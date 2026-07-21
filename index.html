@@ -362,7 +362,52 @@ footer.note b{ color:var(--ink); }
   margin-bottom: 24px;
   line-height:1.6;
 }
+
+/* ---------- IMPORTA ---------- */
+.import-drop{
+  border: 1.5px dashed var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 34px 20px;
+  text-align:center;
+  transition: border-color .15s ease, background .15s ease;
+}
+.import-drop.dragover{ border-color: var(--accent); background: var(--accent-soft); }
+.import-drop-title{
+  font-family:'Inter', sans-serif;
+  font-size:13.5px;
+  color: var(--ink-soft);
+  margin-bottom:14px;
+}
+.import-status{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  color: var(--ink-soft);
+  margin-top:12px;
+  line-height:1.8;
+}
+.import-status .file-ok{ color: var(--green); }
+.import-status .file-err{ color: var(--red); }
+select.cat-select{
+  font-family:'Inter', sans-serif;
+  font-size:12px;
+  padding:5px 8px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background: var(--bg);
+}
+.dup-badge{
+  display:inline-block;
+  font-size:10px;
+  font-family:'IBM Plex Mono', monospace;
+  color: var(--ink-soft);
+  background: var(--surface-2);
+  border-radius:8px;
+  padding:2px 7px;
+  margin-left:6px;
+}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -383,6 +428,7 @@ footer.note b{ color:var(--ink); }
     <button data-tab="dashboard" class="active">Sommario</button>
     <button data-tab="pervoce">Per Voce</button>
     <button data-tab="transazioni">Transazioni</button>
+    <button data-tab="importa">Importa</button>
     <button data-tab="budget">Budget</button>
     <button data-tab="patrimonio">Patrimonio</button>
     <button data-tab="portafoglio">Portafoglio Titoli</button>
@@ -462,6 +508,35 @@ footer.note b{ color:var(--ink); }
       <thead><tr><th>Data</th><th>Descrizione</th><th>Categoria</th><th class="num">Importo</th><th></th></tr></thead>
       <tbody></tbody>
     </table>
+  </section>
+
+  <!-- ================= IMPORTA ================= -->
+  <section id="tab-importa" style="display:none;">
+    <div class="section-title">Importa movimenti da file bancari</div>
+    <div class="section-sub">Riconosce automaticamente gli estratti di Fineco e Illimity (conto corrente e carta di credito) e propone una categoria per ogni movimento, che puoi correggere prima di confermare.</div>
+
+    <div class="import-drop" id="import-drop">
+      <input type="file" id="import-file-input" accept=".xlsx" multiple style="display:none;">
+      <div class="import-drop-inner">
+        <div class="import-drop-title">Trascina qui i file .xlsx oppure</div>
+        <button class="primary" id="btn-choose-files">Scegli file</button>
+      </div>
+    </div>
+    <div id="import-status" class="import-status"></div>
+
+    <div id="import-review" style="display:none;">
+      <div class="toolbar" style="margin-top:22px;">
+        <button class="ghost" id="btn-select-all-new">Seleziona tutti i nuovi</button>
+        <button class="ghost" id="btn-select-none">Deseleziona tutti</button>
+        <div style="flex:1"></div>
+        <span class="section-sub" style="margin:0;" id="import-count"></span>
+        <button class="primary" id="btn-confirm-import">Importa selezionati</button>
+      </div>
+      <table class="ledger" id="import-table">
+        <thead><tr><th></th><th>Data</th><th>Descrizione</th><th class="num">Importo</th><th>Fonte</th><th>Categoria proposta</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </section>
 
   <!-- ================= BUDGET ================= -->
@@ -641,6 +716,229 @@ function renderDashboardRecent(){
     </tr>
   `).join("");
 }
+
+/* ---------------- IMPORTA ---------------- */
+
+/* Regole di categorizzazione automatica: prima corrispondenza vince.
+   Applicate al testo descrizione in maiuscolo. */
+const REGOLE_USCITE = [
+  [/ALDI|ESSELUNGA|CARREFOUR|CONAD|COOP\b|\bPAM\b|LIDL|EUROSPIN|IPERAL|BENNET|IPERSTAR/i, 'Casa - Spesa'],
+  [/FASTWEB/i, 'Casa - Internet'],
+  [/\bA2A\b/i, 'Casa - A2A'],
+  [/\bENI\d*|Q8|TAMOIL|\bAGIP\b|\bIP\b.*CARBURANT|SIA FUEL|STAZIONE DI SERVIZIO/i, 'Rifornimento'],
+  [/PRELIEVO BANCOMAT|PRELEVAMENTO|ATM \d|PRELIEVO CONTANTI/i, 'Prelievi'],
+  [/COMPRAVENDITA TITOLI|ACQUISTO TITOLI/i, 'Acquisto Titoli'],
+  [/BOLLO DOSSIER TITOLI|TOBIN TAX|IMPOSTA DI BOLLO|CANONE DEL CONTO|C\/C T\d/i, 'Imposte/Tasse'],
+  [/TELEPASS|UNIPOLTECH|UNIPOLMOVE/i, 'Telepass'],
+  [/AUTOSTRADA|PEDAGGIO/i, 'Viaggi'],
+  [/\bTAXI\b|UBER|FREE ?NOW/i, 'Taxi'],
+  [/HOTEL|BOOKING\.COM|AIRBNB|RIFUGIO/i, 'Hotel'],
+  [/RISTORANTE|TRATTORIA|OSTERIA|PIZZ|\bBAR\b|COFFEE|CAFF[EÈ]|GELATER|PANIFICIO|FORNO DELLA|MC ?DONALD|BURGER/i, 'Pranzi/Cene'],
+  [/FARMACIA/i, 'Casa - Altro'],
+  [/SIBRA|TRENITALIA|TRENORD|\bATM MILANO\b|BUS\b/i, 'Viaggi'],
+  [/SPESE CARTA DI CREDITO ESTRATTO|UTILIZZO CARTA DI CREDITO/i, '__TRASFERIMENTO_CARTA__'],
+  [/AMAZON/i, 'Hobby'],
+];
+const REGOLE_ENTRATE = [
+  [/STIPENDIO|RETRIBUZIONE/i, 'Stipendio'],
+  [/COMPRAVENDITA TITOLI|VENDITA TITOLI/i, 'Vendita Titoli'],
+  [/INTERESS|CEDOLA/i, 'Interessi/Cedole'],
+  [/DIVIDEND/i, 'Dividendi'],
+  [/RIMBORSO/i, 'Rimborsi Lavorativi'],
+];
+
+function suggerisciCategoria(desc, importo){
+  const d = desc.toUpperCase();
+  const regole = importo < 0 ? REGOLE_USCITE : REGOLE_ENTRATE;
+  for(const [re, cat] of regole){
+    if(re.test(d)) return cat;
+  }
+  return importo < 0 ? 'Altro' : 'Altro';
+}
+
+/* ---- Rilevamento formato + parsing dei 3 layout noti ---- */
+function trovaRigaIntestazione(rows, keywords){
+  for(let i=0;i<rows.length;i++){
+    const row = (rows[i]||[]).map(v=> (v==null?'':String(v)).trim());
+    if(keywords.every(k => row.includes(k))) return i;
+  }
+  return -1;
+}
+
+function parseFoglioMovimenti(rows, nomeFile){
+  // Formato A: Illimity (conto o carta) -> Data operazione, Tipologia, Causale, Stato, Entrate, Uscite, Valuta
+  let hIdx = trovaRigaIntestazione(rows, ['Data operazione','Tipologia','Causale','Entrate','Uscite']);
+  if(hIdx >= 0){
+    const out = [];
+    for(let r=hIdx+1;r<rows.length;r++){
+      const row = rows[r];
+      if(!row || row[0]==null) continue;
+      const data = excelDateToISO(row[0]);
+      if(!data) continue;
+      const causale = row[2]!=null ? String(row[2]).trim() : '';
+      const entrate = numOrNull(row[4]);
+      const uscite = numOrNull(row[5]);
+      const importo = entrate!=null ? entrate : -(uscite||0);
+      out.push({data, desc: causale || String(row[1]||''), importo, fonte:'Illimity'});
+    }
+    return out;
+  }
+  // Formato B: Fineco conto corrente -> Data_Operazione, Data_Valuta, Entrate, Uscite, Descrizione, Descrizione_Completa, Stato
+  hIdx = trovaRigaIntestazione(rows, ['Data_Operazione','Entrate','Uscite','Descrizione']);
+  if(hIdx >= 0){
+    const out = [];
+    for(let r=hIdx+1;r<rows.length;r++){
+      const row = rows[r];
+      if(!row || row[0]==null) continue;
+      const data = excelDateToISO(row[0]);
+      if(!data) continue;
+      const entrate = numOrNull(row[2]);
+      const uscite = numOrNull(row[3]); // già negativo nel formato Fineco
+      const importo = entrate!=null ? entrate : (uscite||0);
+      const desc = row[4]!=null ? String(row[4]).trim() : '';
+      out.push({data, desc, importo, fonte:'Fineco'});
+    }
+    return out;
+  }
+  // Formato C: Fineco carta di credito -> Intestatario carta, Numero carta, Data operazione, Data registrazione, Descrizione, Stato operazione, Tipo operazione, Circuito, Tipo rimborso, Importo
+  hIdx = trovaRigaIntestazione(rows, ['Intestatario carta','Numero carta','Descrizione','Importo']);
+  if(hIdx >= 0){
+    const out = [];
+    for(let r=hIdx+1;r<rows.length;r++){
+      const row = rows[r];
+      if(!row || row[2]==null) continue;
+      const data = excelDateToISO(row[2]);
+      if(!data) continue;
+      const desc = row[4]!=null ? String(row[4]).trim() : '';
+      const importo = numOrNull(row[9]) || 0;
+      out.push({data, desc, importo, fonte:'Fineco Carta'});
+    }
+    return out;
+  }
+  return null; // formato non riconosciuto
+}
+
+function numOrNull(v){
+  if(v===null || v===undefined || v==='') return null;
+  const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/\./g,'').replace(',','.'));
+  return isNaN(n) ? null : n;
+}
+function excelDateToISO(v){
+  if(v instanceof Date) return v.toISOString().slice(0,10);
+  if(typeof v === 'number'){
+    const d = new Date(Math.round((v-25569)*86400*1000));
+    return d.toISOString().slice(0,10);
+  }
+  if(typeof v === 'string'){
+    const m = v.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if(m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  }
+  return null;
+}
+
+let stagingImport = [];
+
+function esisteGiaTransazione(t){
+  return transazioni.some(x => x.data===t.data && x.importo===t.importo && x.desc.trim().toUpperCase()===t.desc.trim().toUpperCase());
+}
+
+async function handleImportFiles(fileList){
+  const statusEl = document.getElementById('import-status');
+  statusEl.innerHTML = '';
+  stagingImport = [];
+  for(const file of fileList){
+    try{
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, {type:'array', cellDates:true});
+      let parsed = null;
+      for(const sheetName of wb.SheetNames){
+        const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], {header:1, raw:true});
+        parsed = parseFoglioMovimenti(rows, file.name);
+        if(parsed && parsed.length) break;
+      }
+      if(!parsed){
+        statusEl.innerHTML += `<div class="file-err">✕ ${file.name}: formato non riconosciuto, file ignorato.</div>`;
+        continue;
+      }
+      parsed.forEach(t=> t.fileName = file.name);
+      stagingImport.push(...parsed);
+      statusEl.innerHTML += `<div class="file-ok">✓ ${file.name}: ${parsed.length} movimenti trovati.</div>`;
+    }catch(err){
+      statusEl.innerHTML += `<div class="file-err">✕ ${file.name}: errore di lettura (${err.message}).</div>`;
+    }
+  }
+  renderImportReview();
+}
+
+function renderImportReview(){
+  const panel = document.getElementById('import-review');
+  if(!stagingImport.length){ panel.style.display='none'; return; }
+  panel.style.display='block';
+
+  stagingImport.sort((a,b)=> b.data.localeCompare(a.data));
+  const nuovi = stagingImport.filter(t=>!esisteGiaTransazione(t)).length;
+  document.getElementById('import-count').textContent = `${stagingImport.length} movimenti totali · ${nuovi} nuovi · ${stagingImport.length-nuovi} già presenti`;
+
+  const catList = [...new Set([
+    ...Object.keys(DATA.usciteCategorie).filter(c=>c!=='TOTALE'),
+    ...Object.keys(DATA.entrateCategorie).filter(c=>c!=='TOTALE'),
+  ])].sort();
+
+  document.getElementById('import-table').querySelector('tbody').innerHTML = stagingImport.map((t,i)=>{
+    const dup = esisteGiaTransazione(t);
+    let suggerita = suggerisciCategoria(t.desc, t.importo);
+    const isTransfer = suggerita === '__TRASFERIMENTO_CARTA__';
+    if(isTransfer) suggerita = 'Altro';
+    const options = catList.map(c=>`<option value="${c}" ${c===suggerita?'selected':''}>${c}</option>`).join("");
+    return `<tr data-idx="${i}">
+      <td><input type="checkbox" class="import-check" data-idx="${i}" ${dup?'':'checked'}></td>
+      <td>${fmtData(t.data)}</td>
+      <td>${t.desc}${dup?'<span class="dup-badge">già presente</span>':''}${isTransfer?'<span class="dup-badge">trasferimento carta &ndash; verifica</span>':''}</td>
+      <td class="num ${t.importo<0?'neg':'pos'}">${eur(t.importo)}</td>
+      <td><span class="tag">${t.fonte}</span></td>
+      <td><select class="cat-select" data-idx="${i}">${options}</select></td>
+    </tr>`;
+  }).join("");
+}
+
+document.getElementById('btn-choose-files').addEventListener('click', ()=> document.getElementById('import-file-input').click());
+document.getElementById('import-file-input').addEventListener('change', (e)=> handleImportFiles(e.target.files));
+
+const dropZone = document.getElementById('import-drop');
+['dragover'].forEach(ev=> dropZone.addEventListener(ev, e=>{ e.preventDefault(); dropZone.classList.add('dragover'); }));
+['dragleave','drop'].forEach(ev=> dropZone.addEventListener(ev, e=>{ e.preventDefault(); dropZone.classList.remove('dragover'); }));
+dropZone.addEventListener('drop', e=>{
+  if(e.dataTransfer.files.length) handleImportFiles(e.dataTransfer.files);
+});
+
+document.getElementById('btn-select-all-new').addEventListener('click', ()=>{
+  document.querySelectorAll('.import-check').forEach(cb=>{
+    const t = stagingImport[cb.dataset.idx];
+    cb.checked = !esisteGiaTransazione(t);
+  });
+});
+document.getElementById('btn-select-none').addEventListener('click', ()=>{
+  document.querySelectorAll('.import-check').forEach(cb=> cb.checked = false);
+});
+
+document.getElementById('btn-confirm-import').addEventListener('click', ()=>{
+  const checks = document.querySelectorAll('.import-check:checked');
+  let n = 0;
+  checks.forEach(cb=>{
+    const idx = cb.dataset.idx;
+    const t = stagingImport[idx];
+    const sel = document.querySelector(`.cat-select[data-idx="${idx}"]`);
+    const cat = sel ? sel.value : suggerisciCategoria(t.desc, t.importo);
+    transazioni.push({data: t.data, desc: t.desc, importo: t.importo, cat});
+    n++;
+  });
+  stagingImport = [];
+  document.getElementById('import-review').style.display='none';
+  document.getElementById('import-status').innerHTML += `<div class="file-ok">&#10003; Importati ${n} movimenti nelle Transazioni.</div>`;
+  document.getElementById('import-file-input').value = '';
+  populateFilters();
+  renderAll();
+});
 
 /* ---------------- PER VOCE ---------------- */
 function populateVoceCat(){
@@ -852,7 +1150,7 @@ document.getElementById('tabs').addEventListener('click', (e)=>{
   if(e.target.tagName !== 'BUTTON') return;
   const tab = e.target.dataset.tab;
   document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('active', b===e.target));
-  ['dashboard','pervoce','transazioni','budget','patrimonio','portafoglio'].forEach(t=>{
+  ['dashboard','pervoce','transazioni','importa','budget','patrimonio','portafoglio'].forEach(t=>{
     document.getElementById('tab-'+t).style.display = (t===tab) ? 'block' : 'none';
   });
 });
