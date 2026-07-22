@@ -101,6 +101,7 @@
   <!-- ================= TRANSAZIONI ================= -->
   <section id="tab-transazioni" style="display:none;">
     <div class="toolbar">
+      <select id="filter-anno"></select>
       <select id="filter-mese"></select>
       <select id="filter-cat"></select>
       <div class="date-range">
@@ -111,6 +112,8 @@
       <div style="flex:1"></div>
       <button class="primary" id="btn-new-tx">+ Nuova registrazione</button>
     </div>
+
+    <div class="grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:22px;" id="tx-summary"></div>
 
     <div class="form-panel" id="tx-form">
       <div class="form-grid">

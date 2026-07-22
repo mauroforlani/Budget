@@ -186,9 +186,10 @@ const GitHubSync = (() => {
           <div class="modal-actions">
             <button class="ghost" id="gh-disconnect" type="button">Disconnetti</button>
             <button class="ghost" id="gh-cancel" type="button">Annulla</button>
-            <button class="primary" id="gh-save" type="button">Salva e connetti</button>
+            <button class="ghost" id="gh-save-push" type="button">Connetti e sovrascrivi GitHub con i dati locali</button>
+            <button class="primary" id="gh-save" type="button">Connetti e carica da GitHub</button>
           </div>
-          <div class="modal-note">Il token deve avere permesso di scrittura sul repository (scope <b>repo</b> per repository privati, oppure <b>public_repo</b> per repository pubblici). Puoi generarne uno da GitHub → Settings → Developer settings → Personal access tokens.</div>
+          <div class="modal-note">Il token deve avere permesso di scrittura sul repository (scope <b>repo</b> per repository privati, oppure <b>public_repo</b> per repository pubblici). Puoi generarne uno da GitHub → Settings → Developer settings → Personal access tokens.<br><br>Usa <b>"Connetti e carica da GitHub"</b> per riprendere i dati già salvati sul repository. Usa <b>"Connetti e sovrascrivi GitHub con i dati locali"</b> se invece vuoi che i dati che vedi ora in questa pagina (es. appena importati) sostituiscano quelli eventualmente già presenti sul repository, ignorandoli.</div>
         </div>`;
       document.body.appendChild(backdrop);
       document.getElementById('gh-cancel').addEventListener('click', closeModal);
@@ -198,24 +199,31 @@ const GitHubSync = (() => {
         setStatus('', 'GitHub non configurato');
         closeModal();
       });
-      document.getElementById('gh-save').addEventListener('click', async () => {
-        const cfg = {
+      function readCfgFromForm() {
+        return {
           owner: document.getElementById('gh-owner').value.trim(),
           repo: document.getElementById('gh-repo').value.trim(),
           branch: document.getElementById('gh-branch').value.trim() || 'main',
           path: document.getElementById('gh-path').value.trim() || DEFAULT_PATH,
           token: document.getElementById('gh-token').value.trim()
         };
-        if (!cfg.owner || !cfg.repo || !cfg.token) {
-          alert('Compila almeno owner, repository e token.');
-          return;
-        }
+      }
+      document.getElementById('gh-save').addEventListener('click', () => {
+        const cfg = readCfgFromForm();
+        if (!cfg.owner || !cfg.repo || !cfg.token) { alert('Compila almeno owner, repository e token.'); return; }
         setConfig(cfg);
         lastKnownSha = null;
         closeModal();
-        if (typeof window.onGitHubConfigured === 'function') {
-          window.onGitHubConfigured();
-        }
+        if (typeof window.onGitHubConfigured === 'function') window.onGitHubConfigured(false);
+      });
+      document.getElementById('gh-save-push').addEventListener('click', () => {
+        const cfg = readCfgFromForm();
+        if (!cfg.owner || !cfg.repo || !cfg.token) { alert('Compila almeno owner, repository e token.'); return; }
+        if (!confirm('Questo sovrascriverà il file dati sul repository GitHub con i dati attualmente presenti in questa pagina. Continuare?')) return;
+        setConfig(cfg);
+        lastKnownSha = null;
+        closeModal();
+        if (typeof window.onGitHubConfigured === 'function') window.onGitHubConfigured(true);
       });
     }
   }

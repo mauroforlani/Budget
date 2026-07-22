@@ -479,15 +479,19 @@ function renderVoceAll() {
 
 /* ---------------- TRANSAZIONI ---------------- */
 function populateFilters() {
-  const mesi = [...new Set(transazioni.map(t => t.data.slice(0, 7)))].sort();
+  const anni = [...new Set(transazioni.map(t => t.data.slice(0, 4)))].sort().reverse();
+  const fy = document.getElementById('filter-anno');
+  const prevAnno = fy.value;
+  fy.innerHTML = '<option value="">Tutti gli anni</option>' + anni.map(a => `<option value="${a}">${a}</option>`).join("");
+  if (anni.includes(prevAnno)) fy.value = prevAnno;
+
   const fm = document.getElementById('filter-mese');
   const prevMese = fm.value;
-  fm.innerHTML = '<option value="">Tutti i mesi</option>' + mesi.map(m => {
-    const idx = parseInt(m.slice(5, 7), 10) - 1;
-    const anno = m.slice(0, 4);
-    return `<option value="${m}">${MESI_IT[idx]} ${anno}</option>`;
+  fm.innerHTML = '<option value="">Tutti i mesi</option>' + MESI_IT.map((nome, i) => {
+    const mm = String(i + 1).padStart(2, '0');
+    return `<option value="${mm}">${nome}</option>`;
   }).join("");
-  if (mesi.includes(prevMese)) fm.value = prevMese;
+  fm.value = prevMese;
 
   const catSet = [...new Set(transazioni.map(t => t.cat))].sort();
   const fc = document.getElementById('filter-cat');
@@ -503,7 +507,8 @@ function populateFilters() {
   sc.innerHTML = allCats.map(c => `<option value="${c}">${c}</option>`).join("");
 }
 
-function renderTransazioni() {
+function filteredTransazioni() {
+  const anno = document.getElementById('filter-anno').value;
   const mese = document.getElementById('filter-mese').value;
   const cat = document.getElementById('filter-cat').value;
   const da = document.getElementById('filter-da').value;
@@ -511,9 +516,26 @@ function renderTransazioni() {
   let rows = [...transazioni];
   if (da) rows = rows.filter(t => t.data >= da);
   if (a) rows = rows.filter(t => t.data <= a);
-  if (!da && !a && mese) rows = rows.filter(t => t.data.startsWith(mese));
+  if (!da && !a) {
+    if (anno) rows = rows.filter(t => t.data.slice(0, 4) === anno);
+    if (mese) rows = rows.filter(t => t.data.slice(5, 7) === mese);
+  }
   if (cat) rows = rows.filter(t => t.cat === cat);
+  return rows;
+}
+
+function renderTransazioni() {
+  const rows = filteredTransazioni();
   rows.sort((a, b) => b.data.localeCompare(a.data));
+
+  const entrate = sum(rows.filter(t => t.importo >= 0).map(t => t.importo));
+  const uscite = sum(rows.filter(t => t.importo < 0).map(t => -t.importo));
+  const saldo = entrate - uscite;
+  document.getElementById('tx-summary').innerHTML = `
+    <div class="card"><div class="label">Entrate (filtro attivo)</div><div class="value pos">${eur(entrate)}</div></div>
+    <div class="card"><div class="label">Uscite (filtro attivo)</div><div class="value neg">${eur(uscite)}</div></div>
+    <div class="card"><div class="label">Saldo netto</div><div class="value ${saldo >= 0 ? 'pos' : 'neg'}">${eur(saldo)}</div><div class="sub">${rows.length} registrazioni</div></div>
+  `;
 
   document.getElementById('tx-table').querySelector('tbody').innerHTML = rows.map(t => `
     <tr>
@@ -881,11 +903,13 @@ document.getElementById('budget-anno').addEventListener('change', renderBudget);
 document.getElementById('voce-cat-entrate').addEventListener('change', () => renderVoceBlock('entrate'));
 document.getElementById('voce-cat-uscite').addEventListener('change', () => renderVoceBlock('uscite'));
 
+document.getElementById('filter-anno').addEventListener('change', renderTransazioni);
 document.getElementById('filter-mese').addEventListener('change', renderTransazioni);
 document.getElementById('filter-cat').addEventListener('change', renderTransazioni);
 document.getElementById('filter-da').addEventListener('change', renderTransazioni);
 document.getElementById('filter-a').addEventListener('change', renderTransazioni);
 document.getElementById('btn-clear-filters').addEventListener('click', () => {
+  document.getElementById('filter-anno').value = '';
   document.getElementById('filter-mese').value = '';
   document.getElementById('filter-cat').value = '';
   document.getElementById('filter-da').value = '';
@@ -990,15 +1014,20 @@ async function initApp() {
   renderAll();
 }
 
-window.onGitHubConfigured = async function () {
-  const remote = await GitHubSync.loadData();
-  if (remote) {
-    DATA = remote;
-    transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
+window.onGitHubConfigured = async function (forcePush) {
+  if (forcePush) {
     recomputeFlussi();
+    await GitHubSync.saveData(buildExportData(), 'Sovrascrittura dati su GitHub con dati locali');
   } else {
-    recomputeFlussi();
-    persist('Inizializzazione dati su GitHub');
+    const remote = await GitHubSync.loadData();
+    if (remote) {
+      DATA = remote;
+      transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
+      recomputeFlussi();
+    } else {
+      recomputeFlussi();
+      persist('Inizializzazione dati su GitHub');
+    }
   }
   populateFilters();
   populateVoceCats();
