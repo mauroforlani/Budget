@@ -40,6 +40,10 @@
     <div class="data-banner" id="data-banner"></div>
 
     <div class="section-title">Sintesi anno corrente (2026)</div>
+    <div class="chart-flags">
+      <label><input type="checkbox" id="summary-flag-titoli"> Includi gestione titoli <span class="flag-hint">(Acquisto/Vendita Titoli)</span></label>
+      <label><input type="checkbox" id="summary-flag-progetti"> Includi gestione progetti <span class="flag-hint">(Progetto)</span></label>
+    </div>
     <div class="grid" id="dash-cards"></div>
 
     <div class="section-title">Entrate e uscite &mdash; tutti gli anni caricati</div>
@@ -169,10 +173,23 @@
 
   <!-- ================= PORTAFOGLIO ================= -->
   <section id="tab-portafoglio" style="display:none;">
+    <div class="toolbar">
+      <input type="file" id="ptf-file-input" accept=".xls,.xlsx" style="display:none;">
+      <button class="primary" id="btn-import-ptf">Importa / sostituisci portafoglio</button>
+      <span class="section-sub" style="margin:0;" id="ptf-updated"></span>
+    </div>
+    <div id="ptf-import-status" class="import-status"></div>
+
     <div class="grid" style="grid-template-columns:repeat(3,1fr);" id="ptf-cards"></div>
     <div class="section-title">Titoli in portafoglio</div>
     <table class="ledger" id="ptf-table">
-      <thead><tr><th>Titolo</th><th>Simbolo</th><th>Strumento</th><th class="num">Quantit&agrave;</th><th class="num">P.zo carico</th></tr></thead>
+      <thead><tr>
+        <th>Titolo</th><th>ISIN</th><th>Mercato</th><th>Strumento</th>
+        <th class="num">Quantit&agrave;</th>
+        <th class="num">P.zo carico</th><th class="num">Valore carico</th>
+        <th class="num">P.zo mercato</th><th class="num">Valore mercato</th>
+        <th class="num">Var%</th><th class="num">Var &euro;</th>
+      </tr></thead>
       <tbody></tbody>
     </table>
   </section>

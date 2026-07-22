@@ -132,10 +132,12 @@ function renderDataBanner() {
     `<b>Copertura dati:</b> flussi annuali ${ANNI[0]}&ndash;${ANNI[ANNI.length - 1] - 1}, dettaglio per categoria dal ${Math.min(...ANNI_CON_CATEGORIE)}, transazioni analitiche ${ANNO_CORRENTE}: ${mesiConDati}.`;
 }
 
-function renderDashboard() {
-  const f = DATA.flussi[ANNO_CORRENTE];
-  const entrateYTD = sum(f.entrate);
-  const usciteYTD = sum(f.uscite);
+function renderDashCards() {
+  const escludiTitoli = !document.getElementById('summary-flag-titoli').checked;
+  const escludiProgetti = !document.getElementById('summary-flag-progetti').checked;
+
+  const entrateYTD = annoAdjEntrate(ANNO_CORRENTE, escludiTitoli, escludiProgetti);
+  const usciteYTD = annoAdjUscite(ANNO_CORRENTE, escludiTitoli, escludiProgetti);
   const saldoYTD = entrateYTD - usciteYTD;
 
   document.getElementById('dash-cards').innerHTML = `
@@ -144,9 +146,11 @@ function renderDashboard() {
     <div class="card"><div class="label">Saldo ${ANNO_CORRENTE} (YTD)</div><div class="value ${saldoYTD >= 0 ? 'pos' : 'neg'}">${eur(saldoYTD)}</div></div>
     <div class="card"><div class="label">Patrimonio totale</div><div class="value">${eur(patrimonioTotale())}</div><div class="sub">Vedi tab Patrimonio</div></div>
   `;
+}
 
+function renderDashboard() {
+  renderDashCards();
   document.getElementById('chart-sub').textContent = `Totali annuali, ${ANNI[0]}\u2013${ANNI[ANNI.length - 1]}.`;
-
   renderDashChart();
   renderDashboardRecent();
 }
@@ -667,17 +671,144 @@ function renderPortafoglio() {
   document.getElementById('ptf-cards').innerHTML = `
     <div class="card"><div class="label">Valore di carico</div><div class="value">${eur(s.valoreCarico)}</div></div>
     <div class="card"><div class="label">Valore di mercato</div><div class="value">${eur(s.valoreMercato)}</div></div>
-    <div class="card"><div class="label">Variazione</div><div class="value pos">${eur(s.varEuro)} (${pct(s.varPct)})</div></div>
+    <div class="card"><div class="label">Variazione</div><div class="value ${s.varEuro >= 0 ? 'pos' : 'neg'}">${eur(s.varEuro)} (${pct(s.varPct)})</div></div>
   `;
+  document.getElementById('ptf-updated').textContent = DATA.portafoglio.aggiornatoIl
+    ? `Ultimo aggiornamento: ${fmtData(DATA.portafoglio.aggiornatoIl)}` : '';
   document.getElementById('ptf-table').querySelector('tbody').innerHTML = DATA.portafoglio.titoli.map(t => `
     <tr>
       <td>${t.nome}</td>
-      <td>${t.simbolo || ''}</td>
+      <td>${t.isin || ''}</td>
+      <td><span class="tag">${t.mercato || ''}</span></td>
       <td><span class="tag">${t.strumento || ''}</span></td>
-      <td class="num">${t.qta.toLocaleString('it-IT')}</td>
-      <td class="num">${t.pzo.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 5 })}</td>
+      <td class="num">${(t.qta || 0).toLocaleString('it-IT')}</td>
+      <td class="num">${(t.pzo || 0).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 5 })}</td>
+      <td class="num">${eur(t.valoreCarico || 0)}</td>
+      <td class="num">${t.pzoMercato != null ? t.pzoMercato.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 5 }) : ''}</td>
+      <td class="num">${eur(t.valoreMercato || 0)}</td>
+      <td class="num ${(t.varPct || 0) >= 0 ? 'pos' : 'neg'}">${t.varPct != null ? pct(t.varPct / 100) : ''}</td>
+      <td class="num ${(t.varEuro || 0) >= 0 ? 'pos' : 'neg'}">${t.varEuro != null ? eur(t.varEuro) : ''}</td>
     </tr>
-  `).join("");
+  `).join("") || `<tr><td colspan="11" style="color:var(--ink-soft); padding:18px;">Nessun titolo in portafoglio: importa un file per popolarlo.</td></tr>`;
+}
+
+/* ---------------- IMPORTAZIONE PORTAFOGLIO (sostituisce il tab) ----------------
+   Riconosce l'export "Portafoglio di sintesi" (xls/xlsx) con colonne:
+   Titolo, ISIN, Simbolo, Mercato, Strumento, Valuta, Quantità, P.zo medio di
+   carico, Cambio di carico, Valore di carico, P.zo di mercato, Cambio di
+   mercato, Valore di mercato €, Var%, Var €, Var in valuta, Rateo. */
+function trovaColonna(headerRow, nomi) {
+  for (let c = 0; c < headerRow.length; c++) {
+    const v = (headerRow[c] == null ? '' : String(headerRow[c])).trim();
+    if (nomi.includes(v)) return c;
+  }
+  return -1;
+}
+
+function parsePortafoglioSintesi(rows) {
+  let hIdx = -1, cols = null;
+  for (let i = 0; i < rows.length; i++) {
+    const row = (rows[i] || []).map(v => (v == null ? '' : String(v)).trim());
+    if (row.includes('Titolo') && row.includes('ISIN') && row.includes('Quantità')) { hIdx = i; break; }
+  }
+  if (hIdx < 0) return null;
+  const header = rows[hIdx];
+  cols = {
+    nome: trovaColonna(header, ['Titolo']),
+    isin: trovaColonna(header, ['ISIN']),
+    simbolo: trovaColonna(header, ['Simbolo']),
+    mercato: trovaColonna(header, ['Mercato']),
+    strumento: trovaColonna(header, ['Strumento']),
+    valuta: trovaColonna(header, ['Valuta']),
+    qta: trovaColonna(header, ['Quantità']),
+    pzo: trovaColonna(header, ['P.zo medio di carico']),
+    valoreCarico: trovaColonna(header, ['Valore di carico']),
+    pzoMercato: trovaColonna(header, ['P.zo di mercato']),
+    valoreMercato: trovaColonna(header, ['Valore di mercato €', 'Valore di mercato']),
+    varPct: trovaColonna(header, ['Var%']),
+    varEuro: trovaColonna(header, ['Var €', 'Var €']),
+  };
+
+  const titoli = [];
+  let r = hIdx + 1;
+  let totaleRowIdx = -1;
+  for (; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row || row.every(v => v === '' || v == null)) continue;
+    const nomeVal = row[cols.nome];
+    if (nomeVal == null || String(nomeVal).trim() === '') continue;
+    if (String(nomeVal).trim().toLowerCase() === 'totale') { totaleRowIdx = r; break; }
+    titoli.push({
+      nome: String(nomeVal).trim(),
+      isin: cols.isin >= 0 ? String(row[cols.isin] || '').trim() : '',
+      simbolo: cols.simbolo >= 0 ? String(row[cols.simbolo] || '').trim() : '',
+      mercato: cols.mercato >= 0 ? String(row[cols.mercato] || '').trim() : '',
+      strumento: cols.strumento >= 0 ? String(row[cols.strumento] || '').trim() : '',
+      valuta: cols.valuta >= 0 ? String(row[cols.valuta] || '').trim() : '',
+      qta: numOrNull(row[cols.qta]) || 0,
+      pzo: numOrNull(row[cols.pzo]) || 0,
+      valoreCarico: numOrNull(row[cols.valoreCarico]) || 0,
+      pzoMercato: numOrNull(row[cols.pzoMercato]),
+      valoreMercato: numOrNull(row[cols.valoreMercato]) || 0,
+      varPct: numOrNull(row[cols.varPct]),
+      varEuro: numOrNull(row[cols.varEuro]),
+    });
+  }
+  if (!titoli.length) return null;
+
+  let summary = {
+    valoreCarico: sum(titoli.map(t => t.valoreCarico)),
+    valoreMercato: sum(titoli.map(t => t.valoreMercato)),
+    varEuro: sum(titoli.map(t => t.valoreMercato)) - sum(titoli.map(t => t.valoreCarico)),
+    varPct: 0,
+  };
+  // riga di riepilogo ufficiale del file (se presente, più precisa della somma manuale)
+  if (totaleRowIdx >= 0 && rows[totaleRowIdx + 1]) {
+    const totRow = rows[totaleRowIdx + 1];
+    const vc = numOrNull(totRow[cols.valoreCarico]);
+    const vm = numOrNull(totRow[cols.valoreMercato]);
+    const vp = numOrNull(totRow[cols.varPct]);
+    const ve = numOrNull(totRow[cols.varEuro]);
+    if (vc != null) summary.valoreCarico = vc;
+    if (vm != null) summary.valoreMercato = vm;
+    if (ve != null) summary.varEuro = ve;
+    if (vp != null) summary.varPct = vp;
+  }
+  if (!summary.varPct && summary.valoreCarico) {
+    summary.varPct = (summary.varEuro / summary.valoreCarico) * 100;
+  }
+  summary.varPct = summary.varPct / 100; // uniforma alla convenzione "frazione" usata da pct()
+
+  return { titoli, summary };
+}
+
+async function handlePortafoglioFile(file) {
+  const statusEl = document.getElementById('ptf-import-status');
+  statusEl.innerHTML = '';
+  try {
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array', cellDates: true });
+    let parsed = null;
+    for (const sheetName of wb.SheetNames) {
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, raw: true });
+      parsed = parsePortafoglioSintesi(rows);
+      if (parsed) break;
+    }
+    if (!parsed) {
+      statusEl.innerHTML = `<div class="file-err">✕ ${file.name}: formato non riconosciuto (attese le colonne del "Portafoglio di sintesi").</div>`;
+      return;
+    }
+    DATA.portafoglio = {
+      titoli: parsed.titoli,
+      summary: parsed.summary,
+      aggiornatoIl: new Date().toISOString().slice(0, 10),
+    };
+    renderPortafoglio();
+    statusEl.innerHTML = `<div class="file-ok">&#10003; Portafoglio sostituito con ${parsed.titoli.length} titoli da ${file.name}.</div>`;
+    persist('Aggiornamento portafoglio da file');
+  } catch (err) {
+    statusEl.innerHTML = `<div class="file-err">✕ ${file.name}: errore di lettura (${err.message}).</div>`;
+  }
 }
 
 /* ---------------- RENDER GLOBALE ---------------- */
@@ -705,6 +836,8 @@ document.getElementById('tabs').addEventListener('click', (e) => {
 /* ---------------- EVENTI ---------------- */
 document.getElementById('flag-titoli').addEventListener('change', renderDashChart);
 document.getElementById('flag-progetti').addEventListener('change', renderDashChart);
+document.getElementById('summary-flag-titoli').addEventListener('change', renderDashCards);
+document.getElementById('summary-flag-progetti').addEventListener('change', renderDashCards);
 document.getElementById('budget-flag-titoli').addEventListener('change', renderBudget);
 document.getElementById('budget-flag-progetti').addEventListener('change', renderBudget);
 document.getElementById('budget-anno').addEventListener('change', renderBudget);
@@ -793,6 +926,12 @@ document.getElementById('btn-confirm-import').addEventListener('click', () => {
 });
 
 document.getElementById('btn-add-istituto').addEventListener('click', addPatrimonioRow);
+
+document.getElementById('btn-import-ptf').addEventListener('click', () => document.getElementById('ptf-file-input').click());
+document.getElementById('ptf-file-input').addEventListener('change', (e) => {
+  if (e.target.files.length) handlePortafoglioFile(e.target.files[0]);
+  e.target.value = '';
+});
 
 /* ---------------- INIZIALIZZAZIONE ---------------- */
 async function initApp() {
