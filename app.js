@@ -144,9 +144,21 @@ function renderHeader() {
 /* ---------------- DASHBOARD ---------------- */
 function renderDataBanner() {
   const primoDett = DATA.meta.primoAnnoDettaglio || Math.min(...ANNI_CON_CATEGORIE);
+  const ultimoAnnoCompleto = ANNO_CORRENTE - 1;
   const mesiConDati = DATA.meta.mesiTransazioniDettagliate.join(", ") || "nessuno";
+
+  const rangeFlussi = ANNI.length > 1 ? `${ANNI[0]}&ndash;${ANNI[ANNI.length - 1]}` : `${ANNI[0]}`;
+  let rangeDettaglio;
+  if (primoDett > ultimoAnnoCompleto) {
+    rangeDettaglio = `${ANNO_CORRENTE} (parziale: ${mesiConDati})`;
+  } else if (primoDett === ultimoAnnoCompleto) {
+    rangeDettaglio = `${primoDett} (anno completo) e ${ANNO_CORRENTE} (parziale: ${mesiConDati})`;
+  } else {
+    rangeDettaglio = `${primoDett}&ndash;${ultimoAnnoCompleto} (anni completi) e ${ANNO_CORRENTE} (parziale: ${mesiConDati})`;
+  }
+
   document.getElementById('data-banner').innerHTML =
-    `<b>Copertura dati:</b> flussi annuali ${ANNI[0]}&ndash;${ANNI[ANNI.length - 1] - 1}, transazioni analitiche di dettaglio dal ${primoDett} al ${ANNO_CORRENTE - 1} (anni completi) e ${ANNO_CORRENTE} (parziale: ${mesiConDati}).`;
+    `<b>Copertura dati:</b> flussi annuali ${rangeFlussi}, transazioni analitiche di dettaglio ${rangeDettaglio}.`;
 }
 
 function renderDashCards() {
