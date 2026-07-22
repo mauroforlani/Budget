@@ -23,10 +23,10 @@ function fmtData(iso) { const [y, m, d] = iso.split("-"); return `${d}/${m}/${y.
 
 /* ---------------- STATO ---------------- */
 let DATA = JSON.parse(JSON.stringify(SEED_DATA));
-let transazioni = (DATA.transazioni2026 || []).map(t => ({ ...t }));
+let transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
 let ANNI = [];
 let ANNI_CON_CATEGORIE = new Set();
-const ANNO_CORRENTE = 2026;
+let ANNO_CORRENTE = (DATA.meta.anniFlussi || [2026]).reduce((a, b) => Math.max(a, b), 0);
 
 function refreshDerivedConstants() {
   ANNI = DATA.meta.anniFlussi.map(Number).sort((a, b) => a - b);
@@ -37,62 +37,78 @@ function patrimonioTotale() {
   return DATA.patrimonio.reduce((s, p) => s + (p.liquidita || 0) + (p.azioni || 0) + (p.obbligazioni || 0) + (p.deposito || 0), 0);
 }
 
-/* ---------------- RICALCOLO ANNO CORRENTE DA TRANSAZIONI ----------------
+/* ---------------- RICALCOLO FLUSSI DA TRANSAZIONI ----------------
    Ogni modifica alle transazioni (nuova, cancellazione, importazione) deve
-   propagarsi a flussi mensili e categorie del 2026, così tutte le altre
-   sezioni (dashboard, budget, per voce) restano coerenti con i dati reali. */
-function recomputeAnno2026() {
-  const entMonth = Array(12).fill(0);
-  const usMonth = Array(12).fill(0);
-  const entCatMonth = Array.from({ length: 12 }, () => ({}));
-  const usCatMonth = Array.from({ length: 12 }, () => ({}));
-  const entCatYear = {};
-  const usCatYear = {};
+   propagarsi a flussi mensili e categorie di TUTTI gli anni per cui esiste
+   dettaglio analitico (non solo l'anno corrente), così dashboard, budget e
+   dettaglio per voce restano coerenti con i dati reali.
+   L'aggregazione mensile usa `meseRif` (il mese/foglio di competenza
+   originale, se noto) invece del solo campo `data`, perché alcune
+   registrazioni di fine mese vengono contabilizzate nel mese successivo
+   nei file sorgente; se `meseRif` non è presente (nuove registrazioni
+   manuali o importate da estratto conto) si usa il mese di `data`. */
+function meseRifOf(t) { return t.meseRif || t.data.slice(0, 7); }
 
+function recomputeFlussi() {
+  const byYear = {};
   transazioni.forEach(t => {
-    const m = parseInt(t.data.slice(5, 7), 10) - 1;
-    if (m < 0 || m > 11) return;
+    const rif = meseRifOf(t);
+    const y = parseInt(rif.slice(0, 4), 10);
+    const mi = parseInt(rif.slice(5, 7), 10) - 1;
+    if (!y || mi < 0 || mi > 11) return;
+    if (!byYear[y]) {
+      byYear[y] = {
+        entMonth: Array(12).fill(0), usMonth: Array(12).fill(0),
+        entCatMonth: Array.from({ length: 12 }, () => ({})), usCatMonth: Array.from({ length: 12 }, () => ({})),
+        entCatYear: {}, usCatYear: {}
+      };
+    }
+    const Y = byYear[y];
     if (t.importo >= 0) {
-      entMonth[m] += t.importo;
-      entCatMonth[m][t.cat] = (entCatMonth[m][t.cat] || 0) + t.importo;
-      entCatYear[t.cat] = (entCatYear[t.cat] || 0) + t.importo;
+      Y.entMonth[mi] += t.importo;
+      Y.entCatMonth[mi][t.cat] = (Y.entCatMonth[mi][t.cat] || 0) + t.importo;
+      Y.entCatYear[t.cat] = (Y.entCatYear[t.cat] || 0) + t.importo;
     } else {
       const v = -t.importo;
-      usMonth[m] += v;
-      usCatMonth[m][t.cat] = (usCatMonth[m][t.cat] || 0) + v;
-      usCatYear[t.cat] = (usCatYear[t.cat] || 0) + v;
+      Y.usMonth[mi] += v;
+      Y.usCatMonth[mi][t.cat] = (Y.usCatMonth[mi][t.cat] || 0) + v;
+      Y.usCatYear[t.cat] = (Y.usCatYear[t.cat] || 0) + v;
     }
   });
 
-  DATA.flussi[ANNO_CORRENTE] = { entrate: entMonth, uscite: usMonth };
+  DATA._monthlyCat = {};
+  Object.keys(byYear).forEach(yStr => {
+    const y = Number(yStr);
+    const Y = byYear[yStr];
+    DATA.flussi[y] = { entrate: Y.entMonth, uscite: Y.usMonth };
 
-  Object.keys(DATA.entrateCategorie).forEach(cat => {
-    if (cat === 'TOTALE') return;
-    DATA.entrateCategorie[cat][ANNO_CORRENTE] = entCatYear[cat] || 0;
-  });
-  Object.keys(DATA.usciteCategorie).forEach(cat => {
-    if (cat === 'TOTALE') return;
-    DATA.usciteCategorie[cat][ANNO_CORRENTE] = usCatYear[cat] || 0;
-  });
-  // categorie apparse solo nelle nuove transazioni (non presenti nei dizionari storici)
-  Object.keys(entCatYear).forEach(cat => {
-    if (!(cat in DATA.entrateCategorie)) DATA.entrateCategorie[cat] = {};
-    DATA.entrateCategorie[cat][ANNO_CORRENTE] = entCatYear[cat];
-  });
-  Object.keys(usCatYear).forEach(cat => {
-    if (!(cat in DATA.usciteCategorie)) DATA.usciteCategorie[cat] = {};
-    DATA.usciteCategorie[cat][ANNO_CORRENTE] = usCatYear[cat];
+    Object.keys(DATA.entrateCategorie).forEach(cat => { if (cat !== 'TOTALE') DATA.entrateCategorie[cat][y] = Y.entCatYear[cat] || 0; });
+    Object.keys(DATA.usciteCategorie).forEach(cat => { if (cat !== 'TOTALE') DATA.usciteCategorie[cat][y] = Y.usCatYear[cat] || 0; });
+    Object.keys(Y.entCatYear).forEach(cat => {
+      if (!(cat in DATA.entrateCategorie)) DATA.entrateCategorie[cat] = {};
+      DATA.entrateCategorie[cat][y] = Y.entCatYear[cat];
+    });
+    Object.keys(Y.usCatYear).forEach(cat => {
+      if (!(cat in DATA.usciteCategorie)) DATA.usciteCategorie[cat] = {};
+      DATA.usciteCategorie[cat][y] = Y.usCatYear[cat];
+    });
+    if (DATA.entrateCategorie['TOTALE']) DATA.entrateCategorie['TOTALE'][y] = sum(Y.entMonth);
+    if (DATA.usciteCategorie['TOTALE']) DATA.usciteCategorie['TOTALE'][y] = sum(Y.usMonth);
+
+    DATA._monthlyCat[y] = { entrate: Y.entCatMonth, uscite: Y.usCatMonth };
   });
 
-  if (DATA.entrateCategorie['TOTALE']) DATA.entrateCategorie['TOTALE'][ANNO_CORRENTE] = sum(entMonth);
-  if (DATA.usciteCategorie['TOTALE']) DATA.usciteCategorie['TOTALE'][ANNO_CORRENTE] = sum(usMonth);
+  const anniConDettaglio = Object.keys(byYear).map(Number);
+  if (anniConDettaglio.length) {
+    ANNO_CORRENTE = Math.max(...anniConDettaglio, ...DATA.meta.anniFlussi.map(Number));
+  }
 
-  DATA._monthlyCat2026 = { entrate: entCatMonth, uscite: usCatMonth };
-
+  const cur = byYear[ANNO_CORRENTE];
   const mesiConDati = [];
-  for (let m = 0; m < 12; m++) { if (entMonth[m] !== 0 || usMonth[m] !== 0) mesiConDati.push(MESI_IT[m]); }
+  if (cur) { for (let m = 0; m < 12; m++) { if (cur.entMonth[m] !== 0 || cur.usMonth[m] !== 0) mesiConDati.push(MESI_IT[m]); } }
   DATA.meta.mesiTransazioniDettagliate = mesiConDati;
   DATA.meta.mesiSenzaDati2026 = MESI_IT.filter(m => !mesiConDati.includes(m));
+  DATA.meta.primoAnnoDettaglio = anniConDettaglio.length ? Math.min(...anniConDettaglio) : null;
 
   refreshDerivedConstants();
 }
@@ -100,8 +116,8 @@ function recomputeAnno2026() {
 /* ---------------- PERSISTENZA SU GITHUB ---------------- */
 function buildExportData() {
   const clone = JSON.parse(JSON.stringify(DATA));
-  delete clone._monthlyCat2026;
-  clone.transazioni2026 = transazioni.map(t => ({ ...t }));
+  delete clone._monthlyCat;
+  clone.transazioni = transazioni.map(t => ({ ...t }));
   return clone;
 }
 let persistTimer = null;
@@ -127,9 +143,10 @@ function renderHeader() {
 
 /* ---------------- DASHBOARD ---------------- */
 function renderDataBanner() {
+  const primoDett = DATA.meta.primoAnnoDettaglio || Math.min(...ANNI_CON_CATEGORIE);
   const mesiConDati = DATA.meta.mesiTransazioniDettagliate.join(", ") || "nessuno";
   document.getElementById('data-banner').innerHTML =
-    `<b>Copertura dati:</b> flussi annuali ${ANNI[0]}&ndash;${ANNI[ANNI.length - 1] - 1}, dettaglio per categoria dal ${Math.min(...ANNI_CON_CATEGORIE)}, transazioni analitiche ${ANNO_CORRENTE}: ${mesiConDati}.`;
+    `<b>Copertura dati:</b> flussi annuali ${ANNI[0]}&ndash;${ANNI[ANNI.length - 1] - 1}, transazioni analitiche di dettaglio dal ${primoDett} al ${ANNO_CORRENTE - 1} (anni completi) e ${ANNO_CORRENTE} (parziale: ${mesiConDati}).`;
 }
 
 function renderDashCards() {
@@ -499,7 +516,7 @@ function renderTransazioni() {
 
 function deleteTx(data, desc) {
   transazioni = transazioni.filter(t => !(t.data === data && t.desc === desc));
-  recomputeAnno2026();
+  recomputeFlussi();
   populateFilters();
   renderAll();
   renderVoceAll();
@@ -507,45 +524,52 @@ function deleteTx(data, desc) {
 }
 
 /* ---------------- BUDGET ---------------- */
-function categoriaMeseValore(dict, monthlyDict2026, cat, anno, mIdx) {
-  if (anno === ANNO_CORRENTE) {
-    return (monthlyDict2026 && monthlyDict2026[mIdx] && monthlyDict2026[mIdx][cat]) || 0;
+function haDettaglioMensile(anno) {
+  return !!(DATA._monthlyCat && DATA._monthlyCat[anno]);
+}
+function haDettaglioCategorie(anno) {
+  return haDettaglioMensile(anno) || ANNI_CON_CATEGORIE.has(anno);
+}
+
+function categoriaMeseValore(dict, cat, anno, mIdx) {
+  if (haDettaglioMensile(anno)) {
+    const lato = dict === DATA.entrateCategorie ? 'entrate' : 'uscite';
+    const monthly = DATA._monthlyCat[anno][lato];
+    return (monthly && monthly[mIdx] && monthly[mIdx][cat]) || 0;
   }
   const annualVal = dict[cat] ? dict[cat][anno] : undefined;
   if (annualVal === undefined) return 0;
   return annualVal / 12;
 }
 
-function haDettaglioCategorie(anno) {
-  return ANNI_CON_CATEGORIE.has(anno) || anno === ANNO_CORRENTE;
-}
-
 function stipendioMese(anno, mIdx) {
   if (!haDettaglioCategorie(anno)) return 0;
-  return categoriaMeseValore(DATA.entrateCategorie, DATA._monthlyCat2026?.entrate, 'Stipendio', anno, mIdx);
+  return categoriaMeseValore(DATA.entrateCategorie, 'Stipendio', anno, mIdx);
 }
 function usciteBaseEffettivo(anno, mIdx) {
   let v = DATA.flussi[anno].uscite[mIdx];
   if (!haDettaglioCategorie(anno)) return v;
-  v -= categoriaMeseValore(DATA.usciteCategorie, DATA._monthlyCat2026?.uscite, 'Acquisto Titoli', anno, mIdx);
-  v -= categoriaMeseValore(DATA.usciteCategorie, DATA._monthlyCat2026?.uscite, 'Progetto', anno, mIdx);
-  v -= categoriaMeseValore(DATA.usciteCategorie, DATA._monthlyCat2026?.uscite, 'Spese Lavorative', anno, mIdx);
+  v -= categoriaMeseValore(DATA.usciteCategorie, 'Acquisto Titoli', anno, mIdx);
+  v -= categoriaMeseValore(DATA.usciteCategorie, 'Progetto', anno, mIdx);
+  v -= categoriaMeseValore(DATA.usciteCategorie, 'Spese Lavorative', anno, mIdx);
   return v;
 }
 function annoAdjEntrateMese(anno, mIdx, escludiTitoli, escludiProgetti) {
   let v = DATA.flussi[anno].entrate[mIdx];
   if (!haDettaglioCategorie(anno)) return v;
-  if (escludiTitoli) v -= categoriaMeseValore(DATA.entrateCategorie, DATA._monthlyCat2026?.entrate, 'Vendita Titoli', anno, mIdx);
-  if (escludiProgetti) v -= categoriaMeseValore(DATA.entrateCategorie, DATA._monthlyCat2026?.entrate, 'Progetto', anno, mIdx);
+  if (escludiTitoli) v -= categoriaMeseValore(DATA.entrateCategorie, 'Vendita Titoli', anno, mIdx);
+  if (escludiProgetti) v -= categoriaMeseValore(DATA.entrateCategorie, 'Progetto', anno, mIdx);
   return v;
 }
 function annoAdjUsciteMese(anno, mIdx, escludiTitoli, escludiProgetti) {
   let v = DATA.flussi[anno].uscite[mIdx];
   if (!haDettaglioCategorie(anno)) return v;
-  if (escludiTitoli) v -= categoriaMeseValore(DATA.usciteCategorie, DATA._monthlyCat2026?.uscite, 'Acquisto Titoli', anno, mIdx);
-  if (escludiProgetti) v -= categoriaMeseValore(DATA.usciteCategorie, DATA._monthlyCat2026?.uscite, 'Progetto', anno, mIdx);
+  if (escludiTitoli) v -= categoriaMeseValore(DATA.usciteCategorie, 'Acquisto Titoli', anno, mIdx);
+  if (escludiProgetti) v -= categoriaMeseValore(DATA.usciteCategorie, 'Progetto', anno, mIdx);
   return v;
 }
+
+
 
 function populateBudgetAnno() {
   const sel = document.getElementById('budget-anno');
@@ -597,7 +621,7 @@ function renderBudget() {
   note.push('Flusso teorico = 50% dello stipendio del mese.');
   note.push('Flusso effettivo = uscite del mese al netto di Progetto, Acquisto Titoli e Spese Lavorative.');
   note.push('Delta = Flusso effettivo &minus; Flusso teorico (valori &le; 0 indicano uscite nette entro la soglia teorica).');
-  if (anno !== ANNO_CORRENTE) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Progetto, Acquisto Titoli, Spese Lavorative) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
+  if (!haDettaglioMensile(anno)) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Progetto, Acquisto Titoli, Spese Lavorative) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
   document.getElementById('budget-note').innerHTML = note.join(' ');
 }
 
@@ -874,7 +898,7 @@ document.getElementById('btn-save-tx').addEventListener('click', () => {
   document.getElementById('f-desc').value = '';
   document.getElementById('f-importo').value = '';
   document.getElementById('tx-form').classList.remove('open');
-  recomputeAnno2026();
+  recomputeFlussi();
   populateFilters();
   renderAll();
   renderVoceAll();
@@ -916,7 +940,7 @@ document.getElementById('btn-confirm-import').addEventListener('click', () => {
   document.getElementById('import-review').style.display = 'none';
   document.getElementById('import-status').innerHTML += `<div class="file-ok">&#10003; Importati ${n} movimenti nelle Transazioni.</div>`;
   document.getElementById('import-file-input').value = '';
-  recomputeAnno2026();
+  recomputeFlussi();
   populateFilters();
   populateVoceCats();
   populateBudgetAnno();
@@ -942,11 +966,11 @@ async function initApp() {
     const remote = await GitHubSync.loadData();
     if (remote) {
       DATA = remote;
-      transazioni = (DATA.transazioni2026 || []).map(t => ({ ...t }));
+      transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
     }
   }
 
-  recomputeAnno2026();
+  recomputeFlussi();
   populateFilters();
   populateVoceCats();
   populateBudgetAnno();
@@ -958,10 +982,10 @@ window.onGitHubConfigured = async function () {
   const remote = await GitHubSync.loadData();
   if (remote) {
     DATA = remote;
-    transazioni = (DATA.transazioni2026 || []).map(t => ({ ...t }));
-    recomputeAnno2026();
+    transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
+    recomputeFlussi();
   } else {
-    recomputeAnno2026();
+    recomputeFlussi();
     persist('Inizializzazione dati su GitHub');
   }
   populateFilters();
