@@ -516,11 +516,9 @@ function haDettaglioCategorie(anno) {
   return ANNI_CON_CATEGORIE.has(anno) || anno === ANNO_CORRENTE;
 }
 
-function entrateBaseTeorico(anno, mIdx) {
-  let v = DATA.flussi[anno].entrate[mIdx];
-  if (!haDettaglioCategorie(anno)) return v;
-  v -= categoriaMeseValore(DATA.entrateCategorie, DATA._monthlyCat2026?.entrate, 'Vendita Titoli', anno, mIdx);
-  return v;
+function stipendioMese(anno, mIdx) {
+  if (!haDettaglioCategorie(anno)) return 0;
+  return categoriaMeseValore(DATA.entrateCategorie, DATA._monthlyCat2026?.entrate, 'Stipendio', anno, mIdx);
 }
 function usciteBaseEffettivo(anno, mIdx) {
   let v = DATA.flussi[anno].uscite[mIdx];
@@ -565,8 +563,8 @@ function renderBudget() {
     const e = annoAdjEntrateMese(anno, i, escludiTitoli, escludiProgetti);
     const u = annoAdjUsciteMese(anno, i, escludiTitoli, escludiProgetti);
     const saldo = e - u;
-    const teorico = 0.6 * entrateBaseTeorico(anno, i);
-    const effettivo = entrateBaseTeorico(anno, i) - usciteBaseEffettivo(anno, i);
+    const teorico = 0.5 * stipendioMese(anno, i);
+    const effettivo = usciteBaseEffettivo(anno, i);
     const delta = effettivo - teorico;
     totE += e; totU += u; totTeor += teorico; totEff += effettivo;
     return `<tr>
@@ -575,8 +573,8 @@ function renderBudget() {
       <td class="num neg">${eur(u)}</td>
       <td class="num ${saldo >= 0 ? 'pos' : 'neg'}">${eur(saldo)}</td>
       <td class="num">${eur(teorico)}</td>
-      <td class="num ${effettivo >= 0 ? 'pos' : 'neg'}">${eur(effettivo)}</td>
-      <td class="num ${delta >= 0 ? 'delta-pos' : 'delta-neg'}">${eur(delta)}</td>
+      <td class="num neg">${eur(effettivo)}</td>
+      <td class="num ${delta <= 0 ? 'delta-pos' : 'delta-neg'}">${eur(delta)}</td>
     </tr>`;
   }).join("");
 
@@ -587,14 +585,15 @@ function renderBudget() {
       <td class="num neg">${eur(totU)}</td>
       <td class="num ${(totE - totU) >= 0 ? 'pos' : 'neg'}">${eur(totE - totU)}</td>
       <td class="num">${eur(totTeor)}</td>
-      <td class="num ${totEff >= 0 ? 'pos' : 'neg'}">${eur(totEff)}</td>
-      <td class="num ${(totEff - totTeor) >= 0 ? 'delta-pos' : 'delta-neg'}">${eur(totEff - totTeor)}</td>
+      <td class="num neg">${eur(totEff)}</td>
+      <td class="num ${(totEff - totTeor) <= 0 ? 'delta-pos' : 'delta-neg'}">${eur(totEff - totTeor)}</td>
     </tr>`;
 
   const note = [];
-  note.push('Flusso teorico = 60% delle entrate del mese (esclusa Vendita Titoli).');
-  note.push('Flusso effettivo = entrate del mese (esclusa Vendita Titoli) meno uscite del mese (al netto di Acquisto Titoli, Progetto e Spese Lavorative).');
-  if (anno !== ANNO_CORRENTE) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: le categorie escluse dal calcolo (Vendita/Acquisto Titoli, Progetto, Spese Lavorative) sono stimate distribuendo il totale annuale in parti uguali sui 12 mesi.`);
+  note.push('Flusso teorico = 50% dello stipendio del mese.');
+  note.push('Flusso effettivo = uscite del mese al netto di Progetto, Acquisto Titoli e Spese Lavorative.');
+  note.push('Delta = Flusso effettivo &minus; Flusso teorico (valori &le; 0 indicano uscite nette entro la soglia teorica).');
+  if (anno !== ANNO_CORRENTE) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Progetto, Acquisto Titoli, Spese Lavorative) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
   document.getElementById('budget-note').innerHTML = note.join(' ');
 }
 
