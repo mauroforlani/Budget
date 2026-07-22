@@ -188,14 +188,14 @@ function annoAdjEntrate(y, escludiTitoli, escludiProgetti) {
   let v = sum(DATA.flussi[y].entrate);
   if (!ANNI_CON_CATEGORIE.has(y)) return v;
   if (escludiTitoli) v -= (DATA.entrateCategorie['Vendita Titoli']?.[y] || 0);
-  if (escludiProgetti) v -= (DATA.entrateCategorie['Progetto']?.[y] || 0);
+  if (escludiProgetti) v -= (DATA.entrateCategorie['Progetti/Spese Straordinarie']?.[y] || 0);
   return v;
 }
 function annoAdjUscite(y, escludiTitoli, escludiProgetti) {
   let v = sum(DATA.flussi[y].uscite);
   if (!ANNI_CON_CATEGORIE.has(y)) return v;
   if (escludiTitoli) v -= (DATA.usciteCategorie['Acquisto Titoli']?.[y] || 0);
-  if (escludiProgetti) v -= (DATA.usciteCategorie['Progetto']?.[y] || 0);
+  if (escludiProgetti) v -= (DATA.usciteCategorie['Progetti/Spese Straordinarie']?.[y] || 0);
   return v;
 }
 
@@ -225,7 +225,7 @@ function renderDashChart() {
 
   const noteBits = [];
   if (escludiTitoli) noteBits.push('gestione titoli esclusa (Acquisto/Vendita Titoli)');
-  if (escludiProgetti) noteBits.push('gestione progetti esclusa (Progetto)');
+  if (escludiProgetti) noteBits.push('gestione progetti esclusa (Progetti/Spese Straordinarie)');
   const primoAnnoCat = Math.min(...ANNI_CON_CATEGORIE);
   let note = noteBits.length ? noteBits.join(' &middot; ') : 'valori totali, nessuna esclusione applicata.';
   if (escludiTitoli || escludiProgetti) {
@@ -584,7 +584,7 @@ function usciteBaseEffettivo(anno, mIdx) {
   let v = DATA.flussi[anno].uscite[mIdx];
   if (!haDettaglioCategorie(anno)) return v;
   v -= categoriaMeseValore(DATA.usciteCategorie, 'Acquisto Titoli', anno, mIdx);
-  v -= categoriaMeseValore(DATA.usciteCategorie, 'Progetto', anno, mIdx);
+  v -= categoriaMeseValore(DATA.usciteCategorie, 'Progetti/Spese Straordinarie', anno, mIdx);
   v -= categoriaMeseValore(DATA.usciteCategorie, 'Spese Lavorative', anno, mIdx);
   return v;
 }
@@ -592,14 +592,14 @@ function annoAdjEntrateMese(anno, mIdx, escludiTitoli, escludiProgetti) {
   let v = DATA.flussi[anno].entrate[mIdx];
   if (!haDettaglioCategorie(anno)) return v;
   if (escludiTitoli) v -= categoriaMeseValore(DATA.entrateCategorie, 'Vendita Titoli', anno, mIdx);
-  if (escludiProgetti) v -= categoriaMeseValore(DATA.entrateCategorie, 'Progetto', anno, mIdx);
+  if (escludiProgetti) v -= categoriaMeseValore(DATA.entrateCategorie, 'Progetti/Spese Straordinarie', anno, mIdx);
   return v;
 }
 function annoAdjUsciteMese(anno, mIdx, escludiTitoli, escludiProgetti) {
   let v = DATA.flussi[anno].uscite[mIdx];
   if (!haDettaglioCategorie(anno)) return v;
   if (escludiTitoli) v -= categoriaMeseValore(DATA.usciteCategorie, 'Acquisto Titoli', anno, mIdx);
-  if (escludiProgetti) v -= categoriaMeseValore(DATA.usciteCategorie, 'Progetto', anno, mIdx);
+  if (escludiProgetti) v -= categoriaMeseValore(DATA.usciteCategorie, 'Progetti/Spese Straordinarie', anno, mIdx);
   return v;
 }
 
@@ -653,9 +653,9 @@ function renderBudget() {
 
   const note = [];
   note.push('Flusso teorico = 50% dello stipendio del mese.');
-  note.push('Flusso effettivo = uscite del mese al netto di Progetto, Acquisto Titoli e Spese Lavorative.');
+  note.push('Flusso effettivo = uscite del mese al netto di Progetti/Spese Straordinarie, Acquisto Titoli e Spese Lavorative.');
   note.push('Delta = Flusso effettivo &minus; Flusso teorico (valori &le; 0 indicano uscite nette entro la soglia teorica).');
-  if (!haDettaglioMensile(anno)) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Progetto, Acquisto Titoli, Spese Lavorative) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
+  if (!haDettaglioMensile(anno)) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Progetti/Spese Straordinarie, Acquisto Titoli, Spese Lavorative) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
   document.getElementById('budget-note').innerHTML = note.join(' ');
 }
 
