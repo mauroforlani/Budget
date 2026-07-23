@@ -26932,203 +26932,210 @@
     }
   ],
   "portafoglio": {
-    "summary": {
-      "valoreCarico": 135315.99,
-      "valoreMercato": 140849.33,
-      "varPct": 0.04089198919,
-      "varEuro": 5533.34
-    },
     "titoli": [
       {
-        "nome": "Titolo",
-        "isin": "ISIN",
-        "simbolo": "SIMBOLO",
-        "strumento": "STRUMENTO",
-        "valuta": "Valuta",
-        "qta": 0,
-        "pzo": 0
-      },
-      {
-        "nome": "INTESA SANPAOLO",
-        "isin": "IT0000072618",
-        "simbolo": "ISP.MI",
-        "strumento": "Azione",
-        "valuta": "EUR",
-        "qta": 2000,
-        "pzo": 2.54933
-      },
-      {
-        "nome": "INTERPUMP GROUP",
-        "isin": "IT0001078911",
-        "simbolo": "IP.MI",
-        "strumento": "Azione",
-        "valuta": "EUR",
-        "qta": 150,
-        "pzo": 42.701
-      },
-      {
-        "nome": "A2A",
-        "isin": "IT0001233417",
-        "simbolo": "A2A.MI",
-        "strumento": "Azione",
-        "valuta": "EUR",
-        "qta": 1600,
-        "pzo": 1.86302
-      },
-      {
-        "nome": "HERA",
-        "isin": "IT0001250932",
-        "simbolo": "HER.MI",
-        "strumento": "Azione",
-        "valuta": "EUR",
-        "qta": 1000,
-        "pzo": 3.54673
-      },
-      {
-        "nome": "ENEL",
-        "isin": "IT0003128367",
-        "simbolo": "ENEL.MI",
-        "strumento": "Azione",
-        "valuta": "EUR",
-        "qta": 1000,
-        "pzo": 5.94945
-      },
-      {
-        "nome": "ENI",
-        "isin": "IT0003132476",
-        "simbolo": "ENI.MI",
-        "strumento": "Azione",
-        "valuta": "EUR",
-        "qta": 350,
-        "pzo": 15.22085
-      },
-      {
-        "nome": "REPLY",
-        "isin": "IT0005282865",
-        "simbolo": "REY.MI",
-        "strumento": "Azione",
-        "valuta": "EUR",
-        "qta": 15,
-        "pzo": 183.14733
-      },
-      {
-        "nome": "ALPHABET-A",
-        "isin": "US02079K3059",
-        "simbolo": "GOOGL.O",
-        "strumento": "Azione",
-        "valuta": "USD",
-        "qta": 30,
-        "pzo": 140.13175
-      },
-      {
-        "nome": "AMAZON.COM",
-        "isin": "US0231351067",
-        "simbolo": "AMZN.O",
-        "strumento": "Azione",
-        "valuta": "USD",
-        "qta": 50,
-        "pzo": 115.55953
-      },
-      {
-        "nome": "PAYPAL HOLDINGS",
-        "isin": "US70450Y1038",
-        "simbolo": "PYPL.O",
-        "strumento": "Azione",
-        "valuta": "USD",
-        "qta": 80,
-        "pzo": 64.61181
-      },
-      {
-        "nome": "XTR HLTHC USD-1C-AC",
-        "isin": "IE00BM67HK77",
-        "simbolo": "XDWH.MI",
-        "strumento": "ETF",
-        "valuta": "EUR",
-        "qta": 100,
-        "pzo": 46.48
-      },
-      {
-        "nome": "BTP-1MZ25 5",
-        "isin": "IT0004513641",
-        "simbolo": "PMZ25.MOT",
+        "nome": "BTP-1OT39 4,15",
+        "isin": "IT0005582421",
+        "simbolo": "JCKWJ0.MOT",
+        "mercato": "MOT",
         "strumento": "Obbligazione",
         "valuta": "EUR",
         "qta": 10000,
-        "pzo": 102.003
+        "pzo": 101.129,
+        "valoreCarico": 10112.9,
+        "pzoMercato": 99.31,
+        "valoreMercato": 9931,
+        "varPct": -1.798693,
+        "varEuro": -181.9
+      },
+      {
+        "nome": "BTPI-15MG39 2,4",
+        "isin": "IT0005547812",
+        "simbolo": "JB88SD.MOT",
+        "mercato": "MOT",
+        "strumento": "Obbligazione",
+        "valuta": "EUR",
+        "qta": 10000,
+        "pzo": 101.235,
+        "valoreCarico": 10123.5,
+        "pzoMercato": 102.4,
+        "valoreMercato": 11137.7408,
+        "varPct": 1.150788,
+        "varEuro": 116.5
+      },
+      {
+        "nome": "BTP-1MZ38 3,25",
+        "isin": "IT0005496770",
+        "simbolo": "JBSUEB.MOT",
+        "mercato": "MOT",
+        "strumento": "Obbligazione",
+        "valuta": "EUR",
+        "qta": 10000,
+        "pzo": 92.67,
+        "valoreCarico": 9267,
+        "pzoMercato": 92.16,
+        "valoreMercato": 9216,
+        "varPct": -0.55034,
+        "varEuro": -51
+      },
+      {
+        "nome": "BTP-1OT55 4,65",
+        "isin": "IT0005668238",
+        "simbolo": "JDAUUY.MOT",
+        "mercato": "MOT",
+        "strumento": "Obbligazione",
+        "valuta": "EUR",
+        "qta": 10000,
+        "pzo": 104.78,
+        "valoreCarico": 10478,
+        "pzoMercato": 99,
+        "valoreMercato": 9900,
+        "varPct": -5.51632,
+        "varEuro": -578
+      },
+      {
+        "nome": "REPLY N",
+        "isin": "IT0005282865",
+        "simbolo": "REY.MI",
+        "mercato": "AFF",
+        "strumento": "Azione",
+        "valuta": "EUR",
+        "qta": 70,
+        "pzo": 108.105,
+        "valoreCarico": 7567.35,
+        "pzoMercato": 94.5,
+        "valoreMercato": 6615,
+        "varPct": -12.584987,
+        "varEuro": -952.35
       },
       {
         "nome": "BTP-1ST38 2,95",
         "isin": "IT0005321325",
         "simbolo": "532132.MOT",
+        "mercato": "MOT",
         "strumento": "Obbligazione",
         "valuta": "EUR",
         "qta": 10000,
-        "pzo": 90.5077
+        "pzo": 90.5077,
+        "valoreCarico": 9050.77,
+        "pzoMercato": 88.85,
+        "valoreMercato": 8885,
+        "varPct": -1.831557,
+        "varEuro": -165.77
       },
       {
-        "nome": "BTP-VAL 13GN27SU CUM",
-        "isin": "IT0005547390",
-        "simbolo": "T54739.MOT",
-        "strumento": "Obbligazione",
-        "valuta": "EUR",
-        "qta": 10000,
-        "pzo": 100
-      },
-      {
-        "nome": "BTP-FUTURA 17NV28",
+        "nome": "BTP-17NV28 FUTURA",
         "isin": "IT0005425761",
         "simbolo": "T42576.MOT",
+        "mercato": "MOT",
         "strumento": "Obbligazione",
         "valuta": "EUR",
         "qta": 10000,
-        "pzo": 84.74
+        "pzo": 84.74,
+        "valoreCarico": 8474,
+        "pzoMercato": 95.09,
+        "valoreMercato": 9509,
+        "varPct": 12.213831,
+        "varEuro": 1035
       },
       {
         "nome": "BTP-1ST40 5",
         "isin": "IT0004532559",
         "simbolo": "P1ST40.MOT",
+        "mercato": "MOT",
         "strumento": "Obbligazione",
         "valuta": "EUR",
         "qta": 10000,
-        "pzo": 98.7
+        "pzo": 98.7,
+        "valoreCarico": 9870,
+        "pzoMercato": 107.96,
+        "valoreMercato": 10796,
+        "varPct": 9.381966,
+        "varEuro": 926
       },
       {
-        "nome": "BTP-ITALIA 28GN30",
+        "nome": "BTP-13GN27 VALSU CUM",
+        "isin": "IT0005547390",
+        "simbolo": "T54739.MOT",
+        "mercato": "MOT",
+        "strumento": "Obbligazione",
+        "valuta": "EUR",
+        "qta": 10000,
+        "pzo": 100,
+        "valoreCarico": 10000,
+        "pzoMercato": 100.923,
+        "valoreMercato": 10092.3,
+        "varPct": 0.923,
+        "varEuro": 92.3
+      },
+      {
+        "nome": "BTP-28GN30 ITALIA",
         "isin": "IT0005497000",
         "simbolo": "T49700.MOT",
+        "mercato": "MOT",
         "strumento": "Obbligazione",
         "valuta": "EUR",
         "qta": 10000,
-        "pzo": 92.26
-      },
-      {
-        "nome": "BTP-ITALIA 21MG26",
-        "isin": "IT0005332835",
-        "simbolo": "533283.MOT",
-        "strumento": "Obbligazione",
-        "valuta": "EUR",
-        "qta": 8000,
-        "pzo": 96.41
+        "pzo": 92.26,
+        "valoreCarico": 9226,
+        "pzoMercato": 101.1,
+        "valoreMercato": 10144.6773,
+        "varPct": 9.581617,
+        "varEuro": 884
       },
       {
         "nome": "BTPI-15ST41 2,55",
         "isin": "IT0004545890",
         "simbolo": "PIST41.MOT",
+        "mercato": "MOT",
         "strumento": "Obbligazione",
         "valuta": "EUR",
         "qta": 10000,
-        "pzo": 120.0315
+        "pzo": 120.0315,
+        "valoreCarico": 12003.15,
+        "pzoMercato": 105.16,
+        "valoreMercato": 15059.85844,
+        "varPct": -12.389664,
+        "varEuro": -1487.15
       },
       {
-        "nome": "BTP-ITALIA 14MZ28CUM",
+        "nome": "BTP-1OT53 4,5",
+        "isin": "IT0005534141",
+        "simbolo": "553414.MOT",
+        "mercato": "MOT",
+        "strumento": "Obbligazione",
+        "valuta": "EUR",
+        "qta": 10000,
+        "pzo": 102.14,
+        "valoreCarico": 10214,
+        "pzoMercato": 97.4,
+        "valoreMercato": 9740,
+        "varPct": -4.640689,
+        "varEuro": -474
+      },
+      {
+        "nome": "BTP-14MZ28 ITALIACUM",
         "isin": "IT0005532715",
         "simbolo": "BT19_C.MOT",
+        "mercato": "MOT",
         "strumento": "Obbligazione",
         "valuta": "EUR",
         "qta": 8000,
-        "pzo": 100
+        "pzo": 100,
+        "valoreCarico": 8000,
+        "pzoMercato": 101.5,
+        "valoreMercato": 8325.5172,
+        "varPct": 1.5,
+        "varEuro": 120
       }
-    ]
+    ],
+    "summary": {
+      "valoreCarico": 124386.67,
+      "valoreMercato": 129352.09374,
+      "varEuro": -716.37,
+      "varPct": -0.005759220000000001
+    },
+    "aggiornatoIl": "2026-07-23"
   },
   "meta": {
     "anniFlussi": [
