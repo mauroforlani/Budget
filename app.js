@@ -22,7 +22,30 @@ function sum(arr) { return arr.reduce((a, b) => a + b, 0); }
 function fmtData(iso) { const [y, m, d] = iso.split("-"); return `${d}/${m}/${y.slice(2)}`; }
 
 /* ---------------- STATO ---------------- */
-let DATA = JSON.parse(JSON.stringify(SEED_DATA));
+/* Migrazione nomi categoria: se dati (locali o da GitHub) usano ancora i
+   vecchi nomi "Progetto"/"Progetti", li unifica in quello attuale. Protegge
+   da dati salvati su GitHub prima della rinomina, che altrimenti non
+   verrebbero più riconosciuti dalle formule di esclusione. */
+function migrateCategoryNames(data) {
+  const RENAME_MAP = { 'Progetto': 'Progetti/Spese Straordinarie', 'Progetti': 'Progetti/Spese Straordinarie' };
+  function mergeDict(dict) {
+    if (!dict) return;
+    Object.keys(RENAME_MAP).forEach(old => {
+      if (dict[old]) {
+        const target = RENAME_MAP[old];
+        if (!dict[target]) dict[target] = {};
+        Object.keys(dict[old]).forEach(y => { dict[target][y] = (dict[target][y] || 0) + dict[old][y]; });
+        delete dict[old];
+      }
+    });
+  }
+  mergeDict(data.entrateCategorie);
+  mergeDict(data.usciteCategorie);
+  (data.transazioni || []).forEach(t => { if (RENAME_MAP[t.cat]) t.cat = RENAME_MAP[t.cat]; });
+  return data;
+}
+
+let DATA = migrateCategoryNames(JSON.parse(JSON.stringify(SEED_DATA)));
 let transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
 let ANNI = [];
 let ANNI_CON_CATEGORIE = new Set();
@@ -431,7 +454,9 @@ function populateVoceCats() {
   selE.innerHTML = catsE.map(c => `<option value="${c}">${c}</option>`).join("");
   selU.innerHTML = catsU.map(c => `<option value="${c}">${c}</option>`).join("");
   if (catsE.includes(prevE)) selE.value = prevE;
+  else if (catsE.includes('Stipendio')) selE.value = 'Stipendio';
   if (catsU.includes(prevU)) selU.value = prevU;
+  else if (catsU.includes('Viaggi')) selU.value = 'Viaggi';
 }
 
 function renderVoceBlock(tipo) {
@@ -635,8 +660,8 @@ function renderBudget() {
       <td class="num neg">${eur(u)}</td>
       <td class="num ${saldo >= 0 ? 'pos' : 'neg'}">${eur(saldo)}</td>
       <td class="num">${eur(teorico)}</td>
-      <td class="num neg">${eur(effettivo)}</td>
-      <td class="num ${delta <= 0 ? 'delta-pos' : 'delta-neg'}">${eur(delta)}</td>
+      <td class="num ${effettivo > teorico ? 'pos' : 'neg'}">${eur(effettivo)}</td>
+      <td class="num ${delta > 0 ? 'delta-pos' : 'delta-neg'}">${eur(delta)}</td>
     </tr>`;
   }).join("");
 
@@ -647,29 +672,40 @@ function renderBudget() {
       <td class="num neg">${eur(totU)}</td>
       <td class="num ${(totE - totU) >= 0 ? 'pos' : 'neg'}">${eur(totE - totU)}</td>
       <td class="num">${eur(totTeor)}</td>
-      <td class="num neg">${eur(totEff)}</td>
-      <td class="num ${(totEff - totTeor) <= 0 ? 'delta-pos' : 'delta-neg'}">${eur(totEff - totTeor)}</td>
+      <td class="num ${totEff > totTeor ? 'pos' : 'neg'}">${eur(totEff)}</td>
+      <td class="num ${(totEff - totTeor) > 0 ? 'delta-pos' : 'delta-neg'}">${eur(totEff - totTeor)}</td>
     </tr>`;
 
   const note = [];
   note.push('Flusso teorico = 50% dello stipendio del mese.');
   note.push('Flusso effettivo = uscite del mese al netto di Progetti/Spese Straordinarie, Acquisto Titoli e Spese Lavorative.');
-  note.push('Delta = Flusso effettivo &minus; Flusso teorico (valori &le; 0 indicano uscite nette entro la soglia teorica).');
+  note.push('Il Flusso effettivo è verde quando supera il Flusso teorico, rosso quando è inferiore. Delta = Flusso effettivo &minus; Flusso teorico.');
   if (!haDettaglioMensile(anno)) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Progetti/Spese Straordinarie, Acquisto Titoli, Spese Lavorative) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
   document.getElementById('budget-note').innerHTML = note.join(' ');
 }
 
 /* ---------------- PATRIMONIO (editabile) ---------------- */
+function formatItNumber(n) {
+  return (n || 0).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function parseItNumber(str) {
+  if (typeof str !== 'string') return Number(str) || 0;
+  const s = str.trim().replace(/\./g, '').replace(',', '.');
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+
 function renderPatrimonio() {
   const tbody = document.getElementById('patrimonio-table').querySelector('tbody');
   tbody.innerHTML = DATA.patrimonio.map((p, i) => {
     const tot = (p.liquidita || 0) + (p.azioni || 0) + (p.obbligazioni || 0) + (p.deposito || 0);
+    const numField = (field, val) => `<input class="cell-edit patr-field" data-idx="${i}" data-field="${field}" type="text" inputmode="decimal" value="${formatItNumber(val)}">`;
     return `<tr data-idx="${i}">
       <td><input class="cell-edit patr-field" data-idx="${i}" data-field="istituto" type="text" value="${p.istituto == null ? '' : p.istituto}"></td>
-      <td><input class="cell-edit patr-field" data-idx="${i}" data-field="liquidita" type="number" step="0.01" value="${p.liquidita || 0}"></td>
-      <td><input class="cell-edit patr-field" data-idx="${i}" data-field="azioni" type="number" step="0.01" value="${p.azioni || 0}"></td>
-      <td><input class="cell-edit patr-field" data-idx="${i}" data-field="obbligazioni" type="number" step="0.01" value="${p.obbligazioni || 0}"></td>
-      <td><input class="cell-edit patr-field" data-idx="${i}" data-field="deposito" type="number" step="0.01" value="${p.deposito || 0}"></td>
+      <td>${numField('liquidita', p.liquidita)}</td>
+      <td>${numField('azioni', p.azioni)}</td>
+      <td>${numField('obbligazioni', p.obbligazioni)}</td>
+      <td>${numField('deposito', p.deposito)}</td>
       <td class="num" style="font-weight:600;">${eur(tot)}</td>
       <td><button class="rowbtn" data-idx="${i}" onclick="deletePatrimonioRow(${i})">elimina</button></td>
     </tr>`;
@@ -688,6 +724,21 @@ function renderPatrimonio() {
 
   tbody.querySelectorAll('.patr-field').forEach(inp => {
     inp.addEventListener('change', onPatrimonioFieldChange);
+    if (inp.dataset.field !== 'istituto') {
+      // in focus mostra il numero "grezzo" (facile da editare), al blur riformatta con il separatore
+      inp.addEventListener('focus', (e) => {
+        const idx = parseInt(e.target.dataset.idx, 10);
+        const field = e.target.dataset.field;
+        const raw = DATA.patrimonio[idx] ? (DATA.patrimonio[idx][field] || 0) : 0;
+        e.target.value = String(raw).replace('.', ',');
+      });
+      inp.addEventListener('blur', (e) => {
+        const idx = parseInt(e.target.dataset.idx, 10);
+        const field = e.target.dataset.field;
+        const row = DATA.patrimonio[idx];
+        if (row) e.target.value = formatItNumber(row[field]);
+      });
+    }
   });
 }
 
@@ -699,8 +750,7 @@ function onPatrimonioFieldChange(e) {
   if (field === 'istituto') {
     row.istituto = e.target.value.trim() || null;
   } else {
-    const n = parseFloat(e.target.value);
-    row[field] = isNaN(n) ? 0 : n;
+    row[field] = parseItNumber(e.target.value);
   }
   renderPatrimonio();
   renderHeader();
@@ -1008,7 +1058,7 @@ async function initApp() {
   if (GitHubSync.isConfigured()) {
     const remote = await GitHubSync.loadData();
     if (remote) {
-      DATA = remote;
+      DATA = migrateCategoryNames(remote);
       transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
     }
   }
@@ -1028,7 +1078,7 @@ window.onGitHubConfigured = async function (forcePush) {
   } else {
     const remote = await GitHubSync.loadData();
     if (remote) {
-      DATA = remote;
+      DATA = migrateCategoryNames(remote);
       transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
       recomputeFlussi();
     } else {
