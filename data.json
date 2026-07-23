@@ -230,8 +230,8 @@
         15474.750000000004,
         13018.119999999995,
         12243.489999999998,
-        9028.789999999999,
-        7888.360000000001,
+        9213.22,
+        10658.870000000004,
         0,
         0,
         0,
@@ -412,7 +412,7 @@
       "2023": 196395.59999999998,
       "2024": 70281.38999999998,
       "2025": 55272.01,
-      "2026": 63712.049999999996
+      "2026": 66666.99
     },
     "Imposte/Tasse": {
       "2019": 11.02,
@@ -422,7 +422,7 @@
       "2023": 771.4599999999999,
       "2024": 3217.6600000000003,
       "2025": 1732.3799999999997,
-      "2026": 575.41
+      "2026": 694.91
     },
     "Pranzi/Cene": {
       "2019": 19.5,
@@ -432,7 +432,7 @@
       "2023": 2705.990000000001,
       "2024": 4334.099999999998,
       "2025": 3624.4700000000007,
-      "2026": 1277.81
+      "2026": 1632.0099999999998
     },
     "Spese Lavorative": {
       "2019": 0,
@@ -452,7 +452,7 @@
       "2023": 11953.030000000002,
       "2024": 11220.089999999995,
       "2025": 8013.6399999999985,
-      "2026": 6446.449999999999
+      "2026": 6711.449999999999
     },
     "Hotel": {
       "2019": 0,
@@ -462,7 +462,7 @@
       "2023": 4570.6900000000005,
       "2024": 5476.840000000001,
       "2025": 3655.87,
-      "2026": 528.4
+      "2026": 1104.8
     },
     "Hobby": {
       "2019": 0,
@@ -472,7 +472,7 @@
       "2023": 6110.309999999996,
       "2024": 4060.2499999999977,
       "2025": 6151.4199999999955,
-      "2026": 862.3
+      "2026": 1970.52
     },
     "Altro": {
       "2019": 0,
@@ -492,7 +492,7 @@
       "2023": 637.2799999999999,
       "2024": 578.13,
       "2025": 267.33999999999986,
-      "2026": 437.08000000000004
+      "2026": 483.71000000000004
     },
     "Telefono": {
       "2019": 0,
@@ -522,7 +522,7 @@
       "2023": 1420,
       "2024": 3570.04,
       "2025": 2970,
-      "2026": 1240
+      "2026": 1560
     },
     "Rifornimento": {
       "2019": 0,
@@ -532,7 +532,7 @@
       "2023": 1060.3200000000004,
       "2024": 1076.51,
       "2025": 1106.1200000000001,
-      "2026": 803.82
+      "2026": 968.81
     },
     "Serate": {
       "2019": 0,
@@ -26939,6 +26939,12 @@
       "cat": "Imposte/Tasse"
     },
     {
+      "data": "2026-06-21",
+      "desc": "Pagamento Bancomat",
+      "importo": -14.18,
+      "cat": "Rifornimento"
+    },
+    {
       "data": "2026-06-16",
       "desc": "Compravendita Titoli",
       "importo": 2557.54,
@@ -26963,6 +26969,18 @@
       "cat": "Imposte/Tasse"
     },
     {
+      "data": "2026-06-14",
+      "desc": "Pagamento Bancomat",
+      "importo": -17.16,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-06-13",
+      "desc": "Pagamento Bancomat",
+      "importo": -17.88,
+      "cat": "Rifornimento"
+    },
+    {
       "data": "2026-06-09",
       "desc": "SEPA Direct Debit",
       "importo": -11.99,
@@ -26973,6 +26991,12 @@
       "desc": "SEPA Direct Debit",
       "importo": -229.01,
       "cat": "Telepass"
+    },
+    {
+      "data": "2026-06-09",
+      "desc": "Prelievo Bancomat",
+      "importo": -160,
+      "cat": "Prelievi"
     },
     {
       "data": "2026-06-03",
@@ -27009,6 +27033,456 @@
       "desc": "Ritenuta Portaf.Remunerato",
       "importo": -0.05,
       "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-06-27",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-27",
+      "desc": "YOUR MOMENTS VIVILO CESENA IT",
+      "importo": -39.99,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-06-27",
+      "desc": "AMZN Mktp IT*WB0H12SW5 AMZN.COM/BILL LU",
+      "importo": -23.75,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-06-27",
+      "desc": "HOTEL EUROPA VALTOURNENCHE IT",
+      "importo": -185,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-06-26",
+      "desc": "MODERNA DISTRIBUZIONE VALTOURNENCHE IT",
+      "importo": -1.4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-26",
+      "desc": "RISTORANTE LE BLASON VALTOURNENCHE IT",
+      "importo": -56.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-25",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-23",
+      "desc": "Amazon.it*1R93G6GD5 www.amazon.it LU",
+      "importo": -699,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-06-23",
+      "desc": "VENCHI MI Gae Aulenti Milano IT",
+      "importo": -11.2,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-23",
+      "desc": "SPONTINI GAE AULENTI MILANO IT",
+      "importo": -10.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-23",
+      "desc": "FELTRINELLI CAFE' - ED MILANO IT",
+      "importo": -4.7,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-22",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-22",
+      "desc": "SIGNORVINO MILANO IT",
+      "importo": -12.74,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-21",
+      "desc": "AMAZON* B39229175 LUXEMBOURG LU",
+      "importo": -12.34,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-06-21",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -1.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-21",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-21",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -4.43,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-20",
+      "desc": "WWW.VIGNETTE.EXPRESS KATOWICE PL",
+      "importo": -74,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-06-20",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.5,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-20",
+      "desc": "PASTICCERIA MASTAI SRL CHIAVENNA IT",
+      "importo": -5.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-20",
+      "desc": "Station Mesocco Mesocco CH",
+      "importo": -14.7,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-06-20",
+      "desc": "Pag. del 21/06/26 ora 15:23 presso: IPER STAROIL VIALE BRIANZA,31 CINISELLO B ALSAMO 20092 MI ITA Carta N ***** 112 Nessuna Commissione",
+      "importo": -14.18,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-06-18",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-17",
+      "desc": "ACCONTI/SALDI SOGGIORN VALTOURNENCHE IT",
+      "importo": -175,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-06-17",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -6.64,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-16",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-15",
+      "desc": "PAGOPA GPAY NEXI MILANO IT",
+      "importo": -119.5,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-06-14",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-14",
+      "desc": "14 GRADI GARDEN CERNUSCO SUL IT",
+      "importo": -15,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-13",
+      "desc": "HOTEL TOURING PREDAZZO PREDAZZO IT",
+      "importo": -7,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-06-13",
+      "desc": "SITC LIFT PORDOI V CANAZEI IT",
+      "importo": -64,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-06-13",
+      "desc": "ENI 59065 CASSINA DE P IT",
+      "importo": -17.64,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-06-13",
+      "desc": "ADS CAMPAGNOLA OVEST CALCINATO IT",
+      "importo": -4.7,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-13",
+      "desc": "PV2278 NOGAREDO IT",
+      "importo": -18.13,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-06-13",
+      "desc": "Pag. del 14/06/26 ora 10:13 presso: CRIS TOFORETTI S.P.A. LOCALITA' MEZZAVALLE, 23 PREDAZZO 38037 TN ITA Carta N *****112 Nessuna Commissione",
+      "importo": -17.16,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-06-12",
+      "desc": "PIZZERIA INCONTRO PREDAZZO IT",
+      "importo": -29.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-12",
+      "desc": "COOP TRENTINO PREDAZZO IT",
+      "importo": -0.72,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-12",
+      "desc": "FUNIVIE SEGGIOVIE S MA PRIMIERO SAN IT",
+      "importo": -43,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-06-12",
+      "desc": "NUOVA SIDAP SRL 9625O COLOGNO MONZE IT",
+      "importo": -16.08,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-06-12",
+      "desc": "Pag. del 13/06/26 ora 12:55 presso: SOCO GAR RETE SRL MONT.. VIALE MILANO,25 MONTECCHIO MAGGIORE 36075 VI ITA C arta N *****112 Nessuna Commissione",
+      "importo": -17.88,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-06-11",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.5,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-11",
+      "desc": "BKG*HOTEL AT BOOKING.C (888)850-3958 NL",
+      "importo": -121.4,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-06-10",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-10",
+      "desc": "GRUPPO NEGOZI SRL MILANO IT",
+      "importo": -8.1,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-09",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -3.35,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-08",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-08",
+      "desc": "Prelevamento carta N ***** 112 Data operazione 9/6/2026 Ora 10:36 1030 BANCA MONTE DEI PASCHI DI SIEN N ATM 4290 MILANO (MI)",
+      "importo": -160,
+      "cat": "Prelievi"
+    },
+    {
+      "data": "2026-06-07",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-07",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -6.41,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-06",
+      "desc": "MASO GRISUN SPIAZZO IT",
+      "importo": -263,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-06-06",
+      "desc": "ENGAGIGO SRL WWW.ENDU.NET IT",
+      "importo": -26,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-06-05",
+      "desc": "SNACK ROCK CAFE' - POP PINZOLO IT",
+      "importo": -6.7,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-05",
+      "desc": "CARE ALTO SPIAZZO IT",
+      "importo": -40.1,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-04",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.74,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-04",
+      "desc": "D.A.M.P. SAS DI MARTAN Mazzano IT",
+      "importo": -34.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-03",
+      "desc": "VENCHI MI Gae Aulenti Milano IT",
+      "importo": -5.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-03",
+      "desc": "SPONTINI GAE AULENTI MILANO IT",
+      "importo": -10.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-02",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-02",
+      "desc": "AMZN Mktp IT*N31M06PE4 AMZN.COM/BILL LU",
+      "importo": -13.94,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-06-02",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -5.74,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-02",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-01",
+      "desc": "WWW.AMAZON.* N38X833D4 LUXEMBOURG LU",
+      "importo": -19.95,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-06-01",
+      "desc": "LA TORRE SAN MICHELE A IT",
+      "importo": -47.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-01",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -5.6,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-01",
+      "desc": "HTTPS: STABILIMENTI.B HTTPS://STABI IT",
+      "importo": -28,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-05-31",
+      "desc": "NYX*BreakafeSncdiPitt BeniComuni IT",
+      "importo": -1.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-05-31",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -5.6,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-05-31",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -6.08,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-05-30",
+      "desc": "MAXI' PASIANO DI PO IT",
+      "importo": -5.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-05-30",
+      "desc": "HTTPS: STABILIMENTI.B HTTPS://STABI IT",
+      "importo": -28,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-05-29",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -7.4,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-05-29",
+      "desc": "GUSTO PIZZA DI ACUNTO SAN MICHELE A IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-05-28",
+      "desc": "LOM035 MILANO TERZAGHI MILANO IT",
+      "importo": -87,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-05-28",
+      "desc": "HTTPS: STABILIMENTI.B HTTPS://STABI IT",
+      "importo": -28,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-05-27",
+      "desc": "Amazon.it*NQ0XB5064 www.amazon.it LU",
+      "importo": -11.25,
+      "cat": "Hobby"
     }
   ],
   "patrimonio": [
