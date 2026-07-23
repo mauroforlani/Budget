@@ -322,16 +322,6 @@
       "2025": 189.14,
       "2026": 0
     },
-    "Progetto": {
-      "2019": 0,
-      "2020": 7045,
-      "2021": 3620,
-      "2022": 27130,
-      "2023": 200,
-      "2024": 0,
-      "2025": 0,
-      "2026": 0
-    },
     "Casa - Spesa": {
       "2019": 0,
       "2020": 17.27,
@@ -401,6 +391,16 @@
       "2024": 0,
       "2025": 0,
       "2026": 74.72
+    },
+    "Progetti/Spese Straordinarie": {
+      "2019": 0,
+      "2020": 7045,
+      "2021": 3620,
+      "2022": 27130,
+      "2023": 200,
+      "2024": 0,
+      "2025": 0,
+      "2026": 0
     }
   },
   "usciteCategorie": {
@@ -554,16 +554,6 @@
       "2025": 1325,
       "2026": 407
     },
-    "Progetti": {
-      "2019": 0,
-      "2020": 3579.77,
-      "2021": 0,
-      "2022": 5000,
-      "2023": 56151.829999999994,
-      "2024": 149.99,
-      "2025": 0,
-      "2026": 0
-    },
     "Telepass": {
       "2019": 0,
       "2020": 575.01,
@@ -611,6 +601,16 @@
       "2022": 0,
       "2023": 0,
       "2024": 57.129999999999995,
+      "2025": 0,
+      "2026": 0
+    },
+    "Progetti/Spese Straordinarie": {
+      "2019": 0,
+      "2020": 3579.77,
+      "2021": 0,
+      "2022": 5000,
+      "2023": 56151.829999999994,
+      "2024": 149.99,
       "2025": 0,
       "2026": 0
     }
@@ -1226,7 +1226,7 @@
       "data": "2020-02-26",
       "desc": "SEPA Direct Debit",
       "importo": -9.64,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2020-02-26",
@@ -1712,13 +1712,13 @@
       "data": "2020-05-12",
       "desc": "ILIAD Italia           PARIS         IT",
       "importo": -4.99,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2020-05-12",
       "desc": "ILIAD Italia           PARIS         IT",
       "importo": -7.99,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2020-05-14",
@@ -1862,7 +1862,7 @@
       "data": "2020-06-15",
       "desc": "Bonifico SEPA Italia",
       "importo": 3500,
-      "cat": "Progetto"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2020-06-17",
@@ -1970,7 +1970,7 @@
       "data": "2020-07-13",
       "desc": "PAYPAL *MITO SRL       35314369001   IT",
       "importo": -57.15,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2020-07-13",
@@ -2384,7 +2384,7 @@
       "data": "2020-09-09",
       "desc": "Bonifico SEPA Italia",
       "importo": -2000,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2020-09-11",
@@ -2612,7 +2612,7 @@
       "data": "2020-10-27",
       "desc": "Bonifico SEPA Italia",
       "importo": -1500,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2020-10-30",
@@ -2756,7 +2756,7 @@
       "data": "2020-11-27",
       "desc": "Bonifico Istantaneo",
       "importo": 45,
-      "cat": "Progetto"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2020-11-30",
@@ -2810,7 +2810,7 @@
       "data": "2020-12-08",
       "desc": "Bonifico SEPA Italia",
       "importo": 3500,
-      "cat": "Progetto"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2020-12-10",
@@ -3434,7 +3434,7 @@
       "data": "2021-04-12",
       "desc": "Bonifico SEPA Italia",
       "importo": 120,
-      "cat": "Progetto"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2021-04-13",
@@ -4094,7 +4094,7 @@
       "data": "2021-06-24",
       "desc": "Bonifico SEPA Italia",
       "importo": 1000,
-      "cat": "Progetto"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2021-06-25",
@@ -5408,7 +5408,7 @@
       "data": "2021-11-09",
       "desc": "Bonifico SEPA Italia",
       "importo": 2500,
-      "cat": "Progetto"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2021-11-10",
@@ -6524,7 +6524,7 @@
       "data": "2022-03-14",
       "desc": "Bonifico SEPA Italia",
       "importo": 5000,
-      "cat": "Progetto"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2022-03-15",
@@ -6590,7 +6590,7 @@
       "data": "2022-03-22",
       "desc": "Bonifico SEPA Italia",
       "importo": 22000,
-      "cat": "Progetto"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2022-03-23",
@@ -6956,7 +6956,7 @@
       "data": "2022-05-11",
       "desc": "Bonifico SEPA Italia",
       "importo": 130,
-      "cat": "Progetto"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2022-05-12",
@@ -9434,7 +9434,7 @@
       "data": "2022-12-30",
       "desc": "Bonifico SEPA Italia",
       "importo": -5000,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2023-01-02",
@@ -9740,7 +9740,7 @@
       "data": "2023-02-01",
       "desc": "Assegno Fineco",
       "importo": -35000,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2023-02-01",
@@ -9776,13 +9776,13 @@
       "data": "2023-02-02",
       "desc": "Assegno Fineco",
       "importo": -3500,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2023-02-02",
       "desc": "Assegno Fineco",
       "importo": -4270,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2023-02-03",
@@ -10220,7 +10220,7 @@
       "data": "2023-03-21",
       "desc": "Bonifico SEPA Italia",
       "importo": -11450,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2023-03-22",
@@ -10322,7 +10322,7 @@
       "data": "2023-03-29",
       "desc": "Bonifico SEPA Italia",
       "importo": 200,
-      "cat": "Progetto"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2023-03-30",
@@ -12488,13 +12488,13 @@
       "data": "2023-09-06",
       "desc": "Pagamento Bollettino CBILL PA",
       "importo": -125.88,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2023-09-06",
       "desc": "Commiss.Bollettino CBILL PA",
       "importo": -1.95,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2023-09-07",
@@ -12650,7 +12650,7 @@
       "data": "2023-09-20",
       "desc": "Bonifico SEPA Italia",
       "importo": -902,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2023-09-21",
@@ -12944,7 +12944,7 @@
       "data": "2023-10-16",
       "desc": "Bonifico SEPA Italia",
       "importo": -902,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2023-10-17",
@@ -14318,7 +14318,7 @@
       "data": "2024-02-15",
       "desc": "WWW.AMAZON* 404-105615 LUXEMBOURG LU",
       "importo": -149.99,
-      "cat": "Progetti"
+      "cat": "Progetti/Spese Straordinarie"
     },
     {
       "data": "2024-02-15",
@@ -26918,7 +26918,7 @@
   "patrimonio": [
     {
       "istituto": "Illimity",
-      "liquidita": 0,
+      "liquidita": 7792.54,
       "azioni": 0,
       "obbligazioni": 0,
       "deposito": 0
