@@ -998,6 +998,13 @@ async function initApp() {
   GitHubSync.init();
   refreshDerivedConstants();
 
+  // Forza i flag titoli/progetti a deflaggato all'avvio: alcuni browser
+  // ripristinano automaticamente lo stato delle checkbox dopo un refresh
+  // (bfcache/autofill), che altrimenti farebbe apparire "spuntati" senza
+  // che l'utente li abbia mai toccati in questa sessione.
+  ['flag-titoli', 'flag-progetti', 'summary-flag-titoli', 'summary-flag-progetti', 'budget-flag-titoli', 'budget-flag-progetti']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
+
   if (GitHubSync.isConfigured()) {
     const remote = await GitHubSync.loadData();
     if (remote) {
