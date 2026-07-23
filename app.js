@@ -282,11 +282,11 @@ const REGOLE_USCITE = [
   [/AUTOSTRADA|PEDAGGIO/i, 'Viaggi'],
   [/\bTAXI\b|UBER|FREE ?NOW/i, 'Taxi'],
   [/HOTEL|BOOKING\.COM|AIRBNB|RIFUGIO/i, 'Hotel'],
-  [/RISTORANTE|TRATTORIA|OSTERIA|PIZZ|\bBAR\b|COFFEE|CAFF[EÈ]|GELATER|PANIFICIO|FORNO DELLA|MC ?DONALD|BURGER/i, 'Pranzi/Cene'],
+  [/RISTORANTE|TRATTORIA|OSTERIA|PIZZ|\bBAR\b|COFFEE|CAFF[EÈ]|CAFE\b|GELATER|PANIFICIO|FORNO DELLA|MC ?DONALD|BURGER/i, 'Pranzi/Cene'],
   [/FARMACIA/i, 'Casa - Altro'],
   [/SIBRA|TRENITALIA|TRENORD|\bATM MILANO\b|BUS\b/i, 'Viaggi'],
   [/SPESE CARTA DI CREDITO ESTRATTO|UTILIZZO CARTA DI CREDITO/i, '__TRASFERIMENTO_CARTA__'],
-  [/AMAZON/i, 'Hobby'],
+  [/AMAZON|\bAMZN\b/i, 'Hobby'],
 ];
 const REGOLE_ENTRATE = [
   [/STIPENDIO|RETRIBUZIONE/i, 'Stipendio'],
@@ -361,6 +361,24 @@ function parseFoglioMovimenti(rows) {
   return null;
 }
 
+/* Alcuni export (es. Fineco "movimenti carta") salvano un intervallo dati
+   ("dimension") interno sbagliato/obsoleto, che fa iniziare la lettura a
+   metà foglio saltando intestazione e prime righe. Ricalcola l'intervallo
+   reale dalle celle effettivamente presenti prima di leggere il foglio. */
+function fixSheetRange(ws) {
+  let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
+  Object.keys(ws).forEach(key => {
+    if (key[0] === '!') return;
+    const cell = XLSX.utils.decode_cell(key);
+    if (cell.r < minR) minR = cell.r;
+    if (cell.r > maxR) maxR = cell.r;
+    if (cell.c < minC) minC = cell.c;
+    if (cell.c > maxC) maxC = cell.c;
+  });
+  if (minR === Infinity) return;
+  ws['!ref'] = XLSX.utils.encode_range({ s: { r: minR, c: minC }, e: { r: maxR, c: maxC } });
+}
+
 function numOrNull(v) {
   if (v === null || v === undefined || v === '') return null;
   const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/\./g, '').replace(',', '.'));
@@ -395,6 +413,7 @@ async function handleImportFiles(fileList) {
       const wb = XLSX.read(buf, { type: 'array', cellDates: true });
       let parsed = null;
       for (const sheetName of wb.SheetNames) {
+        fixSheetRange(wb.Sheets[sheetName]);
         const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, raw: true });
         parsed = parseFoglioMovimenti(rows);
         if (parsed && parsed.length) break;
@@ -898,6 +917,7 @@ async function handlePortafoglioFile(file) {
     const wb = XLSX.read(buf, { type: 'array', cellDates: true });
     let parsed = null;
     for (const sheetName of wb.SheetNames) {
+      fixSheetRange(wb.Sheets[sheetName]);
       const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, raw: true });
       parsed = parsePortafoglioSintesi(rows);
       if (parsed) break;
