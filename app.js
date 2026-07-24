@@ -57,8 +57,33 @@ function refreshDerivedConstants() {
 }
 
 function patrimonioTotale() {
-  return DATA.patrimonio.reduce((s, p) => s + (p.liquidita || 0) + (p.azioni || 0) + (p.obbligazioni || 0) + (p.deposito || 0), 0);
+  return DATA.patrimonio.reduce((s, p) => s + (p.liquidita || 0) + (p.portafoglioTitoli || 0) + (p.deposito || 0), 0);
 }
+
+const ISTITUTI_FISSI = ['Fineco', 'Illimity'];
+
+/* Mantiene sincronizzati i dati automatici del Patrimonio:
+   - il Portafoglio Titoli di Fineco riprende il valore di mercato dal tab Portafoglio Titoli
+   - garantisce sempre la presenza delle righe fisse Fineco/Illimity */
+function syncPatrimonioAutomatico() {
+  ISTITUTI_FISSI.forEach(nome => {
+    if (!DATA.patrimonio.some(p => p.istituto === nome)) {
+      DATA.patrimonio.push({ istituto: nome, liquidita: 0, portafoglioTitoli: 0, deposito: 0 });
+    }
+  });
+  const fineco = DATA.patrimonio.find(p => p.istituto === 'Fineco');
+  if (fineco) fineco.portafoglioTitoli = DATA.portafoglio.summary.valoreMercato || 0;
+}
+
+/* Aggiorna la liquidità di un istituto in base all'importo di una
+   transazione aggiunta (delta positivo) o rimossa (delta negativo, passare
+   -importo). Non fa nulla se l'istituto non è impostato o non esiste. */
+function aggiornaLiquiditaIstituto(istituto, delta) {
+  if (!istituto || !delta) return;
+  const row = DATA.patrimonio.find(p => p.istituto === istituto);
+  if (row) row.liquidita = round2((row.liquidita || 0) + delta);
+}
+function round2(n) { return Math.round(n * 100) / 100; }
 
 /* ---------------- RICALCOLO FLUSSI DA TRANSAZIONI ----------------
    Ogni modifica alle transazioni (nuova, cancellazione, importazione) deve
@@ -185,6 +210,7 @@ function renderDataBanner() {
 }
 
 function renderDashCards() {
+  document.getElementById('dash-cards-title').textContent = `Sintesi anno corrente (${ANNO_CORRENTE})`;
   const escludiTitoli = !document.getElementById('summary-flag-titoli').checked;
   const escludiProgetti = !document.getElementById('summary-flag-progetti').checked;
 
@@ -586,14 +612,17 @@ function renderTransazioni() {
       <td>${fmtData(t.data)}</td>
       <td>${t.desc}</td>
       <td><span class="tag">${t.cat}</span></td>
+      <td>${t.istituto ? `<span class="tag">${t.istituto}</span>` : ''}</td>
       <td class="num ${t.importo < 0 ? 'neg' : 'pos'}">${eur(t.importo)}</td>
       <td><button class="rowbtn" onclick="deleteTx('${t.data}','${t.desc.replace(/'/g, "\\'")}')">elimina</button></td>
     </tr>
-  `).join("") || `<tr><td colspan="5" style="color:var(--ink-soft); padding:18px;">Nessuna registrazione trovata per questo filtro.</td></tr>`;
+  `).join("") || `<tr><td colspan="6" style="color:var(--ink-soft); padding:18px;">Nessuna registrazione trovata per questo filtro.</td></tr>`;
 }
 
 function deleteTx(data, desc) {
+  const rimosse = transazioni.filter(t => t.data === data && t.desc === desc);
   transazioni = transazioni.filter(t => !(t.data === data && t.desc === desc));
+  rimosse.forEach(t => { if (t.istituto) aggiornaLiquiditaIstituto(t.istituto, -t.importo); });
   recomputeFlussi();
   populateFilters();
   renderAll();
@@ -715,33 +744,38 @@ function parseItNumber(str) {
 }
 
 function renderPatrimonio() {
+  syncPatrimonioAutomatico();
   const tbody = document.getElementById('patrimonio-table').querySelector('tbody');
   tbody.innerHTML = DATA.patrimonio.map((p, i) => {
-    const tot = (p.liquidita || 0) + (p.azioni || 0) + (p.obbligazioni || 0) + (p.deposito || 0);
-    const numField = (field, val) => `<input class="cell-edit patr-field" data-idx="${i}" data-field="${field}" type="text" inputmode="decimal" value="${formatItNumber(val)}">`;
+    const fisso = ISTITUTI_FISSI.includes(p.istituto);
+    const finecoAuto = p.istituto === 'Fineco';
+    const tot = (p.liquidita || 0) + (p.portafoglioTitoli || 0) + (p.deposito || 0);
+    const numField = (field, val, readOnly) => `<input class="cell-edit patr-field" data-idx="${i}" data-field="${field}" type="text" inputmode="decimal" value="${formatItNumber(val)}" ${readOnly ? 'readonly title="Aggiornato automaticamente dal tab Portafoglio Titoli"' : ''}>`;
+    const istitutoCell = fisso
+      ? `<span style="font-weight:600; padding:6px 8px; display:inline-block;">${p.istituto}</span>`
+      : `<input class="cell-edit patr-field" data-idx="${i}" data-field="istituto" type="text" value="${p.istituto == null ? '' : p.istituto}">`;
     return `<tr data-idx="${i}">
-      <td><input class="cell-edit patr-field" data-idx="${i}" data-field="istituto" type="text" value="${p.istituto == null ? '' : p.istituto}"></td>
-      <td>${numField('liquidita', p.liquidita)}</td>
-      <td>${numField('azioni', p.azioni)}</td>
-      <td>${numField('obbligazioni', p.obbligazioni)}</td>
-      <td>${numField('deposito', p.deposito)}</td>
+      <td>${istitutoCell}</td>
+      <td>${numField('liquidita', p.liquidita, false)}</td>
+      <td>${numField('portafoglioTitoli', p.portafoglioTitoli, finecoAuto)}</td>
+      <td>${numField('deposito', p.deposito, false)}</td>
       <td class="num" style="font-weight:600;">${eur(tot)}</td>
-      <td><button class="rowbtn" data-idx="${i}" onclick="deletePatrimonioRow(${i})">elimina</button></td>
+      <td>${fisso ? '' : `<button class="rowbtn" data-idx="${i}" onclick="deletePatrimonioRow(${i})">elimina</button>`}</td>
     </tr>`;
   }).join("");
-  const totRow = ['liquidita', 'azioni', 'obbligazioni', 'deposito'].map(k => DATA.patrimonio.reduce((s, p) => s + (p[k] || 0), 0));
+  const totRow = ['liquidita', 'portafoglioTitoli', 'deposito'].map(k => DATA.patrimonio.reduce((s, p) => s + (p[k] || 0), 0));
   document.getElementById('patrimonio-table').querySelector('tfoot').innerHTML = `
     <tr style="font-weight:700; border-top:2px solid var(--ink);">
       <td>TOTALE</td>
       <td class="num">${eur(totRow[0])}</td>
       <td class="num">${eur(totRow[1])}</td>
       <td class="num">${eur(totRow[2])}</td>
-      <td class="num">${eur(totRow[3])}</td>
       <td class="num">${eur(patrimonioTotale())}</td>
       <td></td>
     </tr>`;
 
   tbody.querySelectorAll('.patr-field').forEach(inp => {
+    if (inp.readOnly) return;
     inp.addEventListener('change', onPatrimonioFieldChange);
     if (inp.dataset.field !== 'istituto') {
       // in focus mostra il numero "grezzo" (facile da editare), al blur riformatta con il separatore
@@ -767,6 +801,7 @@ function onPatrimonioFieldChange(e) {
   const row = DATA.patrimonio[idx];
   if (!row) return;
   if (field === 'istituto') {
+    if (ISTITUTI_FISSI.includes(row.istituto)) return; // nome non modificabile per gli istituti fissi
     row.istituto = e.target.value.trim() || null;
   } else {
     row[field] = parseItNumber(e.target.value);
@@ -778,19 +813,22 @@ function onPatrimonioFieldChange(e) {
 }
 
 function addPatrimonioRow() {
-  DATA.patrimonio.push({ istituto: 'Nuovo istituto', liquidita: 0, azioni: 0, obbligazioni: 0, deposito: 0 });
+  DATA.patrimonio.push({ istituto: 'Nuovo istituto', liquidita: 0, portafoglioTitoli: 0, deposito: 0 });
   renderPatrimonio();
   renderHeader();
   renderDashboard();
   persist('Aggiunta istituto patrimonio');
 }
 function deletePatrimonioRow(idx) {
+  const row = DATA.patrimonio[idx];
+  if (row && ISTITUTI_FISSI.includes(row.istituto)) return; // Fineco e Illimity non sono eliminabili
   DATA.patrimonio.splice(idx, 1);
   renderPatrimonio();
   renderHeader();
   renderDashboard();
   persist('Rimozione istituto patrimonio');
 }
+
 
 /* ---------------- PORTAFOGLIO ---------------- */
 function renderPortafoglio() {
@@ -931,8 +969,9 @@ async function handlePortafoglioFile(file) {
       summary: parsed.summary,
       aggiornatoIl: new Date().toISOString().slice(0, 10),
     };
+    syncPatrimonioAutomatico();
     renderPortafoglio();
-    statusEl.innerHTML = `<div class="file-ok">&#10003; Portafoglio sostituito con ${parsed.titoli.length} titoli da ${file.name}.</div>`;
+    statusEl.innerHTML = `<div class="file-ok">&#10003; Portafoglio sostituito con ${parsed.titoli.length} titoli da ${file.name}. Il Portafoglio Titoli di Fineco nel tab Patrimonio &egrave; stato aggiornato di conseguenza.</div>`;
     persist('Aggiornamento portafoglio da file');
   } catch (err) {
     statusEl.innerHTML = `<div class="file-err">✕ ${file.name}: errore di lettura (${err.message}).</div>`;
@@ -998,11 +1037,16 @@ document.getElementById('btn-save-tx').addEventListener('click', () => {
   const desc = document.getElementById('f-desc').value.trim();
   const importo = parseFloat(document.getElementById('f-importo').value);
   const cat = document.getElementById('f-cat').value;
+  const istituto = document.getElementById('f-istituto').value || null;
   if (!data || !desc || isNaN(importo)) { alert('Compila data, descrizione e importo.'); return; }
-  transazioni.push({ data, desc, importo, cat });
+  const nuovaTx = { data, desc, importo, cat };
+  if (istituto) nuovaTx.istituto = istituto;
+  transazioni.push(nuovaTx);
+  if (istituto) aggiornaLiquiditaIstituto(istituto, importo);
   document.getElementById('f-data').value = '';
   document.getElementById('f-desc').value = '';
   document.getElementById('f-importo').value = '';
+  document.getElementById('f-istituto').value = '';
   document.getElementById('tx-form').classList.remove('open');
   recomputeFlussi();
   populateFilters();
@@ -1033,19 +1077,27 @@ document.getElementById('btn-select-none').addEventListener('click', () => {
 
 document.getElementById('btn-confirm-import').addEventListener('click', () => {
   const checks = document.querySelectorAll('.import-check:checked');
+  const istituto = document.getElementById('import-istituto').value || null;
   let n = 0;
+  let deltaLiquidita = 0;
   checks.forEach(cb => {
     const idx = cb.dataset.idx;
     const t = stagingImport[idx];
     const sel = document.querySelector(`.cat-select[data-idx="${idx}"]`);
     const cat = sel ? sel.value : suggerisciCategoria(t.desc, t.importo);
-    transazioni.push({ data: t.data, desc: t.desc, importo: t.importo, cat });
+    const nuovaTx = { data: t.data, desc: t.desc, importo: t.importo, cat };
+    if (istituto) nuovaTx.istituto = istituto;
+    transazioni.push(nuovaTx);
+    deltaLiquidita += t.importo;
     n++;
   });
+  if (istituto && deltaLiquidita) aggiornaLiquiditaIstituto(istituto, deltaLiquidita);
   stagingImport = [];
   document.getElementById('import-review').style.display = 'none';
-  document.getElementById('import-status').innerHTML += `<div class="file-ok">&#10003; Importati ${n} movimenti nelle Transazioni.</div>`;
+  const istitutoMsg = istituto ? ` (liquidit&agrave; ${istituto} aggiornata di ${eur(deltaLiquidita)})` : '';
+  document.getElementById('import-status').innerHTML += `<div class="file-ok">&#10003; Importati ${n} movimenti nelle Transazioni${istitutoMsg}.</div>`;
   document.getElementById('import-file-input').value = '';
+  document.getElementById('import-istituto').value = '';
   recomputeFlussi();
   populateFilters();
   populateVoceCats();
@@ -1084,6 +1136,7 @@ async function initApp() {
   }
 
   recomputeFlussi();
+  syncPatrimonioAutomatico();
   populateFilters();
   populateVoceCats();
   populateBudgetAnno();
@@ -1106,6 +1159,7 @@ window.onGitHubConfigured = async function (forcePush) {
       persist('Inizializzazione dati su GitHub');
     }
   }
+  syncPatrimonioAutomatico();
   populateFilters();
   populateVoceCats();
   populateBudgetAnno();

@@ -453,6 +453,8 @@ table.ledger input[type=text].cell-edit, table.ledger input[type=number].cell-ed
 table.ledger input[type=text].cell-edit{ text-align:left; }
 table.ledger input.cell-edit:hover{ border-color:var(--border); }
 table.ledger input.cell-edit:focus{ border-color:var(--accent); outline:none; background:var(--accent-soft); }
+table.ledger input.cell-edit[readonly]{ background:var(--surface); color:var(--ink-soft); cursor:not-allowed; }
+table.ledger input.cell-edit[readonly]:hover{ border-color:transparent; }
 
 /* ---------- DOUBLE VOCE CHARTS ---------- */
 .voce-block{ margin-bottom: 36px; }

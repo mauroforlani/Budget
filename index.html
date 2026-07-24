@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Le Tue Finanze — 2026</title>
+<title>Le Tue Finanze</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 </style>
@@ -39,7 +39,7 @@
   <section id="tab-dashboard">
     <div class="data-banner" id="data-banner"></div>
 
-    <div class="section-title">Sintesi anno corrente (2026)</div>
+    <div class="section-title" id="dash-cards-title">Sintesi anno corrente</div>
     <div class="chart-flags">
       <label><input type="checkbox" id="summary-flag-titoli" autocomplete="off"> Includi gestione titoli <span class="flag-hint">(Acquisto/Vendita Titoli)</span></label>
       <label><input type="checkbox" id="summary-flag-progetti" autocomplete="off"> Includi gestione progetti <span class="flag-hint">(Progetti/Spese Straordinarie)</span></label>
@@ -121,6 +121,7 @@
         <div><label>Descrizione</label><input type="text" id="f-desc" placeholder="es. Esselunga"></div>
         <div><label>Importo (&euro;)</label><input type="number" step="0.01" id="f-importo" placeholder="-23.27"></div>
         <div><label>Categoria</label><select id="f-cat"></select></div>
+        <div><label>Istituto (liquidit&agrave;)</label><select id="f-istituto"><option value="">&mdash; nessuno &mdash;</option><option value="Fineco">Fineco</option><option value="Illimity">Illimity</option></select></div>
         <div style="display:flex; align-items:flex-end; gap:8px;">
           <button class="primary" id="btn-save-tx">Salva</button>
           <button class="ghost" id="btn-cancel-tx">Annulla</button>
@@ -129,7 +130,7 @@
     </div>
 
     <table class="ledger" id="tx-table">
-      <thead><tr><th>Data</th><th>Descrizione</th><th>Categoria</th><th class="num">Importo</th><th></th></tr></thead>
+      <thead><tr><th>Data</th><th>Descrizione</th><th>Categoria</th><th>Istituto</th><th class="num">Importo</th><th></th></tr></thead>
       <tbody></tbody>
     </table>
   </section>
@@ -163,9 +164,9 @@
   <!-- ================= PATRIMONIO ================= -->
   <section id="tab-patrimonio" style="display:none;">
     <div class="section-title">Patrimonio per istituto</div>
-    <div class="section-sub">Tutti i campi sono editabili: clicca su una cella per modificarla. Il totale si aggiorna automaticamente e alimenta il Patrimonio totale mostrato nel Sommario.</div>
+    <div class="section-sub">Fineco e Illimity sono istituti fissi (nome non modificabile): la liquidit&agrave; si aggiorna da sola in base alle transazioni a cui assegni un istituto, e per Fineco il Portafoglio Titoli riprende automaticamente il valore di mercato dal tab Portafoglio Titoli. Puoi comunque correggere manualmente qualsiasi importo, e aggiungere altri istituti liberi.</div>
     <table class="ledger" id="patrimonio-table">
-      <thead><tr><th>Istituto</th><th class="num">Liquidit&agrave;</th><th class="num">Azioni</th><th class="num">Obbligazioni</th><th class="num">Deposito</th><th class="num">Totale</th><th></th></tr></thead>
+      <thead><tr><th>Istituto</th><th class="num">Liquidit&agrave;</th><th class="num">Portafoglio Titoli</th><th class="num">Deposito</th><th class="num">Totale</th><th></th></tr></thead>
       <tbody></tbody>
       <tfoot></tfoot>
     </table>
@@ -213,12 +214,17 @@
 
     <div id="import-review" style="display:none;">
       <div class="toolbar" style="margin-top:22px;">
+        <label style="display:flex; align-items:center; gap:8px; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;">
+          Applica a istituto:
+          <select id="import-istituto"><option value="">&mdash; nessuno &mdash;</option><option value="Fineco">Fineco</option><option value="Illimity">Illimity</option></select>
+        </label>
         <button class="ghost" id="btn-select-all-new">Seleziona tutti i nuovi</button>
         <button class="ghost" id="btn-select-none">Deseleziona tutti</button>
         <div style="flex:1"></div>
         <span class="section-sub" style="margin:0;" id="import-count"></span>
         <button class="primary" id="btn-confirm-import">Importa selezionati</button>
       </div>
+      <div class="section-sub" style="margin-top:6px;">Se selezioni un istituto, la sua liquidit&agrave; nel tab Patrimonio verr&agrave; aggiornata della somma netta dei movimenti importati e confermati.</div>
       <table class="ledger" id="import-table">
         <thead><tr><th></th><th>Data</th><th>Descrizione</th><th class="num">Importo</th><th>Fonte</th><th>Categoria proposta</th></tr></thead>
         <tbody></tbody>
