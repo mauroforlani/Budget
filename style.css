@@ -322,6 +322,10 @@ button.ghost:hover{ border-color: var(--ink); color:var(--ink); }
   display:none;
 }
 .form-panel.open{ display:block; }
+.form-panel-title{
+  font-family:'Source Serif 4', serif; font-weight:600; font-size:15px;
+  margin-bottom:12px; color:var(--ink);
+}
 .form-grid{ display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; }
 @media(max-width:760px){ .form-grid{ grid-template-columns: repeat(2,1fr);} }
 .form-grid label{

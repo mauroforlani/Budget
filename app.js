@@ -27,7 +27,7 @@ function fmtData(iso) { const [y, m, d] = iso.split("-"); return `${d}/${m}/${y.
    da dati salvati su GitHub prima della rinomina, che altrimenti non
    verrebbero più riconosciuti dalle formule di esclusione. */
 function migrateCategoryNames(data) {
-  const RENAME_MAP = { 'Progetto': 'Progetti/Spese Straordinarie', 'Progetti': 'Progetti/Spese Straordinarie' };
+  const RENAME_MAP = { 'Progetto': 'Progetti/Spese Straordinarie', 'Progetti': 'Progetti/Spese Straordinarie', 'Viaggi/Hotel': 'Viaggi' };
   function mergeDict(dict) {
     if (!dict) return;
     Object.keys(RENAME_MAP).forEach(old => {
@@ -594,9 +594,24 @@ function filteredTransazioni() {
   return rows;
 }
 
+let lastTxRows = [];
+let editingTx = null;
+
+function openTxForm(tx) {
+  editingTx = tx || null;
+  document.getElementById('tx-form-title').textContent = tx ? 'Modifica registrazione' : 'Nuova registrazione';
+  document.getElementById('f-data').value = tx ? tx.data : '';
+  document.getElementById('f-desc').value = tx ? tx.desc : '';
+  document.getElementById('f-importo').value = tx ? tx.importo : '';
+  document.getElementById('f-cat').value = tx ? tx.cat : '';
+  document.getElementById('f-istituto').value = (tx && tx.istituto) ? tx.istituto : '';
+  document.getElementById('tx-form').classList.add('open');
+}
+
 function renderTransazioni() {
   const rows = filteredTransazioni();
   rows.sort((a, b) => b.data.localeCompare(a.data));
+  lastTxRows = rows;
 
   const entrate = sum(rows.filter(t => t.importo >= 0).map(t => t.importo));
   const uscite = sum(rows.filter(t => t.importo < 0).map(t => -t.importo));
@@ -607,28 +622,69 @@ function renderTransazioni() {
     <div class="card"><div class="label">Saldo netto</div><div class="value ${saldo >= 0 ? 'pos' : 'neg'}">${eur(saldo)}</div><div class="sub">${rows.length} registrazioni</div></div>
   `;
 
-  document.getElementById('tx-table').querySelector('tbody').innerHTML = rows.map(t => `
+  document.getElementById('tx-table').querySelector('tbody').innerHTML = rows.map((t, i) => `
     <tr>
+      <td><input type="checkbox" class="tx-select" data-idx="${i}"></td>
       <td>${fmtData(t.data)}</td>
       <td>${t.desc}</td>
       <td><span class="tag">${t.cat}</span></td>
       <td>${t.istituto ? `<span class="tag">${t.istituto}</span>` : ''}</td>
       <td class="num ${t.importo < 0 ? 'neg' : 'pos'}">${eur(t.importo)}</td>
-      <td><button class="rowbtn" onclick="deleteTx('${t.data}','${t.desc.replace(/'/g, "\\'")}')">elimina</button></td>
+      <td><button class="rowbtn" onclick="editTx(${i})">modifica</button> <button class="rowbtn" onclick="deleteTxAt(${i})">elimina</button></td>
     </tr>
-  `).join("") || `<tr><td colspan="6" style="color:var(--ink-soft); padding:18px;">Nessuna registrazione trovata per questo filtro.</td></tr>`;
+  `).join("") || `<tr><td colspan="7" style="color:var(--ink-soft); padding:18px;">Nessuna registrazione trovata per questo filtro.</td></tr>`;
+
+  document.getElementById('tx-select-all').checked = false;
+  updateTxSelectCount();
+  document.querySelectorAll('.tx-select').forEach(cb => cb.addEventListener('change', updateTxSelectCount));
 }
 
-function deleteTx(data, desc) {
-  const rimosse = transazioni.filter(t => t.data === data && t.desc === desc);
-  transazioni = transazioni.filter(t => !(t.data === data && t.desc === desc));
-  rimosse.forEach(t => { if (t.istituto) aggiornaLiquiditaIstituto(t.istituto, -t.importo); });
+function updateTxSelectCount() {
+  const n = document.querySelectorAll('.tx-select:checked').length;
+  const el = document.getElementById('tx-select-count');
+  if (n > 0) { el.style.display = 'inline-block'; el.textContent = `${n} selezionate`; }
+  else { el.style.display = 'none'; }
+}
+
+function editTx(idx) {
+  const tx = lastTxRows[idx];
+  if (!tx) return;
+  openTxForm(tx);
+}
+
+function deleteTxAt(idx) {
+  const tx = lastTxRows[idx];
+  if (!tx) return;
+  const realIdx = transazioni.indexOf(tx);
+  if (realIdx === -1) return;
+  transazioni.splice(realIdx, 1);
+  if (tx.istituto) aggiornaLiquiditaIstituto(tx.istituto, -tx.importo);
   recomputeFlussi();
   populateFilters();
   renderAll();
   renderVoceAll();
   persist('Eliminazione transazione');
 }
+
+function exportSelectedTxToXLSX() {
+  const checked = [...document.querySelectorAll('.tx-select:checked')];
+  if (!checked.length) { alert('Seleziona almeno una transazione da esportare.'); return; }
+  const selected = checked.map(cb => lastTxRows[parseInt(cb.dataset.idx, 10)]).filter(Boolean);
+  const dataRows = selected.map(t => ({
+    Data: t.data,
+    Descrizione: t.desc,
+    Categoria: t.cat,
+    Istituto: t.istituto || '',
+    Importo: t.importo
+  }));
+  const ws = XLSX.utils.json_to_sheet(dataRows);
+  ws['!cols'] = [{ wch: 12 }, { wch: 40 }, { wch: 22 }, { wch: 12 }, { wch: 12 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Transazioni');
+  const stamp = new Date().toISOString().slice(0, 10);
+  XLSX.writeFile(wb, `transazioni_export_${stamp}.xlsx`);
+}
+
 
 /* ---------------- BUDGET ---------------- */
 function haDettaglioMensile(anno) {
@@ -1026,10 +1082,17 @@ document.getElementById('btn-clear-filters').addEventListener('click', () => {
   renderTransazioni();
 });
 
+document.getElementById('tx-select-all').addEventListener('change', (e) => {
+  document.querySelectorAll('.tx-select').forEach(cb => { cb.checked = e.target.checked; });
+  updateTxSelectCount();
+});
+document.getElementById('btn-export-tx').addEventListener('click', exportSelectedTxToXLSX);
+
 document.getElementById('btn-new-tx').addEventListener('click', () => {
-  document.getElementById('tx-form').classList.add('open');
+  openTxForm(null);
 });
 document.getElementById('btn-cancel-tx').addEventListener('click', () => {
+  editingTx = null;
   document.getElementById('tx-form').classList.remove('open');
 });
 document.getElementById('btn-save-tx').addEventListener('click', () => {
@@ -1039,10 +1102,26 @@ document.getElementById('btn-save-tx').addEventListener('click', () => {
   const cat = document.getElementById('f-cat').value;
   const istituto = document.getElementById('f-istituto').value || null;
   if (!data || !desc || isNaN(importo)) { alert('Compila data, descrizione e importo.'); return; }
-  const nuovaTx = { data, desc, importo, cat };
-  if (istituto) nuovaTx.istituto = istituto;
-  transazioni.push(nuovaTx);
-  if (istituto) aggiornaLiquiditaIstituto(istituto, importo);
+
+  if (editingTx) {
+    // annulla l'effetto sulla liquidità della versione precedente, poi applica quella nuova
+    if (editingTx.istituto) aggiornaLiquiditaIstituto(editingTx.istituto, -editingTx.importo);
+    editingTx.data = data;
+    editingTx.desc = desc;
+    editingTx.importo = importo;
+    editingTx.cat = cat;
+    if (istituto) editingTx.istituto = istituto; else delete editingTx.istituto;
+    if (istituto) aggiornaLiquiditaIstituto(istituto, importo);
+    persist('Modifica transazione');
+  } else {
+    const nuovaTx = { data, desc, importo, cat };
+    if (istituto) nuovaTx.istituto = istituto;
+    transazioni.push(nuovaTx);
+    if (istituto) aggiornaLiquiditaIstituto(istituto, importo);
+    persist('Nuova transazione');
+  }
+
+  editingTx = null;
   document.getElementById('f-data').value = '';
   document.getElementById('f-desc').value = '';
   document.getElementById('f-importo').value = '';
@@ -1052,7 +1131,6 @@ document.getElementById('btn-save-tx').addEventListener('click', () => {
   populateFilters();
   renderAll();
   renderVoceAll();
-  persist('Nuova transazione');
 });
 
 document.getElementById('btn-choose-files').addEventListener('click', () => document.getElementById('import-file-input').click());

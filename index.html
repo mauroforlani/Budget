@@ -116,6 +116,7 @@
     <div class="grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:22px;" id="tx-summary"></div>
 
     <div class="form-panel" id="tx-form">
+      <div class="form-panel-title" id="tx-form-title">Nuova registrazione</div>
       <div class="form-grid">
         <div><label>Data</label><input type="date" id="f-data"></div>
         <div><label>Descrizione</label><input type="text" id="f-desc" placeholder="es. Esselunga"></div>
@@ -129,8 +130,17 @@
       </div>
     </div>
 
+    <div class="toolbar" style="margin-bottom:10px;">
+      <label style="display:flex; align-items:center; gap:6px; font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink-soft);">
+        <input type="checkbox" id="tx-select-all"> Seleziona tutte le righe visibili
+      </label>
+      <span class="tag" id="tx-select-count" style="display:none;"></span>
+      <div style="flex:1"></div>
+      <button class="ghost" id="btn-export-tx">Esporta selezionate (.xlsx)</button>
+    </div>
+
     <table class="ledger" id="tx-table">
-      <thead><tr><th>Data</th><th>Descrizione</th><th>Categoria</th><th>Istituto</th><th class="num">Importo</th><th></th></tr></thead>
+      <thead><tr><th style="width:34px;"></th><th>Data</th><th>Descrizione</th><th>Categoria</th><th>Istituto</th><th class="num">Importo</th><th></th></tr></thead>
       <tbody></tbody>
     </table>
   </section>
