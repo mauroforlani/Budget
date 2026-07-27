@@ -186,10 +186,10 @@ const GitHubSync = (() => {
           <div class="modal-actions">
             <button class="ghost" id="gh-disconnect" type="button">Disconnetti</button>
             <button class="ghost" id="gh-cancel" type="button">Annulla</button>
-            <button class="ghost" id="gh-save-push" type="button">Connetti e sovrascrivi GitHub con i dati locali</button>
+            <button class="ghost" id="gh-save-push" type="button">Connetti e carica il data.js su GitHub (sovrascrivi)</button>
             <button class="primary" id="gh-save" type="button">Connetti e carica da GitHub</button>
           </div>
-          <div class="modal-note">Il token deve avere permesso di scrittura sul repository (scope <b>repo</b> per repository privati, oppure <b>public_repo</b> per repository pubblici). Puoi generarne uno da GitHub → Settings → Developer settings → Personal access tokens.<br><br>Usa <b>"Connetti e carica da GitHub"</b> per riprendere i dati già salvati sul repository. Usa <b>"Connetti e sovrascrivi GitHub con i dati locali"</b> se invece vuoi che i dati che vedi ora in questa pagina (es. appena importati) sostituiscano quelli eventualmente già presenti sul repository, ignorandoli.</div>
+          <div class="modal-note">Il token deve avere permesso di scrittura sul repository (scope <b>repo</b> per repository privati, oppure <b>public_repo</b> per repository pubblici). Puoi generarne uno da GitHub → Settings → Developer settings → Personal access tokens.<br><br>Usa <b>"Connetti e carica da GitHub"</b> per riprendere i dati già salvati sul repository. Usa <b>"Connetti e sovrascrivi GitHub con i dati locali"</b> se invece vuoi che i dati "di partenza" contenuti nel file <code>data.js</code> di questa pagina sostituiscano quelli eventualmente già presenti sul repository, ignorandoli.</div>
         </div>`;
       document.body.appendChild(backdrop);
       document.getElementById('gh-cancel').addEventListener('click', closeModal);

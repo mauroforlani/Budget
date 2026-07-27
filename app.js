@@ -1146,8 +1146,15 @@ async function initApp() {
 
 window.onGitHubConfigured = async function (forcePush) {
   if (forcePush) {
+    // Ripristina i dati "di partenza" del file data.js appena caricato,
+    // ignorando qualunque cosa sia già stata scaricata automaticamente da
+    // GitHub all'apertura della pagina: altrimenti si rischia di
+    // "sovrascrivere" GitHub con gli stessi dati vecchi appena scaricati.
+    DATA = migrateCategoryNames(JSON.parse(JSON.stringify(SEED_DATA)));
+    transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
     recomputeFlussi();
-    await GitHubSync.saveData(buildExportData(), 'Sovrascrittura dati su GitHub con dati locali');
+    syncPatrimonioAutomatico();
+    await GitHubSync.saveData(buildExportData(), 'Sovrascrittura dati su GitHub con dati locali (da data.js)');
   } else {
     const remote = await GitHubSync.loadData();
     if (remote) {
