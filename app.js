@@ -914,11 +914,19 @@ function renderPortafoglio() {
 }
 
 /* ---------------- ANALISI ---------------- */
+function getAnalisiFlags() {
+  return {
+    escludiTitoli: !document.getElementById('analisi-flag-titoli').checked,
+    escludiProgetti: !document.getElementById('analisi-flag-progetti').checked,
+  };
+}
+
 function renderAnalisiRisparmio() {
+  const { escludiTitoli, escludiProgetti } = getAnalisiFlags();
   const PXMAX = 150;
   const punti = ANNI.map(y => {
-    const f = DATA.flussi[y];
-    const ent = sum(f.entrate), usc = sum(f.uscite);
+    const ent = annoAdjEntrate(y, escludiTitoli, escludiProgetti);
+    const usc = annoAdjUscite(y, escludiTitoli, escludiProgetti);
     const risparmio = ent > 0 ? (ent - usc) / ent : 0;
     return { y, risparmio, parziale: y === ANNO_CORRENTE };
   });
@@ -934,24 +942,31 @@ function renderAnalisiRisparmio() {
       <div class="yr">${p.y}${p.parziale ? '*' : ''}</div>
     </div>`;
   }).join("") + `</div>`;
+  const escl = [];
+  if (escludiTitoli) escl.push('Acquisto/Vendita Titoli');
+  if (escludiProgetti) escl.push('Progetti/Spese Straordinarie');
+  const esclTxt = escl.length ? ` Escluse dal calcolo: ${escl.join(' e ')}.` : '';
   document.getElementById('analisi-risparmio-note').innerHTML =
-    `Tasso di risparmio = (Entrate &minus; Uscite) / Entrate. Valori negativi indicano un anno in cui le uscite hanno superato le entrate. * anno parziale (${ANNO_CORRENTE}).`;
+    `Tasso di risparmio = (Entrate &minus; Uscite) / Entrate. Valori negativi indicano un anno in cui le uscite hanno superato le entrate.${esclTxt} * anno parziale (${ANNO_CORRENTE}).`;
 }
 
-function buildMonthlySeries() {
+function buildMonthlySeries(escludiTitoli, escludiProgetti) {
   const out = [];
   ANNI.forEach(y => {
     const f = DATA.flussi[y];
     for (let m = 0; m < 12; m++) {
       if (y === ANNO_CORRENTE && !DATA.meta.mesiTransazioniDettagliate.includes(MESI_IT[m])) continue;
-      out.push({ y, m, entrate: f.entrate[m], uscite: f.uscite[m] });
+      const entrate = annoAdjEntrateMese(y, m, escludiTitoli, escludiProgetti);
+      const uscite = annoAdjUsciteMese(y, m, escludiTitoli, escludiProgetti);
+      out.push({ y, m, entrate, uscite, entrateRaw: f.entrate[m], usciteRaw: f.uscite[m] });
     }
   });
   return out;
 }
 
 function renderAnalisiTrend() {
-  const serie = buildMonthlySeries();
+  const { escludiTitoli, escludiProgetti } = getAnalisiFlags();
+  const serie = buildMonthlySeries(escludiTitoli, escludiProgetti);
   const rolling = [];
   for (let i = 11; i < serie.length; i++) {
     const finestra = serie.slice(i - 11, i + 1);
@@ -976,7 +991,11 @@ function renderAnalisiTrend() {
   }).join("") + `</div>`;
 
   const last = rolling[rolling.length - 1];
-  noteEl.innerHTML = `Ultimo punto disponibile (${MESI_IT[last.m]} ${last.y}): uscite degli ultimi 12 mesi pari a ${eur(last.rollingUscite)}. Ogni barra è la somma mobile dei 12 mesi che la precedono (incluso il mese stesso).`;
+  const escl = [];
+  if (escludiTitoli) escl.push('Acquisto Titoli');
+  if (escludiProgetti) escl.push('Progetti/Spese Straordinarie');
+  const esclTxt = escl.length ? ` Escluse dal calcolo: ${escl.join(' e ')}.` : '';
+  noteEl.innerHTML = `Ultimo punto disponibile (${MESI_IT[last.m]} ${last.y}): uscite degli ultimi 12 mesi pari a ${eur(last.rollingUscite)}. Ogni barra è la somma mobile dei 12 mesi che la precedono (incluso il mese stesso).${esclTxt}`;
 }
 
 function populateAnalisiAnno() {
@@ -986,10 +1005,13 @@ function populateAnalisiAnno() {
   sel.value = ANNI.includes(Number(prev)) ? prev : ANNO_CORRENTE;
 }
 
-function renderClassificaTabella(tipo, anno, annoPrec) {
+const CATEGORIE_TITOLI = ['Acquisto Titoli', 'Vendita Titoli'];
+const CATEGORIE_PROGETTI = ['Progetti/Spese Straordinarie'];
+
+function renderClassificaTabella(tipo, anno, annoPrec, categorieEscluse) {
   const dict = tipo === 'entrate' ? DATA.entrateCategorie : DATA.usciteCategorie;
-  const cats = Object.keys(dict).filter(c => c !== 'TOTALE');
-  const totaleAnno = dict['TOTALE'] ? (dict['TOTALE'][anno] || 0) : sum(cats.map(c => dict[c][anno] || 0));
+  const cats = Object.keys(dict).filter(c => c !== 'TOTALE' && !categorieEscluse.includes(c));
+  const totaleAnno = sum(cats.map(c => dict[c][anno] || 0));
 
   const righe = cats
     .map(c => ({ cat: c, val: dict[c][anno] || 0, valPrec: dict[c][annoPrec] || 0 }))
@@ -1013,10 +1035,15 @@ function renderClassificaTabella(tipo, anno, annoPrec) {
 }
 
 function renderAnalisiClassifica() {
+  const { escludiTitoli, escludiProgetti } = getAnalisiFlags();
+  const categorieEscluse = [
+    ...(escludiTitoli ? CATEGORIE_TITOLI : []),
+    ...(escludiProgetti ? CATEGORIE_PROGETTI : []),
+  ];
   const anno = parseInt(document.getElementById('analisi-anno').value || ANNO_CORRENTE, 10);
   const annoPrec = anno - 1;
-  renderClassificaTabella('uscite', anno, annoPrec);
-  renderClassificaTabella('entrate', anno, annoPrec);
+  renderClassificaTabella('uscite', anno, annoPrec, categorieEscluse);
+  renderClassificaTabella('entrate', anno, annoPrec, categorieEscluse);
 }
 
 function renderAnalisi() {
@@ -1024,6 +1051,7 @@ function renderAnalisi() {
   renderAnalisiTrend();
   renderAnalisiClassifica();
 }
+
 
 
 /* ---------------- IMPORTAZIONE PORTAFOGLIO (sostituisce il tab) ----------------
@@ -1179,6 +1207,8 @@ document.getElementById('budget-flag-titoli').addEventListener('change', renderB
 document.getElementById('budget-flag-progetti').addEventListener('change', renderBudget);
 document.getElementById('budget-anno').addEventListener('change', renderBudget);
 document.getElementById('analisi-anno').addEventListener('change', renderAnalisiClassifica);
+document.getElementById('analisi-flag-titoli').addEventListener('change', renderAnalisi);
+document.getElementById('analisi-flag-progetti').addEventListener('change', renderAnalisi);
 
 document.getElementById('voce-cat-entrate').addEventListener('change', () => renderVoceBlock('entrate'));
 document.getElementById('voce-cat-uscite').addEventListener('change', () => renderVoceBlock('uscite'));
@@ -1318,7 +1348,7 @@ async function initApp() {
   // ripristinano automaticamente lo stato delle checkbox dopo un refresh
   // (bfcache/autofill), che altrimenti farebbe apparire "spuntati" senza
   // che l'utente li abbia mai toccati in questa sessione.
-  ['flag-titoli', 'flag-progetti', 'summary-flag-titoli', 'summary-flag-progetti', 'budget-flag-titoli', 'budget-flag-progetti']
+  ['flag-titoli', 'flag-progetti', 'summary-flag-titoli', 'summary-flag-progetti', 'budget-flag-titoli', 'budget-flag-progetti', 'analisi-flag-titoli', 'analisi-flag-progetti']
     .forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
 
   if (GitHubSync.isConfigured()) {
