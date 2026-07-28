@@ -913,6 +913,119 @@ function renderPortafoglio() {
   `).join("") || `<tr><td colspan="11" style="color:var(--ink-soft); padding:18px;">Nessun titolo in portafoglio: importa un file per popolarlo.</td></tr>`;
 }
 
+/* ---------------- ANALISI ---------------- */
+function renderAnalisiRisparmio() {
+  const PXMAX = 150;
+  const punti = ANNI.map(y => {
+    const f = DATA.flussi[y];
+    const ent = sum(f.entrate), usc = sum(f.uscite);
+    const risparmio = ent > 0 ? (ent - usc) / ent : 0;
+    return { y, risparmio, parziale: y === ANNO_CORRENTE };
+  });
+  const maxAbs = Math.max(...punti.map(p => Math.abs(p.risparmio)), 0.05);
+  document.getElementById('analisi-risparmio-chart').innerHTML = `<div class="colchart">` + punti.map(p => {
+    const h = Math.max(2, Math.abs(p.risparmio) / maxAbs * PXMAX);
+    const cls = p.risparmio >= 0 ? 'pos-metric' : 'neg-metric';
+    const pctTxt = (p.risparmio * 100).toFixed(0) + '%';
+    return `<div class="colgroup">
+      <div class="bars">
+        <div class="col single ${cls}" style="height:${h}px;" title="${p.y}: tasso di risparmio ${(p.risparmio * 100).toFixed(1)}%"><span class="tip">${pctTxt}</span></div>
+      </div>
+      <div class="yr">${p.y}${p.parziale ? '*' : ''}</div>
+    </div>`;
+  }).join("") + `</div>`;
+  document.getElementById('analisi-risparmio-note').innerHTML =
+    `Tasso di risparmio = (Entrate &minus; Uscite) / Entrate. Valori negativi indicano un anno in cui le uscite hanno superato le entrate. * anno parziale (${ANNO_CORRENTE}).`;
+}
+
+function buildMonthlySeries() {
+  const out = [];
+  ANNI.forEach(y => {
+    const f = DATA.flussi[y];
+    for (let m = 0; m < 12; m++) {
+      if (y === ANNO_CORRENTE && !DATA.meta.mesiTransazioniDettagliate.includes(MESI_IT[m])) continue;
+      out.push({ y, m, entrate: f.entrate[m], uscite: f.uscite[m] });
+    }
+  });
+  return out;
+}
+
+function renderAnalisiTrend() {
+  const serie = buildMonthlySeries();
+  const rolling = [];
+  for (let i = 11; i < serie.length; i++) {
+    const finestra = serie.slice(i - 11, i + 1);
+    rolling.push({ y: serie[i].y, m: serie[i].m, rollingUscite: sum(finestra.map(w => w.uscite)) });
+  }
+
+  const el = document.getElementById('analisi-trend-chart');
+  const noteEl = document.getElementById('analisi-trend-note');
+  if (!rolling.length) {
+    el.innerHTML = '';
+    noteEl.textContent = 'Servono almeno 12 mesi di dati consecutivi per calcolare la media mobile su 12 mesi.';
+    return;
+  }
+  const maxVal = Math.max(...rolling.map(r => r.rollingUscite), 1);
+  el.innerHTML = `<div class="trend-chart">` + rolling.map(r => {
+    const h = Math.max(2, r.rollingUscite / maxVal * 130);
+    const isGen = r.m === 0;
+    return `<div class="trend-bar-wrap">
+      <div class="trend-bar" style="height:${h}px;" title="${MESI_IT[r.m]} ${r.y}: ${eur(r.rollingUscite)} (uscite ultimi 12 mesi)"></div>
+      ${isGen ? `<div class="trend-tick">${r.y}</div>` : ''}
+    </div>`;
+  }).join("") + `</div>`;
+
+  const last = rolling[rolling.length - 1];
+  noteEl.innerHTML = `Ultimo punto disponibile (${MESI_IT[last.m]} ${last.y}): uscite degli ultimi 12 mesi pari a ${eur(last.rollingUscite)}. Ogni barra è la somma mobile dei 12 mesi che la precedono (incluso il mese stesso).`;
+}
+
+function populateAnalisiAnno() {
+  const sel = document.getElementById('analisi-anno');
+  const prev = sel.value;
+  sel.innerHTML = [...ANNI].reverse().map(y => `<option value="${y}">${y}</option>`).join("");
+  sel.value = ANNI.includes(Number(prev)) ? prev : ANNO_CORRENTE;
+}
+
+function renderClassificaTabella(tipo, anno, annoPrec) {
+  const dict = tipo === 'entrate' ? DATA.entrateCategorie : DATA.usciteCategorie;
+  const cats = Object.keys(dict).filter(c => c !== 'TOTALE');
+  const totaleAnno = dict['TOTALE'] ? (dict['TOTALE'][anno] || 0) : sum(cats.map(c => dict[c][anno] || 0));
+
+  const righe = cats
+    .map(c => ({ cat: c, val: dict[c][anno] || 0, valPrec: dict[c][annoPrec] || 0 }))
+    .filter(r => r.val !== 0 || r.valPrec !== 0)
+    .sort((a, b) => b.val - a.val);
+
+  document.getElementById(`analisi-${tipo}-table`).querySelector('tbody').innerHTML = righe.map(r => {
+    const quota = totaleAnno ? (r.val / totaleAnno * 100) : 0;
+    const delta = r.val - r.valPrec;
+    const deltaPct = r.valPrec ? (delta / r.valPrec * 100) : null;
+    const favorevole = tipo === 'entrate' ? delta >= 0 : delta <= 0;
+    const deltaTxt = `${delta >= 0 ? '+' : ''}${eur(delta)}` + (deltaPct !== null ? ` (${delta >= 0 ? '+' : ''}${deltaPct.toFixed(0)}%)` : '');
+    return `<tr>
+      <td>${r.cat}</td>
+      <td class="num">${eur(r.val)}</td>
+      <td class="num">${quota.toFixed(1)}%</td>
+      <td class="num">${eur(r.valPrec)}</td>
+      <td class="num ${favorevole ? 'pos' : 'neg'}">${deltaTxt}</td>
+    </tr>`;
+  }).join("") || `<tr><td colspan="5" style="color:var(--ink-soft); padding:18px;">Nessun dato per l'anno selezionato.</td></tr>`;
+}
+
+function renderAnalisiClassifica() {
+  const anno = parseInt(document.getElementById('analisi-anno').value || ANNO_CORRENTE, 10);
+  const annoPrec = anno - 1;
+  renderClassificaTabella('uscite', anno, annoPrec);
+  renderClassificaTabella('entrate', anno, annoPrec);
+}
+
+function renderAnalisi() {
+  renderAnalisiRisparmio();
+  renderAnalisiTrend();
+  renderAnalisiClassifica();
+}
+
+
 /* ---------------- IMPORTAZIONE PORTAFOGLIO (sostituisce il tab) ----------------
    Riconosce l'export "Portafoglio di sintesi" (xls/xlsx) con colonne:
    Titolo, ISIN, Simbolo, Mercato, Strumento, Valuta, Quantità, P.zo medio di
@@ -1041,12 +1154,13 @@ function renderAll() {
   renderDashboard();
   renderTransazioni();
   renderBudget();
+  renderAnalisi();
   renderPatrimonio();
   renderPortafoglio();
 }
 
 /* ---------------- TABS ---------------- */
-const TAB_ORDER = ['dashboard', 'pervoce', 'transazioni', 'budget', 'patrimonio', 'portafoglio', 'importa'];
+const TAB_ORDER = ['dashboard', 'pervoce', 'transazioni', 'budget', 'analisi', 'patrimonio', 'portafoglio', 'importa'];
 document.getElementById('tabs').addEventListener('click', (e) => {
   if (e.target.tagName !== 'BUTTON') return;
   const tab = e.target.dataset.tab;
@@ -1064,6 +1178,7 @@ document.getElementById('summary-flag-progetti').addEventListener('change', rend
 document.getElementById('budget-flag-titoli').addEventListener('change', renderBudget);
 document.getElementById('budget-flag-progetti').addEventListener('change', renderBudget);
 document.getElementById('budget-anno').addEventListener('change', renderBudget);
+document.getElementById('analisi-anno').addEventListener('change', renderAnalisiClassifica);
 
 document.getElementById('voce-cat-entrate').addEventListener('change', () => renderVoceBlock('entrate'));
 document.getElementById('voce-cat-uscite').addEventListener('change', () => renderVoceBlock('uscite'));
@@ -1180,6 +1295,7 @@ document.getElementById('btn-confirm-import').addEventListener('click', () => {
   populateFilters();
   populateVoceCats();
   populateBudgetAnno();
+  populateAnalisiAnno();
   renderAll();
   renderVoceAll();
   persist(`Importazione ${n} movimenti da file`);
@@ -1218,6 +1334,7 @@ async function initApp() {
   populateFilters();
   populateVoceCats();
   populateBudgetAnno();
+  populateAnalisiAnno();
   renderVoceAll();
   renderAll();
 }
@@ -1248,6 +1365,7 @@ window.onGitHubConfigured = async function (forcePush) {
   populateFilters();
   populateVoceCats();
   populateBudgetAnno();
+  populateAnalisiAnno();
   renderVoceAll();
   renderAll();
 };

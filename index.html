@@ -30,6 +30,7 @@
     <button data-tab="pervoce">Dettaglio per voce</button>
     <button data-tab="transazioni">Transazioni</button>
     <button data-tab="budget">Budget</button>
+    <button data-tab="analisi">Analisi</button>
     <button data-tab="patrimonio">Patrimonio</button>
     <button data-tab="portafoglio">Portafoglio Titoli</button>
     <button data-tab="importa">Importa</button>
@@ -169,6 +170,45 @@
       <tfoot></tfoot>
     </table>
     <div class="budget-note" id="budget-note"></div>
+  </section>
+
+  <!-- ================= ANALISI ================= -->
+  <section id="tab-analisi" style="display:none;">
+    <div class="section-title">Tasso di risparmio</div>
+    <div class="section-sub">Quota delle entrate annuali non spesa: (Entrate &minus; Uscite) / Entrate.</div>
+    <div class="chart-panel">
+      <div id="analisi-risparmio-chart"></div>
+      <div class="chart-note" id="analisi-risparmio-note"></div>
+    </div>
+
+    <div class="section-title">Trend uscite &mdash; media mobile 12 mesi</div>
+    <div class="section-sub">Somma delle uscite degli ultimi 12 mesi, calcolata mese per mese: smussa la stagionalità e mostra la direzione di fondo della spesa.</div>
+    <div class="chart-panel">
+      <div id="analisi-trend-chart"></div>
+      <div class="chart-note" id="analisi-trend-note"></div>
+    </div>
+
+    <div class="section-title">Classifica categorie</div>
+    <div class="section-sub">Confronto con l'anno precedente: un valore verde nelle uscite indica una riduzione della spesa, nelle entrate un aumento.</div>
+    <div class="toolbar">
+      <select id="analisi-anno"></select>
+    </div>
+
+    <div class="voce-block">
+      <div class="voce-block-title">Uscite per categoria</div>
+      <table class="ledger" id="analisi-uscite-table">
+        <thead><tr><th>Categoria</th><th class="num">Anno selezionato</th><th class="num">% sul totale</th><th class="num">Anno precedente</th><th class="num">Variazione</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="voce-block">
+      <div class="voce-block-title">Entrate per categoria</div>
+      <table class="ledger" id="analisi-entrate-table">
+        <thead><tr><th>Categoria</th><th class="num">Anno selezionato</th><th class="num">% sul totale</th><th class="num">Anno precedente</th><th class="num">Variazione</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </section>
 
   <!-- ================= PATRIMONIO ================= -->
