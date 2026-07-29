@@ -709,12 +709,25 @@ function stipendioMese(anno, mIdx) {
   if (!haDettaglioCategorie(anno)) return 0;
   return categoriaMeseValore(DATA.entrateCategorie, 'Stipendio', anno, mIdx);
 }
+/* Flusso Effettivo = Entrate nette − Uscite nette, dove:
+   Entrate nette = Entrate totali − Rimborsi Lavorativi − Entrate da Progetto − Vendita Titoli
+   Uscite nette  = Uscite totali − Spese Lavorative − Acquisto Titoli − Uscite da Progetto
+   Il risultato è quindi un saldo Entrate−Uscite depurato della gestione
+   lavorativa (rimborsi/spese) e di titoli/progetti su entrambi i lati. */
+function entrateBaseEffettivo(anno, mIdx) {
+  let v = DATA.flussi[anno].entrate[mIdx];
+  if (!haDettaglioCategorie(anno)) return v;
+  v -= categoriaMeseValore(DATA.entrateCategorie, 'Rimborsi Lavorativi', anno, mIdx);
+  v -= categoriaMeseValore(DATA.entrateCategorie, 'Progetti/Spese Straordinarie', anno, mIdx);
+  v -= categoriaMeseValore(DATA.entrateCategorie, 'Vendita Titoli', anno, mIdx);
+  return v;
+}
 function usciteBaseEffettivo(anno, mIdx) {
   let v = DATA.flussi[anno].uscite[mIdx];
   if (!haDettaglioCategorie(anno)) return v;
+  v -= categoriaMeseValore(DATA.usciteCategorie, 'Spese Lavorative', anno, mIdx);
   v -= categoriaMeseValore(DATA.usciteCategorie, 'Acquisto Titoli', anno, mIdx);
   v -= categoriaMeseValore(DATA.usciteCategorie, 'Progetti/Spese Straordinarie', anno, mIdx);
-  v -= categoriaMeseValore(DATA.usciteCategorie, 'Spese Lavorative', anno, mIdx);
   return v;
 }
 function annoAdjEntrateMese(anno, mIdx, escludiTitoli, escludiProgetti) {
@@ -755,7 +768,7 @@ function renderBudget() {
     const u = annoAdjUsciteMese(anno, i, escludiTitoli, escludiProgetti);
     const saldo = e - u;
     const teorico = 0.5 * stipendioMese(anno, i);
-    const effettivo = usciteBaseEffettivo(anno, i);
+    const effettivo = entrateBaseEffettivo(anno, i) - usciteBaseEffettivo(anno, i);
     const delta = effettivo - teorico;
     totE += e; totU += u; totTeor += teorico; totEff += effettivo;
     return `<tr>
@@ -782,9 +795,9 @@ function renderBudget() {
 
   const note = [];
   note.push('Flusso teorico = 50% dello stipendio del mese.');
-  note.push('Flusso effettivo = uscite del mese al netto di Progetti/Spese Straordinarie, Acquisto Titoli e Spese Lavorative.');
+  note.push('Flusso effettivo = Entrate nette &minus; Uscite nette, dove Entrate nette = Entrate totali &minus; Rimborsi Lavorativi &minus; Entrate da Progetto &minus; Vendita Titoli, e Uscite nette = Uscite totali &minus; Spese Lavorative &minus; Acquisto Titoli &minus; Uscite da Progetto.');
   note.push('Il Flusso effettivo è verde quando supera il Flusso teorico, rosso quando è inferiore. Delta = Flusso effettivo &minus; Flusso teorico.');
-  if (!haDettaglioMensile(anno)) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Progetti/Spese Straordinarie, Acquisto Titoli, Spese Lavorative) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
+  if (!haDettaglioMensile(anno)) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Rimborsi Lavorativi, Spese Lavorative, Progetti/Spese Straordinarie, Acquisto/Vendita Titoli) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
   document.getElementById('budget-note').innerHTML = note.join(' ');
 }
 
