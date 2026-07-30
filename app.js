@@ -533,11 +533,12 @@ function renderVoceBlock(tipo) {
     const media = v / mesiDivisor;
     const prev = i > 0 ? vals[i - 1] : null;
     const delta = prev !== null ? v - prev : null;
+    const favorevole = delta === null ? null : (tipo === 'entrate' ? delta >= 0 : delta <= 0);
     return `<tr>
       <td>${y}${isPartial ? ' <span class="tag">parziale</span>' : ''}</td>
       <td class="num">${eur(v)}</td>
       <td class="num">${eur(media)}</td>
-      <td class="num ${delta === null ? '' : (delta <= 0 ? 'pos' : 'neg')}">${delta === null ? '—' : eur(delta)}</td>
+      <td class="num ${favorevole === null ? '' : (favorevole ? 'pos' : 'neg')}">${delta === null ? '—' : eur(delta)}</td>
     </tr>`;
   }).join("");
 }
