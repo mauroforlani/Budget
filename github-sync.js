@@ -102,17 +102,21 @@ const GitHubSync = (() => {
     }
   }
 
+  let lastLoadDebug = null;
+
   async function loadData() {
     const c = getConfig();
     if (!c || !c.token || !c.owner || !c.repo) return null;
     setStatus('busy', 'Lettura da GitHub…');
+    const url = apiUrl(c.path || DEFAULT_PATH, c.branch);
     try {
-      const res = await fetch(apiUrl(c.path || DEFAULT_PATH, c.branch), {
+      const res = await fetch(url, {
         headers: {
           'Authorization': `token ${c.token}`,
           'Accept': 'application/vnd.github+json'
         }
       });
+      lastLoadDebug = { url, status: res.status, owner: c.owner, repo: c.repo, branch: c.branch, path: c.path };
       if (res.status === 404) {
         setStatus('ok', 'Nessun file dati su GitHub (verrà creato al primo salvataggio)');
         return null;
@@ -127,6 +131,7 @@ const GitHubSync = (() => {
       setStatus('ok', 'Dati caricati da GitHub');
       return parsed;
     } catch (err) {
+      lastLoadDebug = { url, status: 'network-error', owner: c.owner, repo: c.repo, branch: c.branch, path: c.path };
       setStatus('err', 'Errore di connessione a GitHub');
       console.error(err);
       return null;
@@ -359,5 +364,5 @@ const GitHubSync = (() => {
     }
   }
 
-  return { init, isConfigured, loadData, saveData, getConfig, setConfig, clearConfig, openModal: () => openModal() };
+  return { init, isConfigured, loadData, saveData, getConfig, setConfig, clearConfig, openModal: () => openModal(), getLastLoadDebug: () => lastLoadDebug };
 })();

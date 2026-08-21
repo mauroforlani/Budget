@@ -1482,7 +1482,19 @@ window.pullFromGitHub = async function () {
     renderVoceAll();
     renderAll();
   } else {
-    alert('Non ho trovato nessun file dati su questo repository/percorso GitHub. Verifica owner, repository, branch e percorso file, oppure usa prima "Carica su GitHub" per crearlo.');
+    const dbg = (typeof GitHubSync.getLastLoadDebug === 'function') ? GitHubSync.getLastLoadDebug() : null;
+    let detail = '';
+    if (dbg) {
+      // Evidenzia eventuali caratteri "invisibili" (non stampabili, es. spazi
+      // speciali inseriti dalla tastiera del telefono) mostrando anche il
+      // codice esadecimale di ogni carattere del percorso e del branch usati.
+      const showChars = (label, v) => {
+        const suspicious = /[^\x20-\x7E]/.test(v || '');
+        return `${label}: "${v}"${suspicious ? '  ⚠ contiene caratteri non standard: [' + Array.from(v).map(c => c.charCodeAt(0).toString(16)).join(' ') + ']' : ''}`;
+      };
+      detail = `\n\nDettagli tecnici:\nURL interrogato: ${dbg.url}\nRisposta GitHub: ${dbg.status}\n${showChars('Branch usato', dbg.branch)}\n${showChars('Percorso usato', dbg.path)}`;
+    }
+    alert('Non ho trovato nessun file dati su questo repository/percorso GitHub. Verifica owner, repository, branch e percorso file, oppure usa prima "Carica su GitHub" per crearlo.' + detail);
   }
 };
 
