@@ -404,6 +404,36 @@ function parseFoglioMovimenti(rows) {
     }
     return out;
   }
+  hIdx = trovaRigaIntestazione(rows, ['Data', 'Descrizione', 'Categoria', 'Istituto', 'Importo']);
+  if (hIdx >= 0) {
+    // Riconosce il file generato dal pulsante "Esporta selezionate (.xlsx)"
+    // di questa stessa app: a differenza degli estratti bancari, qui
+    // categoria e istituto sono già noti riga per riga (non vanno indovinati).
+    const headerRow = (rows[hIdx] || []).map(v => (v == null ? '' : String(v)).trim());
+    const colData = headerRow.indexOf('Data');
+    const colDesc = headerRow.indexOf('Descrizione');
+    const colCat = headerRow.indexOf('Categoria');
+    const colIst = headerRow.indexOf('Istituto');
+    const colImp = headerRow.indexOf('Importo');
+    const out = [];
+    for (let r = hIdx + 1; r < rows.length; r++) {
+      const row = rows[r];
+      if (!row || row[colData] == null) continue;
+      const data = excelDateToISO(row[colData]);
+      if (!data) continue;
+      const desc = row[colDesc] != null ? String(row[colDesc]).trim() : '';
+      const importo = numOrNull(row[colImp]) || 0;
+      const catRaw = row[colCat] != null ? String(row[colCat]).trim() : '';
+      const istRaw = row[colIst] != null ? String(row[colIst]).trim() : '';
+      out.push({
+        data, desc, importo,
+        fonte: 'Esportazione app',
+        catConosciuta: catRaw || null,
+        istitutoConosciuto: istRaw || null
+      });
+    }
+    return out;
+  }
   return null;
 }
 
@@ -437,6 +467,8 @@ function excelDateToISO(v) {
     return d.toISOString().slice(0, 10);
   }
   if (typeof v === 'string') {
+    const iso = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (iso) return `${iso[1]}-${iso[2]}-${iso[3]}`;
     const m = v.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
     if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
   }
@@ -491,19 +523,24 @@ function renderImportReview() {
     ...Object.keys(DATA.usciteCategorie).filter(c => c !== 'TOTALE'),
     ...Object.keys(DATA.entrateCategorie).filter(c => c !== 'TOTALE'),
   ])].sort();
+  const istList = [...new Set(DATA.patrimonio.map(p => p.istituto).filter(Boolean))];
 
   document.getElementById('import-table').querySelector('tbody').innerHTML = stagingImport.map((t, i) => {
     const dup = esisteGiaTransazione(t);
-    let suggerita = suggerisciCategoria(t.desc, t.importo);
+    let suggerita = t.catConosciuta || suggerisciCategoria(t.desc, t.importo);
     const isTransfer = suggerita === '__TRASFERIMENTO_CARTA__';
     if (isTransfer) suggerita = 'Altro';
     const options = catList.map(c => `<option value="${c}" ${c === suggerita ? 'selected' : ''}>${c}</option>`).join("");
+    const istOptions = ['<option value="">&mdash; nessuno &mdash;</option>']
+      .concat(istList.map(ist => `<option value="${ist}" ${ist === t.istitutoConosciuto ? 'selected' : ''}>${ist}</option>`))
+      .join("");
     return `<tr data-idx="${i}">
       <td><input type="checkbox" class="import-check" data-idx="${i}" ${dup ? '' : 'checked'}></td>
       <td>${fmtData(t.data)}</td>
       <td>${t.desc}${dup ? '<span class="dup-badge">già presente</span>' : ''}${isTransfer ? '<span class="dup-badge">trasferimento carta &ndash; verifica</span>' : ''}</td>
       <td class="num ${t.importo < 0 ? 'neg' : 'pos'}">${eur(t.importo)}</td>
       <td><span class="tag">${t.fonte}</span></td>
+      <td><select class="ist-select" data-idx="${i}">${istOptions}</select></td>
       <td><select class="cat-select" data-idx="${i}">${options}</select></td>
     </tr>`;
   }).join("");
@@ -1334,24 +1371,36 @@ document.getElementById('btn-select-none').addEventListener('click', () => {
 
 document.getElementById('btn-confirm-import').addEventListener('click', () => {
   const checks = document.querySelectorAll('.import-check:checked');
-  const istituto = document.getElementById('import-istituto').value || null;
+  const istitutoGlobale = document.getElementById('import-istituto').value || null;
   let n = 0;
-  let deltaLiquidita = 0;
+  const deltaLiquiditaPerIstituto = {};
   checks.forEach(cb => {
     const idx = cb.dataset.idx;
     const t = stagingImport[idx];
     const sel = document.querySelector(`.cat-select[data-idx="${idx}"]`);
-    const cat = sel ? sel.value : suggerisciCategoria(t.desc, t.importo);
+    const cat = sel ? sel.value : (t.catConosciuta || suggerisciCategoria(t.desc, t.importo));
+    const istSel = document.querySelector(`.ist-select[data-idx="${idx}"]`);
+    // Se la riga ha già un istituto noto (es. import di un export già fatto
+    // da questa app), usa quello; altrimenti applica l'istituto scelto
+    // globalmente per il file (comportamento invariato per gli estratti bancari).
+    const istitutoRiga = (istSel && istSel.value) || istitutoGlobale || null;
     const nuovaTx = { data: t.data, desc: t.desc, importo: t.importo, cat };
-    if (istituto) nuovaTx.istituto = istituto;
+    if (istitutoRiga) {
+      nuovaTx.istituto = istitutoRiga;
+      deltaLiquiditaPerIstituto[istitutoRiga] = (deltaLiquiditaPerIstituto[istitutoRiga] || 0) + t.importo;
+    }
     transazioni.push(nuovaTx);
-    deltaLiquidita += t.importo;
     n++;
   });
-  if (istituto && deltaLiquidita) aggiornaLiquiditaIstituto(istituto, deltaLiquidita);
+  Object.keys(deltaLiquiditaPerIstituto).forEach(ist => {
+    if (deltaLiquiditaPerIstituto[ist]) aggiornaLiquiditaIstituto(ist, deltaLiquiditaPerIstituto[ist]);
+  });
   stagingImport = [];
   document.getElementById('import-review').style.display = 'none';
-  const istitutoMsg = istituto ? ` (liquidit&agrave; ${istituto} aggiornata di ${eur(deltaLiquidita)})` : '';
+  const istitutiToccati = Object.keys(deltaLiquiditaPerIstituto);
+  const istitutoMsg = istitutiToccati.length
+    ? ` (liquidit&agrave; aggiornata: ${istitutiToccati.map(ist => `${ist} ${eur(deltaLiquiditaPerIstituto[ist])}`).join(', ')})`
+    : '';
   document.getElementById('import-status').innerHTML += `<div class="file-ok">&#10003; Importati ${n} movimenti nelle Transazioni${istitutoMsg}.</div>`;
   document.getElementById('import-file-input').value = '';
   document.getElementById('import-istituto').value = '';

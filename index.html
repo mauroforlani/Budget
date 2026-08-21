@@ -257,7 +257,7 @@
   <!-- ================= IMPORTA ================= -->
   <section id="tab-importa" style="display:none;">
     <div class="section-title">Importa movimenti da file bancari</div>
-    <div class="section-sub">Riconosce automaticamente gli estratti di Fineco e Illimity (conto corrente e carta di credito) e propone una categoria per ogni movimento, che puoi correggere prima di confermare. Dopo la conferma, tutte le altre sezioni (Sommario, Dettaglio per voce, Budget, Ultime registrazioni) si aggiornano automaticamente.</div>
+    <div class="section-sub">Riconosce automaticamente gli estratti di Fineco e Illimity (conto corrente e carta di credito), oltre ai file generati dal pulsante "Esporta selezionate (.xlsx)" di questa stessa app (utile per re-importare dati esportati in precedenza), e propone una categoria per ogni movimento, che puoi correggere prima di confermare. Dopo la conferma, tutte le altre sezioni (Sommario, Dettaglio per voce, Budget, Ultime registrazioni) si aggiornano automaticamente.</div>
 
     <div class="import-drop" id="import-drop">
       <input type="file" id="import-file-input" accept=".xlsx" multiple style="display:none;">
@@ -282,7 +282,7 @@
       </div>
       <div class="section-sub" style="margin-top:6px;">Se selezioni un istituto, la sua liquidit&agrave; nel tab Patrimonio verr&agrave; aggiornata della somma netta dei movimenti importati e confermati.</div>
       <table class="ledger" id="import-table">
-        <thead><tr><th></th><th>Data</th><th>Descrizione</th><th class="num">Importo</th><th>Fonte</th><th>Categoria proposta</th></tr></thead>
+        <thead><tr><th></th><th>Data</th><th>Descrizione</th><th class="num">Importo</th><th>Fonte</th><th>Istituto</th><th>Categoria proposta</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
