@@ -47255,7 +47255,7 @@
     {
       "istituto": "Fineco",
       "liquidita": 112296.94,
-      "portafoglioTitoli": 129485.93444,
+      "portafoglioTitoli": 122239.420222,
       "deposito": 0
     }
   ],
@@ -47271,10 +47271,10 @@
         "qta": 10000,
         "pzo": 101.129,
         "valoreCarico": 10112.9,
-        "pzoMercato": 99.3,
-        "valoreMercato": 9930,
-        "varPct": -1.808581,
-        "varEuro": -182.9
+        "pzoMercato": 98.76,
+        "valoreMercato": 9876,
+        "varPct": -2.342553,
+        "varEuro": -236.9
       },
       {
         "nome": "BTPI-15MG39 2,4",
@@ -47286,10 +47286,10 @@
         "qta": 10000,
         "pzo": 101.235,
         "valoreCarico": 10123.5,
-        "pzoMercato": 102.3,
-        "valoreMercato": 11127.171,
-        "varPct": 1.052008,
-        "varEuro": 106.5
+        "pzoMercato": 101.95,
+        "valoreMercato": 11080.23185,
+        "varPct": 0.706277,
+        "varEuro": 71.5
       },
       {
         "nome": "BTP-1MZ38 3,25",
@@ -47301,10 +47301,10 @@
         "qta": 10000,
         "pzo": 92.67,
         "valoreCarico": 9267,
-        "pzoMercato": 92.17,
-        "valoreMercato": 9217,
-        "varPct": -0.539549,
-        "varEuro": -50
+        "pzoMercato": 91.77,
+        "valoreMercato": 9177,
+        "varPct": -0.971188,
+        "varEuro": -90
       },
       {
         "nome": "BTP-1OT55 4,65",
@@ -47316,25 +47316,10 @@
         "qta": 10000,
         "pzo": 104.78,
         "valoreCarico": 10478,
-        "pzoMercato": 99.03,
-        "valoreMercato": 9903,
-        "varPct": -5.487688,
-        "varEuro": -575
-      },
-      {
-        "nome": "REPLY N",
-        "isin": "IT0005282865",
-        "simbolo": "REY.MI",
-        "mercato": "AFF",
-        "strumento": "Azione",
-        "valuta": "EUR",
-        "qta": 70,
-        "pzo": 108.105,
-        "valoreCarico": 7567.35,
-        "pzoMercato": 96.75,
-        "valoreMercato": 6772.5,
-        "varPct": -10.503677,
-        "varEuro": -794.85
+        "pzoMercato": 97.55,
+        "valoreMercato": 9755,
+        "varPct": -6.900172,
+        "varEuro": -723
       },
       {
         "nome": "BTP-1ST38 2,95",
@@ -47346,10 +47331,10 @@
         "qta": 10000,
         "pzo": 90.5077,
         "valoreCarico": 9050.77,
-        "pzoMercato": 88.84,
-        "valoreMercato": 8884,
-        "varPct": -1.842606,
-        "varEuro": -166.77
+        "pzoMercato": 88.41,
+        "valoreMercato": 8841,
+        "varPct": -2.317703,
+        "varEuro": -209.77
       },
       {
         "nome": "BTP-17NV28 FUTURA",
@@ -47361,10 +47346,10 @@
         "qta": 10000,
         "pzo": 84.74,
         "valoreCarico": 8474,
-        "pzoMercato": 95.12,
-        "valoreMercato": 9512,
-        "varPct": 12.249233,
-        "varEuro": 1038
+        "pzoMercato": 95.55,
+        "valoreMercato": 9555,
+        "varPct": 12.756667,
+        "varEuro": 1081
       },
       {
         "nome": "BTP-1ST40 5",
@@ -47376,10 +47361,10 @@
         "qta": 10000,
         "pzo": 98.7,
         "valoreCarico": 9870,
-        "pzoMercato": 107.95,
-        "valoreMercato": 10795,
-        "varPct": 9.371834,
-        "varEuro": 925
+        "pzoMercato": 107.28,
+        "valoreMercato": 10728,
+        "varPct": 8.693009,
+        "varEuro": 858
       },
       {
         "nome": "BTP-13GN27 VALSU CUM",
@@ -47391,10 +47376,10 @@
         "qta": 10000,
         "pzo": 100,
         "valoreCarico": 10000,
-        "pzoMercato": 100.966,
-        "valoreMercato": 10096.6,
-        "varPct": 0.966,
-        "varEuro": 96.6
+        "pzoMercato": 100.86,
+        "valoreMercato": 10086,
+        "varPct": 0.86,
+        "varEuro": 86
       },
       {
         "nome": "BTP-28GN30 ITALIA",
@@ -47406,10 +47391,10 @@
         "qta": 10000,
         "pzo": 92.26,
         "valoreCarico": 9226,
-        "pzoMercato": 100.88,
-        "valoreMercato": 10123.61064,
-        "varPct": 9.343161,
-        "varEuro": 862
+        "pzoMercato": 101.92,
+        "valoreMercato": 10231.85072,
+        "varPct": 10.47041,
+        "varEuro": 966
       },
       {
         "nome": "BTPI-15ST41 2,55",
@@ -47421,10 +47406,10 @@
         "qta": 10000,
         "pzo": 120.0315,
         "valoreCarico": 12003.15,
-        "pzoMercato": 105.12,
-        "valoreMercato": 15054.44544,
-        "varPct": -12.422989,
-        "varEuro": -1491.15
+        "pzoMercato": 104.55,
+        "valoreMercato": 14960.8959,
+        "varPct": -12.897864,
+        "varEuro": -1548.15
       },
       {
         "nome": "BTP-1OT53 4,5",
@@ -47436,10 +47421,10 @@
         "qta": 10000,
         "pzo": 102.14,
         "valoreCarico": 10214,
-        "pzoMercato": 97.46,
-        "valoreMercato": 9746,
-        "varPct": -4.581946,
-        "varEuro": -468
+        "pzoMercato": 96.1,
+        "valoreMercato": 9610,
+        "varPct": -5.913452,
+        "varEuro": -604
       },
       {
         "nome": "BTP-14MZ28 ITALIACUM",
@@ -47451,19 +47436,19 @@
         "qta": 8000,
         "pzo": 100,
         "valoreCarico": 8000,
-        "pzoMercato": 101.48,
-        "valoreMercato": 8324.60736,
-        "varPct": 1.48,
-        "varEuro": 118.4
+        "pzoMercato": 101.61,
+        "valoreMercato": 8338.441752,
+        "varPct": 1.61,
+        "varEuro": 128.8
       }
     ],
     "summary": {
-      "valoreCarico": 124386.67,
-      "valoreMercato": 129485.93444,
-      "varEuro": -582.17,
-      "varPct": -0.00468032
+      "valoreCarico": 116819.31999999999,
+      "valoreMercato": 122239.420222,
+      "varEuro": -220.52,
+      "varPct": -0.0018877
     },
-    "aggiornatoIl": "2026-07-24"
+    "aggiornatoIl": "2026-08-21"
   },
   "meta": {
     "anniFlussi": [
