@@ -51,6 +51,26 @@ const GitHubSync = (() => {
       '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
   }
 
+  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+  // Su reti mobili una singola richiesta può fallire per un intoppo
+  // momentaneo (cambio WiFi/dati, rete lenta, app in background un istante).
+  // Qui riproviamo automaticamente SOLO sugli errori di rete veri e propri
+  // (fetch() che lancia un'eccezione): un 404/401/403 è una risposta valida
+  // di GitHub e non va ritentato, perché non cambierebbe riprovando.
+  async function fetchWithRetry(url, options, attempts = 3) {
+    let lastErr;
+    for (let i = 0; i < attempts; i++) {
+      try {
+        return await fetch(url, options);
+      } catch (err) {
+        lastErr = err;
+        if (i < attempts - 1) await sleep(500 * (i + 1));
+      }
+    }
+    throw lastErr;
+  }
+
   function repoApiUrl(c) {
     return `https://api.github.com/repos/${c.owner}/${c.repo}`;
   }
@@ -61,7 +81,7 @@ const GitHubSync = (() => {
   // (che GitHub usa sia per "repository inesistente" sia per "file non ancora presente").
   async function checkRepoAccess(c) {
     try {
-      const res = await fetch(repoApiUrl(c), {
+      const res = await fetchWithRetry(repoApiUrl(c), {
         headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github+json' }
       });
       if (res.status === 404) return { ok: false, reason: 'repo_not_found' };
@@ -73,7 +93,7 @@ const GitHubSync = (() => {
       if (c.branch && defaultBranch && c.branch !== defaultBranch) {
         // Non blocchiamo: il branch scelto potrebbe esistere comunque anche
         // se diverso da quello predefinito. Verifichiamo esplicitamente.
-        const branchRes = await fetch(
+        const branchRes = await fetchWithRetry(
           `https://api.github.com/repos/${c.owner}/${c.repo}/branches/${encodeURIComponent(c.branch)}`,
           { headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github+json' } }
         );
@@ -110,7 +130,7 @@ const GitHubSync = (() => {
     setStatus('busy', 'Lettura da GitHub…');
     const url = apiUrl(c.path || DEFAULT_PATH, c.branch);
     try {
-      const res = await fetch(url, {
+      const res = await fetchWithRetry(url, {
         headers: {
           'Authorization': `token ${c.token}`,
           'Accept': 'application/vnd.github+json'
@@ -143,7 +163,7 @@ const GitHubSync = (() => {
 
   async function fetchSha(path, branch, token, owner, repo) {
     try {
-      const res = await fetch(apiUrl(path, branch), {
+      const res = await fetchWithRetry(apiUrl(path, branch), {
         headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json' }
       });
       if (res.ok) { const j = await res.json(); return j.sha; }
@@ -173,7 +193,7 @@ const GitHubSync = (() => {
         branch: c.branch || 'main'
       };
       if (sha) body.sha = sha;
-      const res = await fetch(apiUrl(path), {
+      const res = await fetchWithRetry(apiUrl(path), {
         method: 'PUT',
         headers: {
           'Authorization': `token ${c.token}`,
