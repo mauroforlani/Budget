@@ -162,6 +162,13 @@ function recomputeFlussi() {
 }
 
 /* ---------------- PERSISTENZA SU GITHUB ---------------- */
+// Tiene traccia di modifiche fatte in questa pagina che NON sono ancora
+// state confermate come salvate su GitHub. Serve per evitare di scaricare
+// (e quindi sovrascrivere silenziosamente) dati locali non ancora sincronizzati.
+let localDirty = false;
+let lastSyncFailed = false;
+window.appHasUnsyncedChanges = () => localDirty;
+
 function buildExportData() {
   const clone = JSON.parse(JSON.stringify(DATA));
   delete clone._monthlyCat;
@@ -170,9 +177,22 @@ function buildExportData() {
 }
 let persistTimer = null;
 function persist(message) {
+  localDirty = true;
   if (persistTimer) clearTimeout(persistTimer);
   persistTimer = setTimeout(() => {
-    GitHubSync.saveData(buildExportData(), message || 'Aggiornamento dati finanze');
+    const wasAlreadyFailing = lastSyncFailed;
+    GitHubSync.saveData(buildExportData(), message || 'Aggiornamento dati finanze').then(ok => {
+      if (ok) {
+        localDirty = false;
+        lastSyncFailed = false;
+      } else {
+        lastSyncFailed = true;
+        if (!wasAlreadyFailing) {
+          alert('Il salvataggio automatico su GitHub non è riuscito. Le modifiche restano solo in questa pagina: NON chiudere o ricaricare la scheda finché il salvataggio non va a buon fine, oppure rischi di perderle. Controlla la connessione o le credenziali GitHub (icona in alto a destra).');
+        }
+        console.warn('Salvataggio su GitHub fallito: le modifiche restano solo locali finché non riprova con successo.');
+      }
+    });
   }, 600);
 }
 
@@ -1413,5 +1433,12 @@ window.onGitHubConfigured = async function (forcePush) {
   renderVoceAll();
   renderAll();
 };
+
+window.addEventListener('beforeunload', (e) => {
+  if (localDirty) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
 
 initApp();

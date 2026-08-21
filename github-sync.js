@@ -234,6 +234,16 @@ const GitHubSync = (() => {
       document.getElementById('gh-save').addEventListener('click', () => {
         const cfg = readCfgFromForm();
         if (!cfg.owner || !cfg.repo || !cfg.token) { alert('Compila almeno owner, repository e token.'); return; }
+
+        if (typeof window.appHasUnsyncedChanges === 'function' && window.appHasUnsyncedChanges()) {
+          const proceed = confirm(
+            'Attenzione: in questa pagina ci sono modifiche (transazioni, importazioni, patrimonio, ecc.) che NON risultano ancora salvate su GitHub.\n\n' +
+            'Questa azione scarica i dati dal repository e li userà al posto di quelli presenti ora in questa pagina: le modifiche non salvate andranno perse.\n\n' +
+            'Premi Annulla per tornare indietro e riprovare a salvare, oppure OK se vuoi comunque scaricare i dati da GitHub e perdere le modifiche locali.'
+          );
+          if (!proceed) return;
+        }
+
         setConfig(cfg);
         lastKnownSha = null;
         closeModal();
