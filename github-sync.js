@@ -98,7 +98,7 @@ const GitHubSync = (() => {
   async function saveData(obj, message) {
     const c = getConfig();
     if (!c || !c.token || !c.owner || !c.repo) {
-      setStatus('err', 'GitHub non configurato — modifiche solo locali');
+      setStatus('err', 'GitHub non collegato — modifiche solo locali');
       return false;
     }
     // Serializza le chiamate per evitare conflitti di sha in scritture ravvicinate
@@ -152,23 +152,7 @@ const GitHubSync = (() => {
     el.querySelector('.gh-status-text').textContent = text;
   }
 
-  function injectDangerStyles() {
-    if (document.getElementById('gh-danger-style')) return;
-    const style = document.createElement('style');
-    style.id = 'gh-danger-style';
-    style.textContent = `
-      .gh-danger-zone { margin-top: 18px; border-top: 1px solid rgba(150,60,60,0.25); padding-top: 12px; }
-      .gh-danger-zone summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: #b23b3b; user-select: none; }
-      .gh-danger-zone summary:hover { text-decoration: underline; }
-      .gh-danger-hint.gh-danger-hint { color: #8a2f2f; }
-      button.danger { background: #b23b3b; color: #fff; border: 1px solid #8a2f2f; }
-      button.danger:hover { background: #9c3333; }
-    `;
-    document.head.appendChild(style);
-  }
-
   function injectUI() {
-    injectDangerStyles();
     // Pulsante di stato nell'header
     const hdrRight = document.querySelector('.hdr-right');
     if (hdrRight && !document.getElementById('gh-status')) {
@@ -176,7 +160,7 @@ const GitHubSync = (() => {
       btn.id = 'gh-status';
       btn.className = 'gh-status';
       btn.type = 'button';
-      btn.innerHTML = `<span class="dot"></span><span class="gh-status-text">GitHub non configurato</span>`;
+      btn.innerHTML = `<span class="dot"></span><span class="gh-status-text">GitHub non collegato — clicca per collegare</span>`;
       btn.addEventListener('click', openModal);
       hdrRight.appendChild(btn);
     }
@@ -188,7 +172,7 @@ const GitHubSync = (() => {
       backdrop.innerHTML = `
         <div class="modal">
           <h3>Sincronizzazione GitHub</h3>
-          <p class="hint">Ogni modifica (transazioni, importazioni, patrimonio, ecc.) viene salvata automaticamente nel file <code>data.json</code> del repository indicato, tramite le GitHub Contents API. Il token viene salvato solo nel tuo browser (localStorage), mai altrove.</p>
+          <p class="hint">Collegando un repository, ogni modifica che fai in questa pagina (transazioni, importazioni, patrimonio, ecc.) viene <b>salvata automaticamente</b> nel file <code>data.json</code> del repository, pochi istanti dopo ogni modifica. Non devi fare altro.<br><br>Per vedere gli stessi dati su un altro dispositivo o browser, apri questa pagina lì e collega <b>lo stesso</b> repository con questi stessi dati: li scaricherà automaticamente. Il token viene salvato solo in questo browser (localStorage), mai altrove — su ogni dispositivo dovrai inserirlo una volta.</p>
           <label>Proprietario / organizzazione (owner)</label>
           <input type="text" id="gh-owner" placeholder="es. mario-rossi">
           <label>Nome repository</label>
@@ -202,24 +186,16 @@ const GitHubSync = (() => {
           <div class="modal-actions">
             <button class="ghost" id="gh-disconnect" type="button">Disconnetti</button>
             <button class="ghost" id="gh-cancel" type="button">Annulla</button>
-            <button class="primary" id="gh-save" type="button">Connetti e carica da GitHub</button>
+            <button class="primary" id="gh-save" type="button">Sincronizza con GitHub</button>
           </div>
-          <div class="modal-note">Il token deve avere permesso di scrittura sul repository (scope <b>repo</b> per repository privati, oppure <b>public_repo</b> per repository pubblici). Puoi generarne uno da GitHub → Settings → Developer settings → Personal access tokens.<br><br>Usa <b>"Connetti e carica da GitHub"</b> per riprendere i dati già salvati sul repository — è l'opzione che vuoi in praticamente tutti i casi.</div>
-
-          <details class="gh-danger-zone">
-            <summary>Zona pericolosa — sovrascrivi GitHub con i dati locali</summary>
-            <p class="hint gh-danger-hint">Questa azione <b>sostituisce</b> con un nuovo commit i dati attualmente salvati sul repository, rimpiazzandoli con i dati "di partenza" contenuti nel file <code>data.js</code> di questa pagina. Usala solo se sai per certo di voler ripartire da questi dati e ignorare quelli già su GitHub — ad esempio alla primissima configurazione, quando su GitHub non c'è ancora nulla. In tutti gli altri casi rischi di cancellare dati più recenti.</p>
-            <div class="modal-actions">
-              <button class="danger" id="gh-save-push" type="button">Sovrascrivi GitHub con i dati di questa pagina</button>
-            </div>
-          </details>
+          <div class="modal-note">Il token deve avere permesso di scrittura sul repository (scope <b>repo</b> per repository privati, oppure <b>public_repo</b> per repository pubblici). Puoi generarne uno da GitHub → Settings → Developer settings → Personal access tokens.<br><br>Il pulsante <b>"Sincronizza con GitHub"</b> fa sempre la cosa giusta da solo: se sul repository non c'è ancora nessun dato, carica quelli presenti in questa pagina; se ce ne sono già, li scarica in questa pagina. Se in questa pagina hai modifiche che non risultano ancora salvate, prima di scaricare qualsiasi cosa ti verrà chiesta conferma esplicita, per non perderle per sbaglio.</div>
         </div>`;
       document.body.appendChild(backdrop);
       document.getElementById('gh-cancel').addEventListener('click', closeModal);
       backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
       document.getElementById('gh-disconnect').addEventListener('click', () => {
         clearConfig();
-        setStatus('', 'GitHub non configurato');
+        setStatus('', 'GitHub non collegato — clicca per collegare');
         closeModal();
       });
       function readCfgFromForm() {
@@ -249,60 +225,6 @@ const GitHubSync = (() => {
         closeModal();
         if (typeof window.onGitHubConfigured === 'function') window.onGitHubConfigured(false);
       });
-      document.getElementById('gh-save-push').addEventListener('click', async () => {
-        const cfg = readCfgFromForm();
-        if (!cfg.owner || !cfg.repo || !cfg.token) { alert('Compila almeno owner, repository e token.'); return; }
-
-        const pushBtn = document.getElementById('gh-save-push');
-        const originalLabel = pushBtn.textContent;
-        pushBtn.disabled = true;
-        pushBtn.textContent = 'Controllo dati esistenti su GitHub…';
-
-        // Applichiamo temporaneamente la config per poter interrogare l'API
-        // e sapere cosa c'è davvero sul repository PRIMA di chiedere conferma.
-        const previousConfig = getConfig();
-        setConfig(cfg);
-        lastKnownSha = null;
-
-        let remote = null;
-        let remoteCheckFailed = false;
-        try {
-          remote = await loadData();
-        } catch (e) {
-          remoteCheckFailed = true;
-        }
-
-        pushBtn.disabled = false;
-        pushBtn.textContent = originalLabel;
-
-        const localCount = (typeof SEED_DATA !== 'undefined' && Array.isArray(SEED_DATA.transazioni)) ? SEED_DATA.transazioni.length : null;
-        const remoteCount = (remote && Array.isArray(remote.transazioni)) ? remote.transazioni.length : null;
-
-        let warning;
-        if (remote === null && !remoteCheckFailed) {
-          warning = `Su GitHub non risulta ancora nessun file dati: verrà creato con le ${localCount != null ? localCount : '??'} transazioni presenti in questa pagina (data.js). Questa è l'unica situazione in cui questa azione è generalmente sicura.`;
-        } else if (remoteCheckFailed) {
-          warning = `Non sono riuscito a verificare cosa c'è attualmente su GitHub (credenziali errate o problema di rete). Procedere alla cieca è rischioso: se sul repository ci sono già dati, verranno sostituiti con le ${localCount != null ? localCount : '??'} transazioni di questa pagina e andranno persi.`;
-        } else {
-          warning = `ATTENZIONE: sul repository sono già presenti ${remoteCount != null ? remoteCount : 'un numero sconosciuto di'} transazioni salvate. Questa azione le SOSTITUIRÀ con le ${localCount != null ? localCount : '??'} transazioni contenute in questa pagina (data.js), cancellando definitivamente ogni dato più recente inserito dopo l'ultimo aggiornamento di data.js.`;
-        }
-
-        const typed = prompt(
-          warning + '\n\nPer confermare che vuoi procedere comunque, scrivi qui sotto la parola SOVRASCRIVI (tutto maiuscolo) e conferma:'
-        );
-
-        if (typed !== 'SOVRASCRIVI') {
-          // Ripristina la configurazione precedente se l'utente annulla,
-          // per non lasciare la app "agganciata" a un repo non confermato.
-          if (previousConfig) setConfig(previousConfig); else clearConfig();
-          lastKnownSha = null;
-          setStatus('', isConfigured() ? 'GitHub configurato' : 'GitHub non configurato — clicca per collegare');
-          return;
-        }
-
-        closeModal();
-        if (typeof window.onGitHubConfigured === 'function') window.onGitHubConfigured(true);
-      });
     }
   }
 
@@ -322,9 +244,9 @@ const GitHubSync = (() => {
   function init() {
     injectUI();
     if (isConfigured()) {
-      setStatus('', 'GitHub configurato');
+      setStatus('', 'GitHub collegato');
     } else {
-      setStatus('', 'GitHub non configurato — clicca per collegare');
+      setStatus('', 'GitHub non collegato — clicca per collegare');
     }
   }
 

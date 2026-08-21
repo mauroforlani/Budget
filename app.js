@@ -1439,6 +1439,8 @@ async function initApp() {
     if (remote) {
       DATA = migrateCategoryNames(remote);
       transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
+      localDirty = false;
+      lastSyncFailed = false;
     }
   }
 
@@ -1452,27 +1454,22 @@ async function initApp() {
   renderAll();
 }
 
-window.onGitHubConfigured = async function (forcePush) {
-  if (forcePush) {
-    // Ripristina i dati "di partenza" del file data.js appena caricato,
-    // ignorando qualunque cosa sia già stata scaricata automaticamente da
-    // GitHub all'apertura della pagina: altrimenti si rischia di
-    // "sovrascrivere" GitHub con gli stessi dati vecchi appena scaricati.
-    DATA = migrateCategoryNames(JSON.parse(JSON.stringify(SEED_DATA)));
+window.onGitHubConfigured = async function () {
+  const remote = await GitHubSync.loadData();
+  if (remote) {
+    DATA = migrateCategoryNames(remote);
     transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
     recomputeFlussi();
-    syncPatrimonioAutomatico();
-    await GitHubSync.saveData(buildExportData(), 'Sovrascrittura dati su GitHub con dati locali (da data.js)');
+    // I dati locali sono stati sostituiti da quelli scaricati: non ci sono
+    // più modifiche locali "in sospeso" rispetto a GitHub.
+    localDirty = false;
+    lastSyncFailed = false;
   } else {
-    const remote = await GitHubSync.loadData();
-    if (remote) {
-      DATA = migrateCategoryNames(remote);
-      transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
-      recomputeFlussi();
-    } else {
-      recomputeFlussi();
-      persist('Inizializzazione dati su GitHub');
-    }
+    // Su GitHub non c'è ancora nessun dato: carica quello che c'è in questa
+    // pagina (dati di partenza, o eventuali modifiche già fatte prima di
+    // collegare GitHub).
+    recomputeFlussi();
+    persist('Inizializzazione dati su GitHub');
   }
   syncPatrimonioAutomatico();
   populateFilters();
