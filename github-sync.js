@@ -51,6 +51,57 @@ const GitHubSync = (() => {
       '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
   }
 
+  function repoApiUrl(c) {
+    return `https://api.github.com/repos/${c.owner}/${c.repo}`;
+  }
+
+  // Verifica se il repository esiste ed è accessibile con questo token,
+  // PRIMA di provare a leggere/scrivere il file dati: restituisce un esito
+  // con una causa precisa, invece del generico 404 dell'endpoint "contents"
+  // (che GitHub usa sia per "repository inesistente" sia per "file non ancora presente").
+  async function checkRepoAccess(c) {
+    try {
+      const res = await fetch(repoApiUrl(c), {
+        headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github+json' }
+      });
+      if (res.status === 404) return { ok: false, reason: 'repo_not_found' };
+      if (res.status === 401) return { ok: false, reason: 'bad_token' };
+      if (res.status === 403) return { ok: false, reason: 'no_access' };
+      if (!res.ok) return { ok: false, reason: 'other', status: res.status };
+      const json = await res.json();
+      const defaultBranch = json.default_branch;
+      if (c.branch && defaultBranch && c.branch !== defaultBranch) {
+        // Non blocchiamo: il branch scelto potrebbe esistere comunque anche
+        // se diverso da quello predefinito. Verifichiamo esplicitamente.
+        const branchRes = await fetch(
+          `https://api.github.com/repos/${c.owner}/${c.repo}/branches/${encodeURIComponent(c.branch)}`,
+          { headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github+json' } }
+        );
+        if (branchRes.status === 404) return { ok: false, reason: 'branch_not_found' };
+      }
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, reason: 'network' };
+    }
+  }
+
+  function accessErrorMessage(c, result) {
+    switch (result.reason) {
+      case 'repo_not_found':
+        return `Repository "${c.owner}/${c.repo}" non trovato con questo token.\n\nControlla che owner e nome repository siano scritti ESATTAMENTE come su GitHub (es. senza spazi in più, senza trattini lunghi "–" al posto del normale trattino "-": su alcuni telefoni la tastiera li sostituisce automaticamente).\n\nSe il repository è privato, controlla anche che il token abbia accesso a quel repository.`;
+      case 'bad_token':
+        return 'Token non valido, scaduto o scritto in modo errato. Generane uno nuovo da GitHub → Settings → Developer settings → Personal access tokens.';
+      case 'no_access':
+        return `Il token non ha i permessi per accedere a "${c.owner}/${c.repo}". Serve lo scope "repo" per i repository privati (o "public_repo" per quelli pubblici), e se il repository è di un'organizzazione potrebbe servire l'autorizzazione SSO del token.`;
+      case 'branch_not_found':
+        return `Il branch "${c.branch}" non esiste in questo repository. Controlla che sia scritto esattamente come su GitHub (attenzione alle maiuscole: "Main" e "main" sono branch diversi).`;
+      case 'network':
+        return 'Errore di connessione a GitHub. Controlla la connessione a internet e riprova.';
+      default:
+        return `Errore GitHub imprevisto (${result.status || '??'}). Riprova tra poco.`;
+    }
+  }
+
   async function loadData() {
     const c = getConfig();
     if (!c || !c.token || !c.owner || !c.repo) return null;
@@ -190,15 +241,15 @@ const GitHubSync = (() => {
           <h3>Sincronizzazione GitHub</h3>
           <p class="hint">Due pulsanti, due direzioni: <b>"Carica su GitHub"</b> invia i dati di questa pagina al repository (li sovrascrive online). <b>"Scarica da GitHub"</b> fa l'esatto contrario: sostituisce i dati di questa pagina con quelli già salvati sul repository. Nessuna delle due cose avviene mai da sola: parte solo quando premi uno dei due pulsanti. Il token viene salvato solo in questo browser (localStorage), mai altrove — su ogni dispositivo dovrai inserirlo una volta.</p>
           <label>Proprietario / organizzazione (owner)</label>
-          <input type="text" id="gh-owner" placeholder="es. mario-rossi">
+          <input type="text" id="gh-owner" placeholder="es. mario-rossi" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
           <label>Nome repository</label>
-          <input type="text" id="gh-repo" placeholder="es. le-mie-finanze">
+          <input type="text" id="gh-repo" placeholder="es. le-mie-finanze" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
           <label>Branch</label>
-          <input type="text" id="gh-branch" placeholder="main">
+          <input type="text" id="gh-branch" placeholder="main" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
           <label>Percorso file dati</label>
-          <input type="text" id="gh-path" placeholder="data.json">
+          <input type="text" id="gh-path" placeholder="data.json" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
           <label>Personal Access Token (repo scope)</label>
-          <input type="password" id="gh-token" placeholder="ghp_...">
+          <input type="password" id="gh-token" placeholder="ghp_..." autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
           <div class="modal-actions modal-actions-sync">
             <button class="primary" id="gh-upload" type="button">&#8593; Carica su GitHub</button>
             <button class="primary" id="gh-download" type="button">&#8595; Scarica da GitHub</button>
@@ -217,12 +268,22 @@ const GitHubSync = (() => {
         setStatus('', 'GitHub non collegato — clicca per collegare');
         closeModal();
       });
+      function sanitizeField(v) {
+        // Alcune tastiere mobili sostituiscono trattini/virgolette "dritte"
+        // con le varianti tipografiche anche con autocorrect disattivato:
+        // le riportiamo alla forma originale, dato che nei nomi di
+        // repository/branch/percorsi GitHub contano caratteri esatti.
+        return v
+          .replace(/[\u2010-\u2015\u2212]/g, '-')   // trattini lunghi/brevi tipografici -> "-"
+          .replace(/[\u2018\u2019\u201B]/g, "'")     // apici tipografici -> "'"
+          .replace(/[\u201C\u201D\u201F]/g, '"');    // virgolette tipografiche -> '"'
+      }
       function readCfgFromForm() {
         return {
-          owner: document.getElementById('gh-owner').value.trim(),
-          repo: document.getElementById('gh-repo').value.trim(),
-          branch: document.getElementById('gh-branch').value.trim() || 'main',
-          path: document.getElementById('gh-path').value.trim() || DEFAULT_PATH,
+          owner: sanitizeField(document.getElementById('gh-owner').value.trim()),
+          repo: sanitizeField(document.getElementById('gh-repo').value.trim()),
+          branch: sanitizeField(document.getElementById('gh-branch').value.trim()) || 'main',
+          path: sanitizeField(document.getElementById('gh-path').value.trim()) || DEFAULT_PATH,
           token: document.getElementById('gh-token').value.trim()
         };
       }
@@ -230,6 +291,16 @@ const GitHubSync = (() => {
       document.getElementById('gh-upload').addEventListener('click', async () => {
         const cfg = readCfgFromForm();
         if (!cfg.owner || !cfg.repo || !cfg.token) { alert('Compila almeno owner, repository e token.'); return; }
+
+        const btn = document.getElementById('gh-upload');
+        const originalLabel = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Verifica repository…';
+        const access = await checkRepoAccess(cfg);
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+        if (!access.ok) { alert(accessErrorMessage(cfg, access)); return; }
+
         setConfig(cfg);
         lastKnownSha = null;
         closeModal();
@@ -239,6 +310,15 @@ const GitHubSync = (() => {
       document.getElementById('gh-download').addEventListener('click', async () => {
         const cfg = readCfgFromForm();
         if (!cfg.owner || !cfg.repo || !cfg.token) { alert('Compila almeno owner, repository e token.'); return; }
+
+        const btn = document.getElementById('gh-download');
+        const originalLabel = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Verifica repository…';
+        const access = await checkRepoAccess(cfg);
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+        if (!access.ok) { alert(accessErrorMessage(cfg, access)); return; }
 
         if (typeof window.appHasUnsyncedChanges === 'function' && window.appHasUnsyncedChanges()) {
           const proceed = confirm(
