@@ -338,7 +338,7 @@
         13722.3,
         22605.98,
         12180.880000000001,
-        0,
+        12999,
         0,
         0,
         0,
@@ -351,8 +351,8 @@
         13018.119999999995,
         12243.489999999998,
         9213.22,
-        10692.820000000005,
-        0,
+        10731.400000000007,
+        22868.06999999998,
         0,
         0,
         0,
@@ -374,7 +374,7 @@
       "2023": 100111.22,
       "2024": 106390.86,
       "2025": 92990.76,
-      "2026": 82652.84
+      "2026": 95651.84
     },
     "Versamenti": {
       "2015": 3131.71,
@@ -388,7 +388,7 @@
       "2023": 5300,
       "2024": 4434.2,
       "2025": 2900,
-      "2026": 1229.88
+      "2026": 11229.880000000001
     },
     "Vendita Titoli": {
       "2015": 17365.15,
@@ -416,7 +416,7 @@
       "2023": 56795.5,
       "2024": 53593.06,
       "2025": 57269,
-      "2026": 35076
+      "2026": 38048
     },
     "Rimborsi Lavorativi": {
       "2015": 13034.32,
@@ -542,7 +542,7 @@
       "2023": 0,
       "2024": 2851.88,
       "2025": 228.18,
-      "2026": 0
+      "2026": 27
     },
     "Hotel": {
       "2015": 0,
@@ -642,7 +642,7 @@
       "2023": 196395.59999999998,
       "2024": 70281.38999999998,
       "2025": 55272.01,
-      "2026": 66700.94
+      "2026": 89607.58999999998
     },
     "Prelievi": {
       "2015": 4140,
@@ -656,7 +656,7 @@
       "2023": 1420,
       "2024": 3570.04,
       "2025": 2970,
-      "2026": 1560
+      "2026": 1950
     },
     "Rifornimento": {
       "2015": 2486.58,
@@ -670,7 +670,7 @@
       "2023": 1060.3200000000004,
       "2024": 1076.51,
       "2025": 1106.1200000000001,
-      "2026": 968.81
+      "2026": 1200.54
     },
     "Serate": {
       "2015": 228.34999999999994,
@@ -726,7 +726,7 @@
       "2023": 2705.990000000001,
       "2024": 4334.099999999998,
       "2025": 3624.4700000000007,
-      "2026": 1632.0099999999998
+      "2026": 1900.2199999999998
     },
     "Casa": {
       "2015": 35746.21000000001,
@@ -754,7 +754,7 @@
       "2023": 6110.309999999996,
       "2024": 4060.2499999999977,
       "2025": 6151.4199999999955,
-      "2026": 1970.52
+      "2026": 2115.3999999999996
     },
     "Acquisto Titoli": {
       "2015": 8861.31,
@@ -768,7 +768,7 @@
       "2023": 102707.03999999998,
       "2024": 30134.329999999998,
       "2025": 22055.56,
-      "2026": 48118.24
+      "2026": 67744.98
     },
     "Imposte/Tasse": {
       "2015": 361.0999999999998,
@@ -782,7 +782,7 @@
       "2023": 771.4599999999999,
       "2024": 3217.6600000000003,
       "2025": 1732.3799999999997,
-      "2026": 694.91
+      "2026": 774.65
     },
     "Telefono": {
       "2015": 244.28,
@@ -810,7 +810,7 @@
       "2023": 11953.030000000002,
       "2024": 11220.089999999995,
       "2025": 8013.6399999999985,
-      "2026": 6711.449999999999
+      "2026": 7263.519999999999
     },
     "Macchina/Moto": {
       "2015": 1379.22,
@@ -824,7 +824,7 @@
       "2023": 1441.7,
       "2024": 806.36,
       "2025": 1271.26,
-      "2026": 419
+      "2026": 1131.85
     },
     "Enjoy": {
       "2015": 0,
@@ -852,7 +852,7 @@
       "2023": 4570.6900000000005,
       "2024": 5476.840000000001,
       "2025": 3655.87,
-      "2026": 1104.8
+      "2026": 1516.52
     },
     "Casa - Spesa": {
       "2015": 0,
@@ -866,7 +866,7 @@
       "2023": 637.2799999999999,
       "2024": 578.13,
       "2025": 267.33999999999986,
-      "2026": 483.71000000000004
+      "2026": 524.5200000000001
     },
     "Telepass": {
       "2015": 0,
@@ -880,7 +880,7 @@
       "2023": 1190.21,
       "2024": 1398.3600000000001,
       "2025": 1362.28,
-      "2026": 959.21
+      "2026": 1303.11
     },
     "Casa - Internet": {
       "2015": 0,
@@ -908,7 +908,7 @@
       "2023": 1342.48,
       "2024": 1216.54,
       "2025": 1325,
-      "2026": 422.19
+      "2026": 526.19
     },
     "Casa - Altro": {
       "2015": 0,
@@ -46703,6 +46703,528 @@
       "desc": "Imposta sostitutiva Capital Gain",
       "importo": -67.72,
       "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-07-30",
+      "desc": "Stipendio",
+      "importo": 2972,
+      "cat": "Stipendio"
+    },
+    {
+      "data": "2026-07-30",
+      "desc": "Bonifico SEPA Italia",
+      "importo": 10000,
+      "cat": "Versamenti"
+    },
+    {
+      "data": "2026-07-28",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-28",
+      "desc": "SPONTINI GAE AULENTI MILANO IT",
+      "importo": -10.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-28",
+      "desc": "ILLYCAFFE? PORTA NUOV. MILANO IT",
+      "importo": -9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-27",
+      "desc": "WWW.AMAZON.* PC5HR39H5 LUXEMBOURG LU",
+      "importo": -17.49,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-07-27",
+      "desc": "DI MODUGNO SRL MILANO IT",
+      "importo": -212.85,
+      "cat": "Macchina/Moto"
+    },
+    {
+      "data": "2026-07-27",
+      "desc": "GLHCARSRENTAL.FO GOTUGJOGV FO",
+      "importo": -68.03,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-26",
+      "desc": "SEPA Direct Debit",
+      "importo": -104,
+      "cat": "Casa - A2A"
+    },
+    {
+      "data": "2026-07-26",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-26",
+      "desc": "BKG*BOOKING.COM HOTEL (888)850-3958 NL",
+      "importo": -411.72,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-07-26",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -4.71,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-26",
+      "desc": "Sunneva Davidsen Torshavn FO",
+      "importo": -277.55,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-25",
+      "desc": "Tot a post Zogno IT",
+      "importo": -8.3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-25",
+      "desc": "ESSO MILANO IT",
+      "importo": -13.77,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-25",
+      "desc": "FRATELLI CARLUCCI SNC VERANO BRIANZ IT",
+      "importo": -16.55,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-24",
+      "desc": "COMUNE DI CUSIO PARKIN CUSIO IT",
+      "importo": -3,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-23",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.99,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-22",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.99,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-21",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -2.37,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-21",
+      "desc": "Prelevamento carta N ***** 112 Data operazione 22/7/2026 Ora 13:23 1030 BANCA MONTE DEI PASCHI DI SIEN N ATM 104 MILANO (MI)",
+      "importo": -110,
+      "cat": "Prelievi"
+    },
+    {
+      "data": "2026-07-20",
+      "desc": "AMAZON* TS5ML3YK5 LUXEMBOURG LU",
+      "importo": -28.2,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-07-20",
+      "desc": "SPONTINI GAE AULENTI MILANO IT",
+      "importo": -10.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-20",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -2,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-19",
+      "desc": "Compravendita Titoli",
+      "importo": -9392.36,
+      "cat": "Acquisto Titoli"
+    },
+    {
+      "data": "2026-07-19",
+      "desc": "VENCHI MI Gae Aulenti Milano IT",
+      "importo": -8.4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-19",
+      "desc": "Vega - Galvani MILANO IT",
+      "importo": -19.96,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-19",
+      "desc": "ATLANTIC PORTA NUOVA MILANO IT",
+      "importo": -8.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-19",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-18",
+      "desc": "Vega - Galvani MILANO IT",
+      "importo": -67.72,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-18",
+      "desc": "PASSO SAN MARCO 2000 MEZZOLDO IT",
+      "importo": -50.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-17",
+      "desc": "Bonifico Istantaneo",
+      "importo": 27,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-17",
+      "desc": "BAR AL PALAZZO BARDONECCHIA IT",
+      "importo": -4.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-16",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-15",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.5,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-15",
+      "desc": "food distribution srl milano IT",
+      "importo": -2.4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-15",
+      "desc": "EATALY SPA MILANO MILANO IT",
+      "importo": -14.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-14",
+      "desc": "SEPA Direct Debit",
+      "importo": -290.3,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-07-14",
+      "desc": "AMAZON* 6W49X6B75 LUXEMBOURG LU",
+      "importo": -50.23,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-07-14",
+      "desc": "Prelevamento carta N ***** 112 Data operazione 15/7/2026 Ora 16:54 1030 BANCA MONTE DEI PASCHI DI SIEN N ATM 4290 MILANO (MI)",
+      "importo": -120,
+      "cat": "Prelievi"
+    },
+    {
+      "data": "2026-07-13",
+      "desc": "Compravendita Titoli",
+      "importo": -10234.38,
+      "cat": "Acquisto Titoli"
+    },
+    {
+      "data": "2026-07-13",
+      "desc": "BAR MION GRESSAN IT",
+      "importo": -2.8,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-13",
+      "desc": "PV0567 SETTIMO ROTTA IT",
+      "importo": -14.43,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-13",
+      "desc": "A5SAV - SAV CHATILLON IT",
+      "importo": -26.8,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-07-13",
+      "desc": "SATAP - SATAP TORINO IT",
+      "importo": -26.8,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-07-13",
+      "desc": "LA CARBURANTI S R L SETTIMO ROTTA IT",
+      "importo": -17.16,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-12",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-12",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -1,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-12",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -2.98,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-11",
+      "desc": "46034 ARSAGO SEPRIO ARSAGO SEPRIO IT",
+      "importo": -14.91,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-11",
+      "desc": "Aletsch Bahnen AG Bettmeralp CH",
+      "importo": -115.07,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-11",
+      "desc": "BP Tankstelle Morel Morel CH",
+      "importo": -16.1,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-11",
+      "desc": "Parkhaus Morel Riedera Morel CH",
+      "importo": -4.42,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-10",
+      "desc": "VITTORIA SNC_COURMAYEU COURMAYEUR IT",
+      "importo": -63,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-09",
+      "desc": "SEPA Direct Debit",
+      "importo": -11.99,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-07-09",
+      "desc": "Bonifico Istantaneo",
+      "importo": -500,
+      "cat": "Macchina/Moto"
+    },
+    {
+      "data": "2026-07-09",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-09",
+      "desc": "FAMA S.A.S. COURMAYEUR IT",
+      "importo": -6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-09",
+      "desc": "MAGLIONE ANTONIO BRISSOGNE IT",
+      "importo": -5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-09",
+      "desc": "MAGLIONE ANTONIO BRISSOGNE IT",
+      "importo": -2.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-09",
+      "desc": "PV0759 VILLARBOIT IT",
+      "importo": -13.94,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-09",
+      "desc": "Pag. del 10/07/26 ora 21:43 presso: ENI0 0015 S.S. 26 KM 5 030 5 COURMAYEUR 11013 ITA Carta N *****112 Ness una Commissione",
+      "importo": -17.08,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-08",
+      "desc": "GRUPPO NEGOZI SRL MILANO IT",
+      "importo": -8.3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-08",
+      "desc": "LUIGI ZAINI S.P.A. MILANO IT",
+      "importo": -3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-07",
+      "desc": "Imposta bollo dossier titoli",
+      "importo": -56.1,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-07-07",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-06",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -7.31,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-06",
+      "desc": "DF SPORT SPECIALIST MILANO IT",
+      "importo": -36.97,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-07-05",
+      "desc": "AUTOGRILL 0736 ALTAVILLA VIC IT",
+      "importo": -3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-05",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -7.8,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-05",
+      "desc": "HTTPS: STABILIMENTI.B HTTPS://STABI IT",
+      "importo": -28,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-04",
+      "desc": "GUSTO PIZZA DI ACUNTO SAN MICHELE A IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-04",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -5.6,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-04",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -2.2,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-04",
+      "desc": "HTTPS: STABILIMENTI.B HTTPS://STABI IT",
+      "importo": -28,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-03",
+      "desc": "MAXI' PASIANO DI PO IT",
+      "importo": -5.6,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-03",
+      "desc": "HTTPS: STABILIMENTI.B HTTPS://STABI IT",
+      "importo": -28,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-02",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-02",
+      "desc": "Vega - Galvani MILANO IT",
+      "importo": -20.11,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-02",
+      "desc": "Prelevamento carta N ***** 112 Data operazione 3/7/2026 Ora 07:58 1030 BANCA MONTE DEI PASCHI DI SIEN N ATM 4290 MILANO (MI)",
+      "importo": -160,
+      "cat": "Prelievi"
+    },
+    {
+      "data": "2026-07-01",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-01",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -4.51,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-30",
+      "desc": "Tobin Tax Italia Azioni",
+      "importo": -15.11,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-06-30",
+      "desc": "Imposta bollo conto corrente",
+      "importo": -8.53,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-06-30",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -2.94,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-06-30",
+      "desc": "VENCHI MI Gae Aulenti Milano IT",
+      "importo": -5.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-06-30",
+      "desc": "GRUPPO NEGOZI SRL MILANO IT",
+      "importo": -6.4,
+      "cat": "Pranzi/Cene"
     }
   ],
   "patrimonio": [
@@ -46946,10 +47468,10 @@
       "Marzo",
       "Aprile",
       "Maggio",
-      "Giugno"
+      "Giugno",
+      "Luglio"
     ],
     "mesiSenzaDati2026": [
-      "Luglio",
       "Agosto",
       "Settembre",
       "Ottobre",
