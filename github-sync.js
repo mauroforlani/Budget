@@ -152,7 +152,23 @@ const GitHubSync = (() => {
     el.querySelector('.gh-status-text').textContent = text;
   }
 
+  function injectSyncStyles() {
+    if (document.getElementById('gh-sync-style')) return;
+    const style = document.createElement('style');
+    style.id = 'gh-sync-style';
+    style.textContent = `
+      .modal-actions-sync { display: flex; gap: 10px; margin-top: 4px; }
+      .modal-actions-sync button { flex: 1; }
+      #gh-upload { background: #2f7a4f; border-color: #235f3c; }
+      #gh-upload:hover { background: #276841; }
+      #gh-download { background: #2f5f9e; border-color: #244a7c; }
+      #gh-download:hover { background: #274f85; }
+    `;
+    document.head.appendChild(style);
+  }
+
   function injectUI() {
+    injectSyncStyles();
     // Pulsante di stato nell'header
     const hdrRight = document.querySelector('.hdr-right');
     if (hdrRight && !document.getElementById('gh-status')) {
@@ -172,7 +188,7 @@ const GitHubSync = (() => {
       backdrop.innerHTML = `
         <div class="modal">
           <h3>Sincronizzazione GitHub</h3>
-          <p class="hint">Collegando un repository, ogni modifica che fai in questa pagina (transazioni, importazioni, patrimonio, ecc.) viene <b>salvata automaticamente</b> nel file <code>data.json</code> del repository, pochi istanti dopo ogni modifica. Non devi fare altro.<br><br>Per vedere gli stessi dati su un altro dispositivo o browser, apri questa pagina lì e collega <b>lo stesso</b> repository con questi stessi dati: li scaricherà automaticamente. Il token viene salvato solo in questo browser (localStorage), mai altrove — su ogni dispositivo dovrai inserirlo una volta.</p>
+          <p class="hint">Due pulsanti, due direzioni: <b>"Carica su GitHub"</b> invia i dati di questa pagina al repository (li sovrascrive online). <b>"Scarica da GitHub"</b> fa l'esatto contrario: sostituisce i dati di questa pagina con quelli già salvati sul repository. Nessuna delle due cose avviene mai da sola: parte solo quando premi uno dei due pulsanti. Il token viene salvato solo in questo browser (localStorage), mai altrove — su ogni dispositivo dovrai inserirlo una volta.</p>
           <label>Proprietario / organizzazione (owner)</label>
           <input type="text" id="gh-owner" placeholder="es. mario-rossi">
           <label>Nome repository</label>
@@ -183,12 +199,15 @@ const GitHubSync = (() => {
           <input type="text" id="gh-path" placeholder="data.json">
           <label>Personal Access Token (repo scope)</label>
           <input type="password" id="gh-token" placeholder="ghp_...">
+          <div class="modal-actions modal-actions-sync">
+            <button class="primary" id="gh-upload" type="button">&#8593; Carica su GitHub</button>
+            <button class="primary" id="gh-download" type="button">&#8595; Scarica da GitHub</button>
+          </div>
           <div class="modal-actions">
             <button class="ghost" id="gh-disconnect" type="button">Disconnetti</button>
-            <button class="ghost" id="gh-cancel" type="button">Annulla</button>
-            <button class="primary" id="gh-save" type="button">Sincronizza con GitHub</button>
+            <button class="ghost" id="gh-cancel" type="button">Chiudi</button>
           </div>
-          <div class="modal-note">Il token deve avere permesso di scrittura sul repository (scope <b>repo</b> per repository privati, oppure <b>public_repo</b> per repository pubblici). Puoi generarne uno da GitHub → Settings → Developer settings → Personal access tokens.<br><br>Il pulsante <b>"Sincronizza con GitHub"</b> fa sempre la cosa giusta da solo: se sul repository non c'è ancora nessun dato, carica quelli presenti in questa pagina; se ce ne sono già, li scarica in questa pagina. Se in questa pagina hai modifiche che non risultano ancora salvate, prima di scaricare qualsiasi cosa ti verrà chiesta conferma esplicita, per non perderle per sbaglio.</div>
+          <div class="modal-note">Il token deve avere permesso di scrittura sul repository (scope <b>repo</b> per repository privati, oppure <b>public_repo</b> per repository pubblici). Puoi generarne uno da GitHub → Settings → Developer settings → Personal access tokens.<br><br>Le modifiche fatte in questa pagina vengono comunque anche salvate automaticamente in background pochi istanti dopo ogni modifica (transazioni, importazioni, patrimonio, ecc.) — i due pulsanti servono per un salvataggio/caricamento immediato ed esplicito, utile prima di chiudere la pagina o quando passi a un altro dispositivo.</div>
         </div>`;
       document.body.appendChild(backdrop);
       document.getElementById('gh-cancel').addEventListener('click', closeModal);
@@ -207,15 +226,25 @@ const GitHubSync = (() => {
           token: document.getElementById('gh-token').value.trim()
         };
       }
-      document.getElementById('gh-save').addEventListener('click', () => {
+
+      document.getElementById('gh-upload').addEventListener('click', async () => {
+        const cfg = readCfgFromForm();
+        if (!cfg.owner || !cfg.repo || !cfg.token) { alert('Compila almeno owner, repository e token.'); return; }
+        setConfig(cfg);
+        lastKnownSha = null;
+        closeModal();
+        if (typeof window.pushLocalToGitHub === 'function') await window.pushLocalToGitHub();
+      });
+
+      document.getElementById('gh-download').addEventListener('click', async () => {
         const cfg = readCfgFromForm();
         if (!cfg.owner || !cfg.repo || !cfg.token) { alert('Compila almeno owner, repository e token.'); return; }
 
         if (typeof window.appHasUnsyncedChanges === 'function' && window.appHasUnsyncedChanges()) {
           const proceed = confirm(
-            'Attenzione: in questa pagina ci sono modifiche (transazioni, importazioni, patrimonio, ecc.) che NON risultano ancora salvate su GitHub.\n\n' +
-            'Questa azione scarica i dati dal repository e li userà al posto di quelli presenti ora in questa pagina: le modifiche non salvate andranno perse.\n\n' +
-            'Premi Annulla per tornare indietro e riprovare a salvare, oppure OK se vuoi comunque scaricare i dati da GitHub e perdere le modifiche locali.'
+            'Attenzione: in questa pagina ci sono modifiche che non risultano ancora caricate su GitHub.\n\n' +
+            'Scaricando da GitHub, i dati di questa pagina verranno sostituiti e queste modifiche andranno perse.\n\n' +
+            'Premi Annulla per tornare indietro (puoi premere prima "Carica su GitHub" per salvarle), oppure OK per scaricare comunque e perderle.'
           );
           if (!proceed) return;
         }
@@ -223,7 +252,7 @@ const GitHubSync = (() => {
         setConfig(cfg);
         lastKnownSha = null;
         closeModal();
-        if (typeof window.onGitHubConfigured === 'function') window.onGitHubConfigured(false);
+        if (typeof window.pullFromGitHub === 'function') await window.pullFromGitHub();
       });
     }
   }

@@ -1434,15 +1434,11 @@ async function initApp() {
   ['flag-titoli', 'flag-progetti', 'summary-flag-titoli', 'summary-flag-progetti', 'budget-flag-titoli', 'budget-flag-progetti', 'analisi-flag-titoli', 'analisi-flag-progetti']
     .forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
 
-  if (GitHubSync.isConfigured()) {
-    const remote = await GitHubSync.loadData();
-    if (remote) {
-      DATA = migrateCategoryNames(remote);
-      transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
-      localDirty = false;
-      lastSyncFailed = false;
-    }
-  }
+  // NOTA: all'avvio la pagina NON scarica automaticamente i dati da GitHub.
+  // Il caricamento/scaricamento avviene solo quando premi esplicitamente
+  // uno dei due pulsanti "Carica su GitHub" / "Scarica da GitHub".
+  // Questo evita che un refresh accidentale della pagina sovrascriva dati
+  // appena inseriti prima che facciano in tempo a essere salvati online.
 
   recomputeFlussi();
   syncPatrimonioAutomatico();
@@ -1454,30 +1450,40 @@ async function initApp() {
   renderAll();
 }
 
-window.onGitHubConfigured = async function () {
+/* Pulsante "⬆ Carica su GitHub": invia SUBITO (senza attese) i dati
+   attualmente presenti in questa pagina, sovrascrivendo quelli online. */
+window.pushLocalToGitHub = async function () {
+  if (persistTimer) { clearTimeout(persistTimer); persistTimer = null; }
+  const ok = await GitHubSync.saveData(buildExportData(), 'Caricamento manuale su GitHub');
+  if (ok) {
+    localDirty = false;
+    lastSyncFailed = false;
+  } else {
+    lastSyncFailed = true;
+    alert('Caricamento su GitHub non riuscito. Controlla la connessione o le credenziali (icona in alto a destra) e riprova.');
+  }
+};
+
+/* Pulsante "⬇ Scarica da GitHub": sostituisce i dati di questa pagina con
+   quelli attualmente presenti sul repository. */
+window.pullFromGitHub = async function () {
   const remote = await GitHubSync.loadData();
   if (remote) {
     DATA = migrateCategoryNames(remote);
     transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
-    recomputeFlussi();
-    // I dati locali sono stati sostituiti da quelli scaricati: non ci sono
-    // più modifiche locali "in sospeso" rispetto a GitHub.
     localDirty = false;
     lastSyncFailed = false;
-  } else {
-    // Su GitHub non c'è ancora nessun dato: carica quello che c'è in questa
-    // pagina (dati di partenza, o eventuali modifiche già fatte prima di
-    // collegare GitHub).
     recomputeFlussi();
-    persist('Inizializzazione dati su GitHub');
+    syncPatrimonioAutomatico();
+    populateFilters();
+    populateVoceCats();
+    populateBudgetAnno();
+    populateAnalisiAnno();
+    renderVoceAll();
+    renderAll();
+  } else {
+    alert('Non ho trovato nessun file dati su questo repository/percorso GitHub. Verifica owner, repository, branch e percorso file, oppure usa prima "Carica su GitHub" per crearlo.');
   }
-  syncPatrimonioAutomatico();
-  populateFilters();
-  populateVoceCats();
-  populateBudgetAnno();
-  populateAnalisiAnno();
-  renderVoceAll();
-  renderAll();
 };
 
 window.addEventListener('beforeunload', (e) => {
