@@ -5,7 +5,7 @@
    ========================================================================= */
 
 /* ---------------- HELPERS ---------------- */
-const eur = n => (n < 0 ? "-" : "") + "€ " + Math.abs(n).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const eur = n => (n < 0 ? "-" : "") + "€ " + Math.abs(n).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping: 'always' });
 function eurCompact(n) {
   const sign = n < 0 ? "-" : "";
   const abs = Math.abs(n);
@@ -42,6 +42,10 @@ function migrateCategoryNames(data) {
   mergeDict(data.entrateCategorie);
   mergeDict(data.usciteCategorie);
   (data.transazioni || []).forEach(t => { if (RENAME_MAP[t.cat]) t.cat = RENAME_MAP[t.cat]; });
+  if (!data.impostazioni) data.impostazioni = {};
+  if (typeof data.impostazioni.budgetTeoricoPct !== 'number' || isNaN(data.impostazioni.budgetTeoricoPct)) {
+    data.impostazioni.budgetTeoricoPct = 50; // % storica di default (invariata rispetto al comportamento precedente)
+  }
   return data;
 }
 
@@ -816,19 +820,23 @@ function renderBudget() {
   const anno = parseInt(document.getElementById('budget-anno').value || ANNO_CORRENTE, 10);
   const escludiTitoli = !document.getElementById('budget-flag-titoli').checked;
   const escludiProgetti = !document.getElementById('budget-flag-progetti').checked;
+  const teoricoPct = DATA.impostazioni.budgetTeoricoPct;
+  document.getElementById('budget-teorico-pct').value = teoricoPct;
   document.getElementById('budget-title').textContent = `Budget mensile ${anno}`;
 
-  let totE = 0, totU = 0, totTeor = 0, totEff = 0;
+  let totE = 0, totU = 0, totTeor = 0, totEff = 0, totEntrateBase = 0;
   document.getElementById('budget-table').querySelector('tbody').innerHTML = MESI_IT.map((m, i) => {
     const eRaw = DATA.flussi[anno].entrate[i], uRaw = DATA.flussi[anno].uscite[i];
     const noData = (eRaw === 0 && uRaw === 0);
     const e = annoAdjEntrateMese(anno, i, escludiTitoli, escludiProgetti);
     const u = annoAdjUsciteMese(anno, i, escludiTitoli, escludiProgetti);
     const saldo = e - u;
-    const teorico = 0.5 * stipendioMese(anno, i);
-    const effettivo = entrateBaseEffettivo(anno, i) - usciteBaseEffettivo(anno, i);
+    const teorico = (teoricoPct / 100) * stipendioMese(anno, i);
+    const entrateBase = entrateBaseEffettivo(anno, i);
+    const effettivo = entrateBase - usciteBaseEffettivo(anno, i);
     const delta = effettivo - teorico;
-    totE += e; totU += u; totTeor += teorico; totEff += effettivo;
+    const pctRisparmio = entrateBase !== 0 ? (effettivo / entrateBase) * 100 : null;
+    totE += e; totU += u; totTeor += teorico; totEff += effettivo; totEntrateBase += entrateBase;
     return `<tr>
       <td>${m}${noData ? ' <span class="tag">nessun dato</span>' : ''}</td>
       <td class="num pos">${eur(e)}</td>
@@ -837,9 +845,11 @@ function renderBudget() {
       <td class="num">${eur(teorico)}</td>
       <td class="num ${effettivo > teorico ? 'pos' : 'neg'}">${eur(effettivo)}</td>
       <td class="num ${delta > 0 ? 'delta-pos' : 'delta-neg'}">${eur(delta)}</td>
+      <td class="num ${pctRisparmio == null ? '' : (pctRisparmio >= 0 ? 'pos' : 'neg')}">${pctRisparmio == null ? '&mdash;' : pctRisparmio.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'}</td>
     </tr>`;
   }).join("");
 
+  const totPctRisparmio = totEntrateBase !== 0 ? (totEff / totEntrateBase) * 100 : null;
   document.getElementById('budget-table').querySelector('tfoot').innerHTML = `
     <tr style="font-weight:700; border-top:2px solid var(--ink);">
       <td>TOTALE ${anno}</td>
@@ -849,19 +859,21 @@ function renderBudget() {
       <td class="num">${eur(totTeor)}</td>
       <td class="num ${totEff > totTeor ? 'pos' : 'neg'}">${eur(totEff)}</td>
       <td class="num ${(totEff - totTeor) > 0 ? 'delta-pos' : 'delta-neg'}">${eur(totEff - totTeor)}</td>
+      <td class="num ${totPctRisparmio == null ? '' : (totPctRisparmio >= 0 ? 'pos' : 'neg')}">${totPctRisparmio == null ? '&mdash;' : totPctRisparmio.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'}</td>
     </tr>`;
 
   const note = [];
-  note.push('Flusso teorico = 50% dello stipendio del mese.');
+  note.push(`Flusso teorico = ${teoricoPct}% dello stipendio del mese (percentuale modificabile qui sopra).`);
   note.push('Flusso effettivo = Entrate nette &minus; Uscite nette, dove Entrate nette = Entrate totali &minus; Rimborsi Lavorativi &minus; Entrate da Progetto &minus; Vendita Titoli, e Uscite nette = Uscite totali &minus; Spese Lavorative &minus; Acquisto Titoli &minus; Uscite da Progetto.');
   note.push('Il Flusso effettivo è verde quando supera il Flusso teorico, rosso quando è inferiore. Delta = Flusso effettivo &minus; Flusso teorico.');
+  note.push('% Risparmio effettivo = Flusso effettivo / Entrate nette, ossia la quota di entrate nette non spesa nel mese (o nell\'anno, per il totale).');
   if (!haDettaglioMensile(anno)) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Rimborsi Lavorativi, Spese Lavorative, Progetti/Spese Straordinarie, Acquisto/Vendita Titoli) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
   document.getElementById('budget-note').innerHTML = note.join(' ');
 }
 
 /* ---------------- PATRIMONIO (editabile) ---------------- */
 function formatItNumber(n) {
-  return (n || 0).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return (n || 0).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping: 'always' });
 }
 function parseItNumber(str) {
   if (typeof str !== 'string') return Number(str) || 0;
@@ -973,7 +985,7 @@ function renderPortafoglio() {
       <td>${t.isin || ''}</td>
       <td><span class="tag">${t.mercato || ''}</span></td>
       <td><span class="tag">${t.strumento || ''}</span></td>
-      <td class="num">${(t.qta || 0).toLocaleString('it-IT')}</td>
+      <td class="num">${(t.qta || 0).toLocaleString('it-IT', { useGrouping: 'always' })}</td>
       <td class="num">${(t.pzo || 0).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 5 })}</td>
       <td class="num">${eur(t.valoreCarico || 0)}</td>
       <td class="num">${t.pzoMercato != null ? t.pzoMercato.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 5 }) : ''}</td>
@@ -1277,6 +1289,14 @@ document.getElementById('summary-flag-progetti').addEventListener('change', rend
 document.getElementById('budget-flag-titoli').addEventListener('change', renderBudget);
 document.getElementById('budget-flag-progetti').addEventListener('change', renderBudget);
 document.getElementById('budget-anno').addEventListener('change', renderBudget);
+document.getElementById('budget-teorico-pct').addEventListener('change', (e) => {
+  let v = parseFloat(String(e.target.value).replace(',', '.'));
+  if (isNaN(v)) v = 50;
+  v = Math.min(100, Math.max(0, v));
+  DATA.impostazioni.budgetTeoricoPct = v;
+  renderBudget();
+  persist('Aggiornamento % flusso teorico');
+});
 document.getElementById('analisi-anno').addEventListener('change', renderAnalisiClassifica);
 document.getElementById('analisi-flag-titoli').addEventListener('change', renderAnalisi);
 document.getElementById('analisi-flag-progetti').addEventListener('change', renderAnalisi);
