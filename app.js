@@ -1493,9 +1493,67 @@ window.pullFromGitHub = async function () {
         return `${label}: "${v}"${suspicious ? '  ⚠ contiene caratteri non standard: [' + Array.from(v).map(c => c.charCodeAt(0).toString(16)).join(' ') + ']' : ''}`;
       };
       detail = `\n\nDettagli tecnici:\nURL interrogato: ${dbg.url}\nRisposta GitHub: ${dbg.status}\n${showChars('Branch usato', dbg.branch)}\n${showChars('Percorso usato', dbg.path)}`;
+      if (dbg.status === 'network-error') {
+        detail += `\n\nErrore esatto del browser: ${dbg.errName || '(nome sconosciuto)'}: ${dbg.errMessage || '(nessun messaggio)'}`;
+      }
     }
     alert('Non ho trovato nessun file dati su questo repository/percorso GitHub. Verifica owner, repository, branch e percorso file, oppure usa prima "Carica su GitHub" per crearlo.' + detail);
   }
+};
+
+/* ---------------- TRASFERIMENTO DATI VIA FILE (metodo alternativo, senza rete) ----------------
+   Non usa mai l'API di GitHub: scarica un file .json dal browser (sempre
+   affidabile, zero chiamate di rete) che l'utente carica su GitHub da sé
+   tramite il sito github.com (drag&drop), e per riportarlo su un altro
+   dispositivo basta scaricare quello stesso file da GitHub e ricaricarlo
+   qui con un normale selettore di file. Utile quando la sincronizzazione
+   automatica via token/API dà problemi di rete su mobile. */
+
+window.downloadDataFile = function () {
+  const json = JSON.stringify(buildExportData(), null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'data.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+
+window.loadDataFile = function (file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed;
+    try {
+      parsed = JSON.parse(reader.result);
+    } catch (e) {
+      alert('Il file scelto non è un JSON valido. Assicurati di aver selezionato il file data.json scaricato da GitHub.');
+      return;
+    }
+    if (!parsed || !Array.isArray(parsed.transazioni)) {
+      alert('Il file non sembra avere il formato dati atteso (manca "transazioni"). Controlla di aver scelto il file giusto.');
+      return;
+    }
+    DATA = migrateCategoryNames(parsed);
+    transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
+    localDirty = false;
+    lastSyncFailed = false;
+    recomputeFlussi();
+    syncPatrimonioAutomatico();
+    populateFilters();
+    populateVoceCats();
+    populateBudgetAnno();
+    populateAnalisiAnno();
+    renderVoceAll();
+    renderAll();
+    const statusEl = document.getElementById('file-sync-status');
+    if (statusEl) statusEl.textContent = `✓ Dati caricati dal file "${file.name}" (${transazioni.length} transazioni).`;
+  };
+  reader.onerror = () => alert('Non sono riuscito a leggere il file scelto. Riprova.');
+  reader.readAsText(file);
 };
 
 window.addEventListener('beforeunload', (e) => {
