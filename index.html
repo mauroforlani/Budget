@@ -159,6 +159,22 @@
       <label><input type="checkbox" id="budget-flag-titoli" autocomplete="off"> Includi gestione titoli <span class="flag-hint">(Acquisto/Vendita Titoli)</span></label>
       <label><input type="checkbox" id="budget-flag-progetti" autocomplete="off"> Includi gestione progetti <span class="flag-hint">(Progetti/Spese Straordinarie)</span></label>
     </div>
+
+    <div class="section-title">Totali per anno</div>
+    <table class="ledger" id="budget-years-table">
+      <thead><tr>
+        <th>Anno</th>
+        <th class="num">Entrate</th>
+        <th class="num">Uscite</th>
+        <th class="num">Saldo</th>
+        <th class="num">Flusso Teorico</th>
+        <th class="num">Flusso Effettivo</th>
+        <th class="num">Delta</th>
+        <th class="num">% Risparmio effettivo</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+
     <div class="section-title" id="budget-title">Budget mensile</div>
     <table class="ledger" id="budget-table">
       <thead><tr>

@@ -816,6 +816,63 @@ function populateBudgetAnno() {
   sel.value = ANNI.includes(Number(prev)) ? prev : ANNO_CORRENTE;
 }
 
+// Riassume un intero anno sommando mese per mese, con la stessa logica
+// (e la stessa base Stipendio per la %) usata nel dettaglio mensile.
+// Riutilizzata sia dalla tabella "Totali per anno" sia dal totale annuale
+// nel dettaglio, per garantire che i due punti dell'interfaccia siano
+// sempre coerenti fra loro.
+function calcolaAnnoBudget(anno, escludiTitoli, escludiProgetti, teoricoPct) {
+  let totE = 0, totU = 0, totTeor = 0, totEff = 0, totStipendio = 0;
+  for (let i = 0; i < 12; i++) {
+    const e = annoAdjEntrateMese(anno, i, escludiTitoli, escludiProgetti);
+    const u = annoAdjUsciteMese(anno, i, escludiTitoli, escludiProgetti);
+    const stipendio = stipendioMese(anno, i);
+    const teorico = (teoricoPct / 100) * stipendio;
+    const effettivo = entrateBaseEffettivo(anno, i) - usciteBaseEffettivo(anno, i);
+    totE += e; totU += u; totTeor += teorico; totEff += effettivo; totStipendio += stipendio;
+  }
+  const pctRisparmio = totStipendio !== 0 ? (totEff / totStipendio) * 100 : null;
+  return { anno, totE, totU, totTeor, totEff, totStipendio, pctRisparmio };
+}
+
+function budgetRowHtml(label, r, teoricoPct, opts) {
+  opts = opts || {};
+  const saldo = r.totE - r.totU;
+  const delta = r.totEff - r.totTeor;
+  return `<tr${opts.clickAnno != null ? ` class="budget-year-row" data-anno="${opts.clickAnno}" style="cursor:pointer;"` : ''}${opts.bold ? ' style="font-weight:700; border-top:2px solid var(--ink);"' : ''}>
+    <td>${label}</td>
+    <td class="num pos">${eur(r.totE)}</td>
+    <td class="num neg">${eur(r.totU)}</td>
+    <td class="num ${saldo >= 0 ? 'pos' : 'neg'}">${eur(saldo)}</td>
+    <td class="num">${eur(r.totTeor)}</td>
+    <td class="num ${r.totEff > r.totTeor ? 'pos' : 'neg'}">${eur(r.totEff)}</td>
+    <td class="num ${delta > 0 ? 'delta-pos' : 'delta-neg'}">${eur(delta)}</td>
+    <td class="num ${r.pctRisparmio == null ? '' : (r.pctRisparmio >= teoricoPct ? 'pos' : 'neg')}">${r.pctRisparmio == null ? '&mdash;' : r.pctRisparmio.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'}</td>
+  </tr>`;
+}
+
+function renderBudgetYears() {
+  const escludiTitoli = !document.getElementById('budget-flag-titoli').checked;
+  const escludiProgetti = !document.getElementById('budget-flag-progetti').checked;
+  const teoricoPct = DATA.impostazioni.budgetTeoricoPct;
+  const anniDesc = [...ANNI].reverse(); // più recente in alto
+  const righeAnni = anniDesc.map(y => calcolaAnnoBudget(y, escludiTitoli, escludiProgetti, teoricoPct));
+  const selectedAnno = parseInt(document.getElementById('budget-anno').value || ANNO_CORRENTE, 10);
+
+  document.getElementById('budget-years-table').querySelector('tbody').innerHTML =
+    righeAnni.map(r => budgetRowHtml(
+      `${r.anno}${r.anno === selectedAnno ? ' &larr;' : ''}`,
+      r, teoricoPct, { clickAnno: r.anno }
+    )).join("");
+
+  document.querySelectorAll('#budget-years-table .budget-year-row').forEach(row => {
+    row.addEventListener('click', () => {
+      document.getElementById('budget-anno').value = row.dataset.anno;
+      renderBudget();
+    });
+  });
+}
+
 function renderBudget() {
   const anno = parseInt(document.getElementById('budget-anno').value || ANNO_CORRENTE, 10);
   const escludiTitoli = !document.getElementById('budget-flag-titoli').checked;
@@ -823,6 +880,8 @@ function renderBudget() {
   const teoricoPct = DATA.impostazioni.budgetTeoricoPct;
   document.getElementById('budget-teorico-pct').value = teoricoPct;
   document.getElementById('budget-title').textContent = `Budget mensile ${anno}`;
+
+  renderBudgetYears();
 
   let totE = 0, totU = 0, totTeor = 0, totEff = 0, totStipendio = 0;
   document.getElementById('budget-table').querySelector('tbody').innerHTML = MESI_IT.map((m, i) => {
@@ -854,23 +913,15 @@ function renderBudget() {
   }).join("");
 
   const totPctRisparmio = totStipendio !== 0 ? (totEff / totStipendio) * 100 : null;
-  document.getElementById('budget-table').querySelector('tfoot').innerHTML = `
-    <tr style="font-weight:700; border-top:2px solid var(--ink);">
-      <td>TOTALE ${anno}</td>
-      <td class="num pos">${eur(totE)}</td>
-      <td class="num neg">${eur(totU)}</td>
-      <td class="num ${(totE - totU) >= 0 ? 'pos' : 'neg'}">${eur(totE - totU)}</td>
-      <td class="num">${eur(totTeor)}</td>
-      <td class="num ${totEff > totTeor ? 'pos' : 'neg'}">${eur(totEff)}</td>
-      <td class="num ${(totEff - totTeor) > 0 ? 'delta-pos' : 'delta-neg'}">${eur(totEff - totTeor)}</td>
-      <td class="num ${totPctRisparmio == null ? '' : (totPctRisparmio >= teoricoPct ? 'pos' : 'neg')}">${totPctRisparmio == null ? '&mdash;' : totPctRisparmio.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'}</td>
-    </tr>`;
+  document.getElementById('budget-table').querySelector('tfoot').innerHTML =
+    budgetRowHtml(`TOTALE ${anno}`, { totE, totU, totTeor, totEff, pctRisparmio: totPctRisparmio }, teoricoPct, { bold: true });
 
   const note = [];
   note.push(`Flusso teorico = ${teoricoPct}% dello stipendio del mese (percentuale modificabile qui sopra).`);
   note.push('Flusso effettivo = Entrate nette &minus; Uscite nette, dove Entrate nette = Entrate totali &minus; Rimborsi Lavorativi &minus; Entrate da Progetto &minus; Vendita Titoli, e Uscite nette = Uscite totali &minus; Spese Lavorative &minus; Acquisto Titoli &minus; Uscite da Progetto.');
   note.push('Il Flusso effettivo è verde quando supera il Flusso teorico, rosso quando è inferiore. Delta = Flusso effettivo &minus; Flusso teorico.');
-  note.push(`% Risparmio effettivo = Flusso effettivo / Stipendio del mese, ossia la stessa base usata per il Flusso Teorico: è quindi sempre confrontabile direttamente con la % target impostata sopra (verde se &ge; ${teoricoPct}%, rosso altrimenti). Il totale annuale è calcolato come somma dei Flussi Effettivi diviso somma degli stipendi dell'anno (media ponderata sui mesi, non media delle percentuali mensili).`);
+  note.push(`% Risparmio effettivo = Flusso effettivo / Stipendio del mese, ossia la stessa base usata per il Flusso Teorico: è quindi sempre confrontabile direttamente con la % target impostata sopra (verde se &ge; ${teoricoPct}%, rosso altrimenti). Il totale annuale (sia nel dettaglio sotto sia nella tabella "Totali per anno" in alto) è calcolato come somma dei Flussi Effettivi diviso somma degli stipendi dell'anno (media ponderata sui mesi, non media delle percentuali mensili).`);
+  note.push('Clicca su una riga della tabella "Totali per anno" in alto per aprirne il dettaglio mensile qui sotto.');
   if (!haDettaglioMensile(anno)) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Rimborsi Lavorativi, Spese Lavorative, Progetti/Spese Straordinarie, Acquisto/Vendita Titoli) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
   document.getElementById('budget-note').innerHTML = note.join(' ');
 }
