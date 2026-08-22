@@ -46714,7 +46714,7 @@
     },
     {
       "istituto": "Fineco",
-      "liquidita": 112296.94,
+      "liquidita": 129409.88,
       "portafoglioTitoli": 129485.93444,
       "deposito": 0
     }
@@ -46959,6 +46959,6 @@
     "primoAnnoDettaglio": 2015
   },
   "impostazioni": {
-    "budgetTeoricoPct": 50
+    "budgetTeoricoPct": 55
   }
 }
