@@ -132,30 +132,86 @@ const GitHubSync = (() => {
     if (!c || !c.token || !c.owner || !c.repo) return null;
     setStatus('busy', 'Lettura da GitHub…');
     const url = apiUrl(c.path || DEFAULT_PATH, c.branch);
+    let res;
     try {
-      const res = await fetchWithRetry(url, {
+      res = await fetchWithRetry(url, {
         headers: {
           'Authorization': `token ${c.token}`,
           'Accept': 'application/vnd.github+json'
-        }
+        },
+        cache: 'no-store'
       });
-      lastLoadDebug = { url, status: res.status, owner: c.owner, repo: c.repo, branch: c.branch, path: c.path };
-      if (res.status === 404) {
-        setStatus('ok', 'Nessun file dati su GitHub (verrà creato al primo salvataggio)');
+    } catch (err) {
+      // Qui SÌ è un vero problema di connessione: fetch() non ha nemmeno
+      // ottenuto una risposta dal server.
+      lastLoadDebug = { url, status: 'network-error', owner: c.owner, repo: c.repo, branch: c.branch, path: c.path, errName: err && err.name, errMessage: err && err.message };
+      setStatus('err', 'Errore di connessione a GitHub');
+      console.error(err);
+      return null;
+    }
+
+    lastLoadDebug = { url, status: res.status, owner: c.owner, repo: c.repo, branch: c.branch, path: c.path };
+    if (res.status === 404) {
+      setStatus('ok', 'Nessun file dati su GitHub (verrà creato al primo salvataggio)');
+      return null;
+    }
+    if (!res.ok) {
+      setStatus('err', `Errore GitHub (${res.status})`);
+      return null;
+    }
+
+    // Da qui in poi la richiesta è andata a buon fine: eventuali errori sono
+    // di ANALISI della risposta, non di rete, e li segnaliamo come tali.
+    let json;
+    try {
+      json = await res.json();
+    } catch (err) {
+      lastLoadDebug.status = 'parse-error';
+      lastLoadDebug.errName = err && err.name;
+      lastLoadDebug.errMessage = 'Risposta di GitHub non leggibile come JSON: ' + (err && err.message);
+      setStatus('err', 'Risposta di GitHub non valida');
+      console.error(err);
+      return null;
+    }
+
+    let rawContent = json.content;
+    if (!rawContent && json.download_url) {
+      // File troppo grande (>1MB): l'API "contents" non include il
+      // contenuto in questo caso, va scaricato a parte dal download_url.
+      try {
+        const rawRes = await fetchWithRetry(json.download_url, { cache: 'no-store' });
+        rawContent = null; // segnaliamo che va gestito come testo semplice, non base64
+        const text = await rawRes.text();
+        lastKnownSha = json.sha;
+        setStatus('ok', 'Dati caricati da GitHub');
+        return JSON.parse(text);
+      } catch (err) {
+        lastLoadDebug.status = 'parse-error';
+        lastLoadDebug.errName = err && err.name;
+        lastLoadDebug.errMessage = 'File dati troppo grande per l\'endpoint standard, e il download alternativo è fallito: ' + (err && err.message);
+        setStatus('err', 'File dati non leggibile (troppo grande?)');
+        console.error(err);
         return null;
       }
-      if (!res.ok) {
-        setStatus('err', `Errore GitHub (${res.status})`);
-        return null;
-      }
-      const json = await res.json();
-      const parsed = JSON.parse(b64DecodeUnicode(json.content));
+    }
+
+    if (!rawContent) {
+      lastLoadDebug.status = 'parse-error';
+      lastLoadDebug.errMessage = 'La risposta di GitHub non conteneva alcun contenuto file (campo "content" vuoto).';
+      setStatus('err', 'File dati vuoto o illeggibile su GitHub');
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(b64DecodeUnicode(rawContent));
       lastKnownSha = json.sha;
       setStatus('ok', 'Dati caricati da GitHub');
       return parsed;
     } catch (err) {
-      lastLoadDebug = { url, status: 'network-error', owner: c.owner, repo: c.repo, branch: c.branch, path: c.path, errName: err && err.name, errMessage: err && err.message };
-      setStatus('err', 'Errore di connessione a GitHub');
+      lastLoadDebug.status = 'parse-error';
+      lastLoadDebug.errName = err && err.name;
+      lastLoadDebug.errMessage = 'Il file data.json su GitHub non è un JSON valido (potrebbe essere corrotto o vuoto): ' + (err && err.message);
+      setStatus('err', 'File dati su GitHub non valido');
       console.error(err);
       return null;
     }

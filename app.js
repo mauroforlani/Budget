@@ -1493,8 +1493,8 @@ window.pullFromGitHub = async function () {
         return `${label}: "${v}"${suspicious ? '  ⚠ contiene caratteri non standard: [' + Array.from(v).map(c => c.charCodeAt(0).toString(16)).join(' ') + ']' : ''}`;
       };
       detail = `\n\nDettagli tecnici:\nURL interrogato: ${dbg.url}\nRisposta GitHub: ${dbg.status}\n${showChars('Branch usato', dbg.branch)}\n${showChars('Percorso usato', dbg.path)}`;
-      if (dbg.status === 'network-error') {
-        detail += `\n\nErrore esatto del browser: ${dbg.errName || '(nome sconosciuto)'}: ${dbg.errMessage || '(nessun messaggio)'}`;
+      if (dbg.errMessage) {
+        detail += `\n\nDettaglio: ${dbg.errName ? dbg.errName + ': ' : ''}${dbg.errMessage}`;
       }
     }
     alert('Non ho trovato nessun file dati su questo repository/percorso GitHub. Verifica owner, repository, branch e percorso file, oppure usa prima "Carica su GitHub" per crearlo.' + detail);
