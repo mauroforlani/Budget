@@ -175,20 +175,41 @@ const GitHubSync = (() => {
     }
 
     let rawContent = json.content;
-    if (!rawContent && json.download_url) {
+    if (!rawContent && json.sha) {
       // File troppo grande (>1MB): l'API "contents" non include il
-      // contenuto in questo caso, va scaricato a parte dal download_url.
+      // contenuto in questo caso. In passato qui si usava json.download_url
+      // (raw.githubusercontent.com): quell'endpoint passa da una CDN con
+      // cache, che dopo un commit può continuare a servire per alcuni
+      // minuti la versione PRECEDENTE del file, dando l'impressione che i
+      // dati caricati "spariscano". La Git Blobs API (api.github.com),
+      // invece, non passa mai dalla CDN e restituisce sempre l'ultimissimo
+      // commit, oltre a funzionare anche sui repository privati (qui viene
+      // comunque inviato il token, mentre download_url non lo prevedeva).
       try {
-        const rawRes = await fetchWithRetry(json.download_url, { cache: 'no-store' });
-        rawContent = null; // segnaliamo che va gestito come testo semplice, non base64
-        const text = await rawRes.text();
+        const blobRes = await fetchWithRetry(
+          `https://api.github.com/repos/${c.owner}/${c.repo}/git/blobs/${json.sha}`,
+          {
+            headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github+json' },
+            cache: 'no-store'
+          }
+        );
+        if (!blobRes.ok) {
+          lastLoadDebug.status = 'parse-error';
+          lastLoadDebug.errMessage = `Git Blobs API ha risposto ${blobRes.status} nel recupero del file grande.`;
+          setStatus('err', 'File dati non leggibile (troppo grande?)');
+          return null;
+        }
+        const blobJson = await blobRes.json();
+        // La Git Blobs API restituisce sempre base64, indipendentemente
+        // dalla dimensione del file (a differenza dell'endpoint "contents").
+        const parsed = JSON.parse(b64DecodeUnicode(blobJson.content));
         lastKnownSha = json.sha;
         setStatus('ok', 'Dati caricati da GitHub');
-        return JSON.parse(text);
+        return parsed;
       } catch (err) {
         lastLoadDebug.status = 'parse-error';
         lastLoadDebug.errName = err && err.name;
-        lastLoadDebug.errMessage = 'File dati troppo grande per l\'endpoint standard, e il download alternativo è fallito: ' + (err && err.message);
+        lastLoadDebug.errMessage = 'File dati troppo grande per l\'endpoint standard, e il download alternativo (Git Blobs API) è fallito: ' + (err && err.message);
         setStatus('err', 'File dati non leggibile (troppo grande?)');
         console.error(err);
         return null;
