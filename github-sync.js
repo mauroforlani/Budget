@@ -101,7 +101,10 @@ const GitHubSync = (() => {
       }
       return { ok: true };
     } catch (e) {
-      return { ok: false, reason: 'network' };
+      // Non etichettiamo più genericamente: portiamo il messaggio REALE del
+      // browser (es. "Failed to fetch", errori CORS, header non validi...)
+      // fino all'utente, invece di nasconderlo dietro "errore di rete".
+      return { ok: false, reason: 'network', errName: e && e.name, errMessage: e && e.message };
     }
   }
 
@@ -116,7 +119,7 @@ const GitHubSync = (() => {
       case 'branch_not_found':
         return `Il branch "${c.branch}" non esiste in questo repository. Controlla che sia scritto esattamente come su GitHub (attenzione alle maiuscole: "Main" e "main" sono branch diversi).`;
       case 'network':
-        return 'Errore di connessione a GitHub. Controlla la connessione a internet e riprova.';
+        return `Errore nella richiesta verso GitHub.\n\nMessaggio esatto del browser: ${result.errName || '?'}: ${result.errMessage || '(nessun dettaglio)'}\n\nQuesto di solito indica un problema nel token (caratteri non validi, o incollato con un prefisso tipo "token " o "Bearer " già incluso) oppure un blocco della richiesta da parte di un'estensione del browser (ad-blocker, VPN, antivirus con "scansione HTTPS"). Prova a rigenerare il token su GitHub e incollarlo di nuovo, oppure prova in una finestra di navigazione in incognito/anonima senza estensioni attive.`;
       default:
         return `Errore GitHub imprevisto (${result.status || '??'}). Riprova tra poco.`;
     }
@@ -151,7 +154,7 @@ const GitHubSync = (() => {
       setStatus('ok', 'Dati caricati da GitHub');
       return parsed;
     } catch (err) {
-      lastLoadDebug = { url, status: 'network-error', owner: c.owner, repo: c.repo, branch: c.branch, path: c.path };
+      lastLoadDebug = { url, status: 'network-error', owner: c.owner, repo: c.repo, branch: c.branch, path: c.path, errName: err && err.name, errMessage: err && err.message };
       setStatus('err', 'Errore di connessione a GitHub');
       console.error(err);
       return null;
@@ -239,6 +242,14 @@ const GitHubSync = (() => {
       #gh-upload:hover { background: #276841; }
       #gh-download { background: #2f5f9e; border-color: #244a7c; }
       #gh-download:hover { background: #274f85; }
+      .gh-file-zone { margin-top: 18px; border-top: 1px solid rgba(150,150,150,0.25); padding-top: 12px; }
+      .gh-file-title { margin: 0 0 6px 0; font-size: 13px; font-weight: 700; }
+      .gh-file-steps { margin: 6px 0 12px 0; padding-left: 20px; font-size: 12.5px; line-height: 1.5; }
+      .gh-file-steps li { margin-bottom: 4px; }
+      #gh-file-download { background: #6b5a2f; border-color: #52451f; }
+      #gh-file-download:hover { background: #5a4b27; }
+      #gh-file-upload-btn { background: #5a3f8a; border-color: #43306a; }
+      #gh-file-upload-btn:hover { background: #4c3574; }
     `;
     document.head.appendChild(style);
   }
@@ -275,6 +286,7 @@ const GitHubSync = (() => {
           <input type="text" id="gh-path" placeholder="data.json" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
           <label>Personal Access Token (repo scope)</label>
           <input type="password" id="gh-token" placeholder="ghp_..." autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
+          <div id="gh-token-preview" class="hint" style="margin-top:-8px; font-family:'IBM Plex Mono',monospace;"></div>
           <div class="modal-actions modal-actions-sync">
             <button class="primary" id="gh-upload" type="button">&#8593; Carica su GitHub</button>
             <button class="primary" id="gh-download" type="button">&#8595; Scarica da GitHub</button>
@@ -284,6 +296,22 @@ const GitHubSync = (() => {
             <button class="ghost" id="gh-cancel" type="button">Chiudi</button>
           </div>
           <div class="modal-note">Il token deve avere permesso di scrittura sul repository (scope <b>repo</b> per repository privati, oppure <b>public_repo</b> per repository pubblici). Puoi generarne uno da GitHub → Settings → Developer settings → Personal access tokens.<br><br>Le modifiche fatte in questa pagina vengono comunque anche salvate automaticamente in background pochi istanti dopo ogni modifica (transazioni, importazioni, patrimonio, ecc.) — i due pulsanti servono per un salvataggio/caricamento immediato ed esplicito, utile prima di chiudere la pagina o quando passi a un altro dispositivo.</div>
+
+          <div class="gh-file-zone">
+            <h4 class="gh-file-title">Problemi di rete su mobile? Usa il metodo con file</h4>
+            <p class="hint">Questo metodo non usa mai la rete verso GitHub: scarichi un file, lo carichi tu su GitHub dal sito (funziona sempre, su qualunque telefono), e per aggiornare un altro dispositivo scarichi di nuovo quel file da GitHub e lo ricarichi qui.</p>
+            <ol class="gh-file-steps">
+              <li>Premi <b>"Scarica file dati"</b>: il browser salva un file <code>data.json</code>.</li>
+              <li>Vai su github.com, apri il tuo repository, trascina/carica quel file (sostituendo quello esistente) e conferma il commit — dalla pagina web di GitHub, non da qui.</li>
+              <li>Su un altro dispositivo: apri lo stesso file su github.com, scaricalo, poi qui premi <b>"Carica file dati"</b> e selezionalo.</li>
+            </ol>
+            <div class="modal-actions modal-actions-sync">
+              <button class="primary" id="gh-file-download" type="button">&#8595; Scarica file dati</button>
+              <button class="primary" id="gh-file-upload-btn" type="button">&#8593; Carica file dati</button>
+              <input type="file" id="gh-file-input" accept=".json,application/json" style="display:none;">
+            </div>
+            <div id="file-sync-status" class="hint" style="min-height:1.2em;"></div>
+          </div>
         </div>`;
       document.body.appendChild(backdrop);
       document.getElementById('gh-cancel').addEventListener('click', closeModal);
@@ -293,6 +321,35 @@ const GitHubSync = (() => {
         setStatus('', 'GitHub non collegato — clicca per collegare');
         closeModal();
       });
+
+      document.getElementById('gh-file-download').addEventListener('click', () => {
+        if (typeof window.downloadDataFile === 'function') window.downloadDataFile();
+        const statusEl = document.getElementById('file-sync-status');
+        if (statusEl) statusEl.textContent = '✓ File scaricato. Ora caricalo su github.com.';
+      });
+      document.getElementById('gh-file-upload-btn').addEventListener('click', () => {
+        document.getElementById('gh-file-input').click();
+      });
+      document.getElementById('gh-file-input').addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file && typeof window.loadDataFile === 'function') window.loadDataFile(file);
+        e.target.value = '';
+      });
+
+      const tokenInput = document.getElementById('gh-token');
+      const tokenPreview = document.getElementById('gh-token-preview');
+      function updateTokenPreview() {
+        const raw = tokenInput.value;
+        if (!raw) { tokenPreview.textContent = ''; return; }
+        const clean = raw
+          .replace(/[\u0000-\u001F\u007F\u200B-\u200D\uFEFF]/g, '')
+          .replace(/\s+/g, '')
+          .replace(/^(token|bearer)/i, '');
+        const hadJunk = clean !== raw;
+        tokenPreview.textContent = `${clean.length} caratteri, termina con "...${clean.slice(-4)}"${hadJunk ? '  ⚠ conteneva spazi/prefisso rimossi automaticamente' : ''}`;
+      }
+      tokenInput.addEventListener('input', updateTokenPreview);
+      tokenInput.addEventListener('change', updateTokenPreview);
       function sanitizeField(v) {
         // Alcune tastiere mobili sostituiscono trattini/virgolette "dritte"
         // con le varianti tipografiche anche con autocorrect disattivato:
@@ -303,13 +360,25 @@ const GitHubSync = (() => {
           .replace(/[\u2018\u2019\u201B]/g, "'")     // apici tipografici -> "'"
           .replace(/[\u201C\u201D\u201F]/g, '"');    // virgolette tipografiche -> '"'
       }
+      function sanitizeToken(v) {
+        // Rimuove: caratteri di controllo/invisibili incollati per errore
+        // (a-capo, tab, zero-width space...), TUTTI gli spazi (un token
+        // GitHub non ne contiene mai), e un eventuale prefisso "token "/
+        // "Bearer " se l'utente lo ha incollato per errore insieme al token
+        // (es. copiato da un esempio "Authorization: token ghp_xxx").
+        let t = (v || '')
+          .replace(/[\u0000-\u001F\u007F\u200B-\u200D\uFEFF]/g, '') // caratteri di controllo/invisibili
+          .replace(/\s+/g, '');                                     // qualunque spazio/a-capo
+        t = t.replace(/^(token|bearer)/i, '');
+        return t;
+      }
       function readCfgFromForm() {
         return {
           owner: sanitizeField(document.getElementById('gh-owner').value.trim()),
           repo: sanitizeField(document.getElementById('gh-repo').value.trim()),
           branch: sanitizeField(document.getElementById('gh-branch').value.trim()) || 'main',
           path: sanitizeField(document.getElementById('gh-path').value.trim()) || DEFAULT_PATH,
-          token: document.getElementById('gh-token').value.trim()
+          token: sanitizeToken(document.getElementById('gh-token').value)
         };
       }
 
@@ -370,6 +439,10 @@ const GitHubSync = (() => {
     document.getElementById('gh-path').value = c.path || DEFAULT_PATH;
     document.getElementById('gh-token').value = c.token || '';
     document.getElementById('gh-modal').classList.add('open');
+    const previewEl = document.getElementById('gh-token-preview');
+    if (previewEl) {
+      previewEl.textContent = c.token ? `${c.token.length} caratteri, termina con "...${c.token.slice(-4)}"` : '';
+    }
   }
   function closeModal() {
     document.getElementById('gh-modal').classList.remove('open');
