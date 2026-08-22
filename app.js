@@ -824,19 +824,23 @@ function renderBudget() {
   document.getElementById('budget-teorico-pct').value = teoricoPct;
   document.getElementById('budget-title').textContent = `Budget mensile ${anno}`;
 
-  let totE = 0, totU = 0, totTeor = 0, totEff = 0, totEntrateBase = 0;
+  let totE = 0, totU = 0, totTeor = 0, totEff = 0, totStipendio = 0;
   document.getElementById('budget-table').querySelector('tbody').innerHTML = MESI_IT.map((m, i) => {
     const eRaw = DATA.flussi[anno].entrate[i], uRaw = DATA.flussi[anno].uscite[i];
     const noData = (eRaw === 0 && uRaw === 0);
     const e = annoAdjEntrateMese(anno, i, escludiTitoli, escludiProgetti);
     const u = annoAdjUsciteMese(anno, i, escludiTitoli, escludiProgetti);
     const saldo = e - u;
-    const teorico = (teoricoPct / 100) * stipendioMese(anno, i);
-    const entrateBase = entrateBaseEffettivo(anno, i);
-    const effettivo = entrateBase - usciteBaseEffettivo(anno, i);
+    const stipendio = stipendioMese(anno, i);
+    const teorico = (teoricoPct / 100) * stipendio;
+    const effettivo = entrateBaseEffettivo(anno, i) - usciteBaseEffettivo(anno, i);
     const delta = effettivo - teorico;
-    const pctRisparmio = entrateBase !== 0 ? (effettivo / entrateBase) * 100 : null;
-    totE += e; totU += u; totTeor += teorico; totEff += effettivo; totEntrateBase += entrateBase;
+    // Stessa base dello Stipendio usata per il Flusso Teorico, così la %
+    // è sempre direttamente comparabile con la % target impostata sopra:
+    // se il Flusso Effettivo supera il Flusso Teorico in euro, la %
+    // risulta automaticamente >= alla % target (e viceversa).
+    const pctRisparmio = stipendio !== 0 ? (effettivo / stipendio) * 100 : null;
+    totE += e; totU += u; totTeor += teorico; totEff += effettivo; totStipendio += stipendio;
     return `<tr>
       <td>${m}${noData ? ' <span class="tag">nessun dato</span>' : ''}</td>
       <td class="num pos">${eur(e)}</td>
@@ -845,11 +849,11 @@ function renderBudget() {
       <td class="num">${eur(teorico)}</td>
       <td class="num ${effettivo > teorico ? 'pos' : 'neg'}">${eur(effettivo)}</td>
       <td class="num ${delta > 0 ? 'delta-pos' : 'delta-neg'}">${eur(delta)}</td>
-      <td class="num ${pctRisparmio == null ? '' : (pctRisparmio >= 0 ? 'pos' : 'neg')}">${pctRisparmio == null ? '&mdash;' : pctRisparmio.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'}</td>
+      <td class="num ${pctRisparmio == null ? '' : (pctRisparmio >= teoricoPct ? 'pos' : 'neg')}">${pctRisparmio == null ? '&mdash;' : pctRisparmio.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'}</td>
     </tr>`;
   }).join("");
 
-  const totPctRisparmio = totEntrateBase !== 0 ? (totEff / totEntrateBase) * 100 : null;
+  const totPctRisparmio = totStipendio !== 0 ? (totEff / totStipendio) * 100 : null;
   document.getElementById('budget-table').querySelector('tfoot').innerHTML = `
     <tr style="font-weight:700; border-top:2px solid var(--ink);">
       <td>TOTALE ${anno}</td>
@@ -859,14 +863,14 @@ function renderBudget() {
       <td class="num">${eur(totTeor)}</td>
       <td class="num ${totEff > totTeor ? 'pos' : 'neg'}">${eur(totEff)}</td>
       <td class="num ${(totEff - totTeor) > 0 ? 'delta-pos' : 'delta-neg'}">${eur(totEff - totTeor)}</td>
-      <td class="num ${totPctRisparmio == null ? '' : (totPctRisparmio >= 0 ? 'pos' : 'neg')}">${totPctRisparmio == null ? '&mdash;' : totPctRisparmio.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'}</td>
+      <td class="num ${totPctRisparmio == null ? '' : (totPctRisparmio >= teoricoPct ? 'pos' : 'neg')}">${totPctRisparmio == null ? '&mdash;' : totPctRisparmio.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'}</td>
     </tr>`;
 
   const note = [];
   note.push(`Flusso teorico = ${teoricoPct}% dello stipendio del mese (percentuale modificabile qui sopra).`);
   note.push('Flusso effettivo = Entrate nette &minus; Uscite nette, dove Entrate nette = Entrate totali &minus; Rimborsi Lavorativi &minus; Entrate da Progetto &minus; Vendita Titoli, e Uscite nette = Uscite totali &minus; Spese Lavorative &minus; Acquisto Titoli &minus; Uscite da Progetto.');
   note.push('Il Flusso effettivo è verde quando supera il Flusso teorico, rosso quando è inferiore. Delta = Flusso effettivo &minus; Flusso teorico.');
-  note.push('% Risparmio effettivo = Flusso effettivo / Entrate nette, ossia la quota di entrate nette non spesa nel mese (o nell\'anno, per il totale).');
+  note.push(`% Risparmio effettivo = Flusso effettivo / Stipendio del mese, ossia la stessa base usata per il Flusso Teorico: è quindi sempre confrontabile direttamente con la % target impostata sopra (verde se &ge; ${teoricoPct}%, rosso altrimenti). Il totale annuale è calcolato come somma dei Flussi Effettivi diviso somma degli stipendi dell'anno (media ponderata sui mesi, non media delle percentuali mensili).`);
   if (!haDettaglioMensile(anno)) note.push(`Per l'anno ${anno} non sono disponibili transazioni mensili dettagliate: stipendio e categorie escluse dal calcolo (Rimborsi Lavorativi, Spese Lavorative, Progetti/Spese Straordinarie, Acquisto/Vendita Titoli) sono stimati distribuendo il totale annuale in parti uguali sui 12 mesi.`);
   document.getElementById('budget-note').innerHTML = note.join(' ');
 }
