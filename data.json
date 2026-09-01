@@ -353,7 +353,7 @@
         9213.22,
         10983.160000000007,
         23169.539999999986,
-        30105.760000000002,
+        30442.81000000001,
         0,
         0,
         0,
@@ -656,7 +656,7 @@
       "2023": 196395.59999999998,
       "2024": 70281.38999999998,
       "2025": 55272.01,
-      "2026": 120266.57999999999
+      "2026": 120603.62999999999
     },
     "Prelievi": {
       "2015": 4140,
@@ -684,7 +684,7 @@
       "2023": 1060.3200000000004,
       "2024": 1076.51,
       "2025": 1106.1200000000001,
-      "2026": 1235.6499999999999
+      "2026": 1369.71
     },
     "Serate": {
       "2015": 228.34999999999994,
@@ -726,7 +726,7 @@
       "2023": 2751.55,
       "2024": 1330.68,
       "2025": 1331.77,
-      "2026": 843.2299999999999
+      "2026": 845.7299999999999
     },
     "Pranzi/Cene": {
       "2015": 1220.6599999999999,
@@ -740,7 +740,7 @@
       "2023": 2705.990000000001,
       "2024": 4334.099999999998,
       "2025": 3624.4700000000007,
-      "2026": 2045.8799999999999
+      "2026": 2107.669999999999
     },
     "Casa": {
       "2015": 35746.21000000001,
@@ -894,7 +894,7 @@
       "2023": 1190.21,
       "2024": 1398.3600000000001,
       "2025": 1362.28,
-      "2026": 1532.6100000000001
+      "2026": 1671.3100000000006
     },
     "Casa - Internet": {
       "2015": 0,
@@ -47845,6 +47845,168 @@
       "desc": "ADDEBITO FASTWEB 2026-M026569952 SDD 12183875",
       "importo": -33.95,
       "cat": "Casa - Internet"
+    },
+    {
+      "data": "2026-08-30",
+      "desc": "Carta di credito",
+      "importo": -12.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-30",
+      "desc": "Carta di credito",
+      "importo": -10.3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-30",
+      "desc": "Carta di credito",
+      "importo": -5.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-28",
+      "desc": "BAR PRIMO FRATELLI GRICORTE BRUGNAT",
+      "importo": -1.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-28",
+      "desc": "ASPIT PIACENZA SUD   -MILANO SUD",
+      "importo": -5.4,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-08-28",
+      "desc": "ASPIT MILANO OVEST   -RECCO",
+      "importo": -13.3,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-08-28",
+      "desc": "SumUp  *LA NUOVA PERLARECCO",
+      "importo": -2.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-28",
+      "desc": "TAMOIL 3668GOSSOLENGO",
+      "importo": -16.31,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-08-28",
+      "desc": "STATALE 45PIACENZA",
+      "importo": -4.7,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-28",
+      "desc": "PANIFICIO TOSSINIRECCO",
+      "importo": -9.47,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-27",
+      "desc": "SATAP - SATAPTORINO",
+      "importo": -37.9,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-08-27",
+      "desc": "A5SAV - SAVCHATILLON",
+      "importo": -37.9,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-08-27",
+      "desc": "Carta di credito",
+      "importo": -18.28,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-08-27",
+      "desc": "AUTOGRILL 0064SETTIMO ROTTA",
+      "importo": -2.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-26",
+      "desc": "ASPIT DIREZ. USCITA  -COMO-GRANDATE",
+      "importo": -2.5,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-08-26",
+      "desc": "SS Stalvedro Easy StopAirolo",
+      "importo": -18.71,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-08-26",
+      "desc": "Area City Quinto SAPiotta",
+      "importo": -8.22,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-26",
+      "desc": "Trimar SaglCastione",
+      "importo": -10.96,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-08-26",
+      "desc": "ASPIT DIREZ.ENTRATA  -COMO-GRANDATE",
+      "importo": -2.5,
+      "cat": "Altro"
+    },
+    {
+      "data": "2026-08-26",
+      "desc": "BP Coldrerio NSColdrerio",
+      "importo": -20.73,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-08-26",
+      "desc": "ASPIT DIREZ. USCITA  -MILANO NORD",
+      "importo": -1.9,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-08-26",
+      "desc": "ASPIT DIREZ.ENTRATA  -MILANO NORD",
+      "importo": -1.9,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-08-25",
+      "desc": "Vega - GalvaniMILANO",
+      "importo": -17.65,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-08-25",
+      "desc": "SATAP - SATAPTORINO",
+      "importo": -37.9,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-08-25",
+      "desc": "NUOVA SIDAP SRL 9184 OCHATILLON",
+      "importo": -13.89,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-08-25",
+      "desc": "46041 CHATILLONCHATILLON",
+      "importo": -17.53,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-08-25",
+      "desc": "SumUp  *MIAGE DI CRISTCOURMAYEUR",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
     }
   ],
   "patrimonio": [
