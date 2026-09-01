@@ -352,8 +352,8 @@
         12243.489999999998,
         9213.22,
         10983.160000000007,
-        22936.04999999998,
-        0,
+        23169.539999999986,
+        4061.580000000001,
         0,
         0,
         0,
@@ -642,7 +642,7 @@
       "2023": 196395.59999999998,
       "2024": 70281.38999999998,
       "2025": 55272.01,
-      "2026": 89927.32999999999
+      "2026": 94222.39999999998
     },
     "Prelievi": {
       "2015": 4140,
@@ -656,7 +656,7 @@
       "2023": 1420,
       "2024": 3570.04,
       "2025": 2970,
-      "2026": 1950
+      "2026": 2083.07
     },
     "Rifornimento": {
       "2015": 2486.58,
@@ -670,7 +670,7 @@
       "2023": 1060.3200000000004,
       "2024": 1076.51,
       "2025": 1106.1200000000001,
-      "2026": 1186.6
+      "2026": 1235.6499999999999
     },
     "Serate": {
       "2015": 228.34999999999994,
@@ -726,7 +726,7 @@
       "2023": 2705.990000000001,
       "2024": 4334.099999999998,
       "2025": 3624.4700000000007,
-      "2026": 1933.1799999999998
+      "2026": 2045.8799999999999
     },
     "Casa": {
       "2015": 35746.21000000001,
@@ -754,7 +754,7 @@
       "2023": 6110.309999999996,
       "2024": 4060.2499999999977,
       "2025": 6151.4199999999955,
-      "2026": 2350.0599999999995
+      "2026": 2373.039999999999
     },
     "Acquisto Titoli": {
       "2015": 8861.31,
@@ -810,7 +810,7 @@
       "2023": 11953.030000000002,
       "2024": 11220.089999999995,
       "2025": 8013.6399999999985,
-      "2026": 7312.699999999999
+      "2026": 9654.629999999997
     },
     "Macchina/Moto": {
       "2015": 1379.22,
@@ -824,7 +824,7 @@
       "2023": 1441.7,
       "2024": 806.36,
       "2025": 1271.26,
-      "2026": 1131.85
+      "2026": 1141.85
     },
     "Enjoy": {
       "2015": 0,
@@ -852,7 +852,7 @@
       "2023": 4570.6900000000005,
       "2024": 5476.840000000001,
       "2025": 3655.87,
-      "2026": 1516.52
+      "2026": 3088.5099999999998
     },
     "Casa - Spesa": {
       "2015": 0,
@@ -866,7 +866,7 @@
       "2023": 637.2799999999999,
       "2024": 578.13,
       "2025": 267.33999999999986,
-      "2026": 524.5200000000001
+      "2026": 577.87
     },
     "Telepass": {
       "2015": 0,
@@ -47279,6 +47279,450 @@
       "desc": "ACCONTI/SALDI SOGGIORN VALTOURNENCHE IT",
       "importo": 175,
       "cat": "Hotel"
+    },
+    {
+      "data": "2026-08-26",
+      "desc": "RIFUGIO BENEVOLO RHEMES-NOTRE- IT",
+      "importo": -2.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-25",
+      "desc": "COMMISSIONI ANTICIPO CONTANTI",
+      "importo": -2.9,
+      "cat": "Prelievi"
+    },
+    {
+      "data": "2026-08-25",
+      "desc": "VIA SAN GOTTARDO 26 ARBEDO CH",
+      "importo": -130.17,
+      "cat": "Prelievi"
+    },
+    {
+      "data": "2026-08-23",
+      "desc": "GUSTO PIZZA DI ACUNTO SAN MICHELE A IT",
+      "importo": -14,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-23",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -6,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-08-22",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -4.79,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-08-22",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -2.9,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-08-21",
+      "desc": "BKG*HOTEL AT BOOKING.C (888)850-3958 IE",
+      "importo": -216,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-08-21",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -2.8,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-08-21",
+      "desc": "HTTPS: STABILIMENTI.B HTTPS://STABI IT",
+      "importo": -28,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-21",
+      "desc": "GLHCARSRENTAL.FO GOTUGJOGV FO",
+      "importo": -312.92,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-20",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -4.6,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-08-19",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -3.1,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-08-18",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -4.6,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-08-18",
+      "desc": "HTTPS: STABILIMENTI.B HTTPS://STABI IT",
+      "importo": -28,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-17",
+      "desc": "MAXI FAMILY SAN MICHELE A IT",
+      "importo": -2.8,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-08-17",
+      "desc": "HTTPS: STABILIMENTI.B HTTPS://STABI IT",
+      "importo": -28,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-16",
+      "desc": "OUTLET CARBURANTI S.R. MILANO IT",
+      "importo": -18.2,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-08-16",
+      "desc": "HTTPS: STABILIMENTI.B HTTPS://STABI IT",
+      "importo": -28,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-16",
+      "desc": "Hotel at Booking.com Amsterdam NL",
+      "importo": -773.87,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-08-15",
+      "desc": "Atlantsolia Stapabraut Reykjanesber IS",
+      "importo": -50.03,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-14",
+      "desc": "Parka Geysir Reykjavik IS",
+      "importo": -7.77,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-14",
+      "desc": "Islandshestar ehf. Kjolur IS",
+      "importo": -5.03,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-13",
+      "desc": "STR*Parka Reykjavik IS",
+      "importo": -10.77,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-13",
+      "desc": "Olis Hrauneyjar sjalfs HELLA IS",
+      "importo": -60.43,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-13",
+      "desc": "N1 Fludum sjalfsal Fludum IS",
+      "importo": -31.22,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-13",
+      "desc": "OLIS SELFOSS SELFOSS IS",
+      "importo": -5.66,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-13",
+      "desc": "BONUS SELFOSS SELFOSS IS",
+      "importo": -22.11,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-11",
+      "desc": "InsideTheVolcano Gardabaer IS",
+      "importo": -718.2,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-11",
+      "desc": "STR*Parka Reykjavik IS",
+      "importo": -10.76,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-11",
+      "desc": "Icelaundry ehf 650 9 Rofabr IS",
+      "importo": -7.89,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-10",
+      "desc": "MAGN STREYMIN OYRARBAKKI DK",
+      "importo": -57.39,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-10",
+      "desc": "MIKLAGARDUR TORSHAVN DK",
+      "importo": -7.13,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-10",
+      "desc": "MAGN MIDVAG POS MIDVAGUR DK",
+      "importo": -6.96,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-10",
+      "desc": "DUVUGARAR SAKSUN FO",
+      "importo": -40.82,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-09",
+      "desc": "SP/F ZORVA SOERVAGUR DK",
+      "importo": -31.03,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-09",
+      "desc": "KIRKJUBOARGARUR KIRKJUBOUR FO",
+      "importo": -40.82,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-08",
+      "desc": "ANGUS & MUNGO T T RSHAVN DK",
+      "importo": -54.7,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-08",
+      "desc": "KAFFIH SI T RSHAVN DK",
+      "importo": -4.76,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-07",
+      "desc": "MAGN STREYMIN OYRARBAKKI DK",
+      "importo": -55.42,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-07",
+      "desc": "MAGN STREYMIN OYRARBAKKI DK",
+      "importo": -8.17,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-06",
+      "desc": "SP/F ZORVA SOERVAGUR DK",
+      "importo": -46.8,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-05",
+      "desc": "EFFO LEIRVIK LEIRVIK DK",
+      "importo": -53.13,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-05",
+      "desc": "VISIT KALLUR DK-798 TRA.LL DK",
+      "importo": -54.43,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-05",
+      "desc": "LANDLEIOIN FO-800 TVA.RO DK",
+      "importo": -13.61,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-04",
+      "desc": "MAGN MIDVAG POS MIDVAGUR DK",
+      "importo": -9.39,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-04",
+      "desc": "COMMISSIONE ANTICIPO CONTANTE (ESTERO)",
+      "importo": -2.9,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-04",
+      "desc": "ATM BANKNORDIK 7282 MIOVAGUR FO",
+      "importo": -81.63,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-04",
+      "desc": "RITUBERG SP/F MI V GUR DK",
+      "importo": -54.42,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-03",
+      "desc": "Booking.com Hotel Amsterdam NL",
+      "importo": -582.12,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-08-03",
+      "desc": "FAST KOLLAFJOROUR KOLLAFJOERDUR DK",
+      "importo": -51.45,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-03",
+      "desc": "GJAARGAROUR GJOGV DK",
+      "importo": -2.73,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-03",
+      "desc": "BOOKING.SSL.FO TVOEROYRI DK",
+      "importo": -28.72,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-03",
+      "desc": "SP/F ZORVA SOERVAGUR DK",
+      "importo": -46.82,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-03",
+      "desc": "MARJUN WOLLES EIDI FO",
+      "importo": -17.7,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-02",
+      "desc": "FAST KOLLAFJOROUR KOLLAFJOERDUR DK",
+      "importo": -2.58,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-02",
+      "desc": "FAST KOLLAFJOROUR KOLLAFJOERDUR DK",
+      "importo": -10.61,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-01",
+      "desc": "A SOERVAGUR TORSHAVN DK",
+      "importo": -12.36,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-01",
+      "desc": "COMMISSIONE ANTICIPO CONTANTE (ESTERO)",
+      "importo": -2.9,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-08-01",
+      "desc": "ATM BETRI BANKI 7266 MIDVGUR FO",
+      "importo": -136.06,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-31",
+      "desc": "Kindle Svcs*L61SG87Q5 353-12477631 LU",
+      "importo": -12.99,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-07-31",
+      "desc": "Kindle Svcs*XH7S97YN5 353-12477631 LU",
+      "importo": -9.99,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-07-31",
+      "desc": "B666 CPH Carlsberg Spo Kastrup DK",
+      "importo": -51.7,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-07-31",
+      "desc": "APT MALPENSA MILANO IT",
+      "importo": -2.9,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-31",
+      "desc": "APT MALPENSA FERNO IT",
+      "importo": -17.6,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-30",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-07-30",
+      "desc": "STAZI SERIATE - TANG.MILANO E IT",
+      "importo": -6.3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-30",
+      "desc": "SALVETTI FORNERIA PAST MALONNO IT",
+      "importo": -5.7,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-30",
+      "desc": "ENERGY S.R.L. ALBINO IT",
+      "importo": -2.4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-30",
+      "desc": "COLLI AREA SRL MORBEGNO IT",
+      "importo": -1.8,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-07-30",
+      "desc": "ENERGY SELF ALBINO ALBINO IT",
+      "importo": -16.31,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-30",
+      "desc": "PV ENI - 02760 BORMIO IT",
+      "importo": -14.54,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-07-29",
+      "desc": "AUTOLAVAGGIO F.LLI DIG SEGRATE IT",
+      "importo": -10,
+      "cat": "Macchina/Moto"
+    },
+    {
+      "data": "2026-07-29",
+      "desc": "HABANERO CERNUSCO SUL IT",
+      "importo": -80,
+      "cat": "Pranzi/Cene"
     }
   ],
   "patrimonio": [
@@ -47508,10 +47952,10 @@
       "Aprile",
       "Maggio",
       "Giugno",
-      "Luglio"
+      "Luglio",
+      "Agosto"
     ],
     "mesiSenzaDati2026": [
-      "Agosto",
       "Settembre",
       "Ottobre",
       "Novembre",
