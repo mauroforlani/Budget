@@ -48516,9 +48516,123 @@
         "pzoChiusura": 5.1482,
         "valuta": "EUR",
         "pnl": 19.65
+      },
+      {
+        "data": "2018-01-22",
+        "desc": "YOOX NET",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 175,
+        "pzoApertura": 33.2430285,
+        "pzoChiusura": 37.5085714,
+        "valuta": "EUR",
+        "pnl": 746.47
+      },
+      {
+        "data": "2018-01-23",
+        "desc": "AMAZON.COM",
+        "simbolo": "1AMZN",
+        "mercato": "AFTER HOURS",
+        "qta": 3,
+        "pzoApertura": 1064.0166666,
+        "pzoChiusura": 1093.9166666,
+        "valuta": "EUR",
+        "pnl": 89.7
+      },
+      {
+        "data": "2018-05-17",
+        "desc": "PIRELLI & C.",
+        "simbolo": "PIRC",
+        "mercato": "ITALIA",
+        "qta": 500,
+        "pzoApertura": 7.2257,
+        "pzoChiusura": 7.53166,
+        "valuta": "EUR",
+        "pnl": 152.98
+      },
+      {
+        "data": "2018-02-16",
+        "desc": "PIRELLI & C.",
+        "simbolo": "PIRC",
+        "mercato": "Internalizzata Fineco",
+        "qta": 600,
+        "pzoApertura": 7.4140666,
+        "pzoChiusura": 7.6055166,
+        "valuta": "EUR",
+        "pnl": 114.87
+      },
+      {
+        "data": "2018-03-20",
+        "desc": "BTP-1MZ47 2,7%",
+        "simbolo": "JADWKW",
+        "mercato": "MOT",
+        "qta": 10000,
+        "pzoApertura": 95.3250348,
+        "pzoChiusura": 96.9896272,
+        "valuta": "EUR",
+        "pnl": 166.46
+      },
+      {
+        "data": "2018-03-16",
+        "desc": "ENI",
+        "simbolo": "ENI",
+        "mercato": "ITALIA",
+        "qta": 350,
+        "pzoApertura": 13.6178285,
+        "pzoChiusura": 14.0352857,
+        "valuta": "EUR",
+        "pnl": 146.11
+      },
+      {
+        "data": "2018-03-09",
+        "desc": "ATLANTIA",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 33,
+        "pzoApertura": 27.2216428,
+        "pzoChiusura": 27.9066666,
+        "valuta": "EUR",
+        "pnl": 22.61
+      },
+      {
+        "data": "2018-03-09",
+        "desc": "ATLANTIA",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 107,
+        "pzoApertura": 27.2216428,
+        "pzoChiusura": 27.9069158,
+        "valuta": "EUR",
+        "pnl": 73.32
+      },
+      {
+        "data": "2018-03-20",
+        "desc": "BTP-1MZ67 2,8%",
+        "simbolo": "521739",
+        "mercato": "MOT",
+        "qta": 10000,
+        "pzoApertura": 90.4927644,
+        "pzoChiusura": 92.3793209,
+        "valuta": "EUR",
+        "pnl": 188.66
+      },
+      {
+        "data": "2018-04-17",
+        "desc": "TERNA",
+        "simbolo": "TRN",
+        "mercato": "Internalizzata Fineco",
+        "qta": 800,
+        "pzoApertura": 4.6888875,
+        "pzoChiusura": 4.8108375,
+        "valuta": "EUR",
+        "pnl": 97.56
       }
     ],
     "importedFiles": [
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-09-07"
+      },
       {
         "name": "profitloss-export.xls",
         "importedOn": "2026-09-07"
