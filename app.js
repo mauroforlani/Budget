@@ -46,6 +46,10 @@ function migrateCategoryNames(data) {
   if (typeof data.impostazioni.budgetTeoricoPct !== 'number' || isNaN(data.impostazioni.budgetTeoricoPct)) {
     data.impostazioni.budgetTeoricoPct = 50; // % storica di default (invariata rispetto al comportamento precedente)
   }
+  if (!data.profitLoss || !Array.isArray(data.profitLoss.trades)) {
+    data.profitLoss = { trades: [], importedFiles: [] };
+  }
+  if (!Array.isArray(data.profitLoss.importedFiles)) data.profitLoss.importedFiles = [];
   return data;
 }
 
@@ -1313,6 +1317,198 @@ async function handlePortafoglioFile(file) {
   }
 }
 
+/* ---------------- PROFIT & LOSS ----------------
+   Riconosce il foglio "Dettagli" dell'export "Dettaglio P&L" di Fineco, con
+   colonne: Descrizione, Simbolo, Data operazione, Segno, P.zo medio apertura,
+   P.zo medio chiusura, Mercato, Quantità (talvolta scritta "Quantittà" nel
+   file sorgente), Valuta, P&L. Ogni riga è una singola chiusura di posizione
+   (anche parziale), quindi lo stesso titolo può comparire più volte. */
+function parseProfitLossDettagli(rows) {
+  let hIdx = -1;
+  for (let i = 0; i < rows.length; i++) {
+    const row = (rows[i] || []).map(v => (v == null ? '' : String(v)).trim());
+    if (row.includes('Descrizione') && row.includes('Data operazione') && row.includes('P&L')) { hIdx = i; break; }
+  }
+  if (hIdx < 0) return null;
+  const header = rows[hIdx];
+  const cols = {
+    desc: trovaColonna(header, ['Descrizione']),
+    simbolo: trovaColonna(header, ['Simbolo']),
+    data: trovaColonna(header, ['Data operazione']),
+    mercato: trovaColonna(header, ['Mercato']),
+    qta: trovaColonna(header, ['Quantittà', 'Quantità']),
+    pzoApertura: trovaColonna(header, ['P.zo medio apertura']),
+    pzoChiusura: trovaColonna(header, ['P.zo medio chiusura']),
+    valuta: trovaColonna(header, ['Valuta']),
+    pnl: trovaColonna(header, ['P&L']),
+  };
+  if (cols.desc < 0 || cols.data < 0 || cols.pnl < 0) return null;
+
+  const out = [];
+  for (let r = hIdx + 1; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row || row[cols.desc] == null || String(row[cols.desc]).trim() === '') continue;
+    const dataISO = excelDateToISO(row[cols.data]);
+    const pnl = numOrNull(row[cols.pnl]);
+    if (!dataISO || pnl == null) continue;
+    out.push({
+      data: dataISO,
+      desc: String(row[cols.desc]).trim(),
+      simbolo: cols.simbolo >= 0 ? String(row[cols.simbolo] || '').trim() : '',
+      mercato: cols.mercato >= 0 ? String(row[cols.mercato] || '').trim() : '',
+      qta: cols.qta >= 0 ? (numOrNull(row[cols.qta]) || 0) : 0,
+      pzoApertura: cols.pzoApertura >= 0 ? numOrNull(row[cols.pzoApertura]) : null,
+      pzoChiusura: cols.pzoChiusura >= 0 ? numOrNull(row[cols.pzoChiusura]) : null,
+      valuta: cols.valuta >= 0 ? String(row[cols.valuta] || '').trim() : '',
+      pnl,
+    });
+  }
+  return out.length ? out : null;
+}
+
+/* Riconosce un'operazione già presente in archivio, per evitare duplicati
+   quando si ricarica uno stesso export (o un export con periodo sovrapposto
+   a uno già importato in precedenza). */
+function esisteGiaTradePL(t) {
+  return DATA.profitLoss.trades.some(x =>
+    x.data === t.data &&
+    x.simbolo === t.simbolo &&
+    Math.abs((x.qta || 0) - (t.qta || 0)) < 0.0001 &&
+    Math.abs((x.pzoChiusura || 0) - (t.pzoChiusura || 0)) < 0.0001 &&
+    Math.abs(x.pnl - t.pnl) < 0.005
+  );
+}
+
+async function handleProfitLossFile(file) {
+  const statusEl = document.getElementById('pl-import-status');
+  statusEl.innerHTML = '';
+  try {
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array', cellDates: false });
+    let parsed = null;
+    for (const sheetName of wb.SheetNames) {
+      fixSheetRange(wb.Sheets[sheetName]);
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, raw: true });
+      parsed = parseProfitLossDettagli(rows);
+      if (parsed && parsed.length) break;
+    }
+    if (!parsed) {
+      statusEl.innerHTML = `<div class="file-err">✕ ${file.name}: non ho trovato un foglio "Dettagli" con le colonne attese (Descrizione, Data operazione, P&amp;L...).</div>`;
+      return;
+    }
+    let nuovi = 0, duplicati = 0;
+    parsed.forEach(t => {
+      if (esisteGiaTradePL(t)) { duplicati++; return; }
+      DATA.profitLoss.trades.push(t);
+      nuovi++;
+    });
+    DATA.profitLoss.importedFiles.push({ name: file.name, importedOn: new Date().toISOString().slice(0, 10) });
+    populatePLFilters();
+    renderProfitLoss();
+    const dupMsg = duplicati ? ` (${duplicati} gi&agrave; presenti, ignorate)` : '';
+    statusEl.innerHTML = `<div class="file-ok">&#10003; ${file.name}: ${nuovi} nuove operazioni importate${dupMsg}.</div>`;
+    document.getElementById('pl-file-input').value = '';
+    persist('Importazione profit & loss da file');
+  } catch (err) {
+    statusEl.innerHTML = `<div class="file-err">✕ ${file.name}: errore di lettura (${err.message}).</div>`;
+  }
+}
+
+function populatePLFilters() {
+  const anni = [...new Set(DATA.profitLoss.trades.map(t => t.data.slice(0, 4)))].sort().reverse();
+  const sel = document.getElementById('pl-filter-anno');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">Tutti gli anni</option>' + anni.map(a => `<option value="${a}">${a}</option>`).join("");
+  if (anni.includes(prev)) sel.value = prev;
+}
+
+function filteredPLTrades() {
+  const anno = document.getElementById('pl-filter-anno').value;
+  const da = document.getElementById('pl-filter-da').value;
+  const a = document.getElementById('pl-filter-a').value;
+  let rows = [...DATA.profitLoss.trades];
+  if (da) rows = rows.filter(t => t.data >= da);
+  if (a) rows = rows.filter(t => t.data <= a);
+  if (!da && !a && anno) rows = rows.filter(t => t.data.slice(0, 4) === anno);
+  return rows;
+}
+
+function renderProfitLoss() {
+  const nTotali = DATA.profitLoss.trades.length;
+  document.getElementById('pl-updated').textContent = nTotali
+    ? `${nTotali} operazioni in archivio${DATA.profitLoss.importedFiles.length ? ` · ultimo import: ${DATA.profitLoss.importedFiles[DATA.profitLoss.importedFiles.length - 1].name}` : ''}`
+    : '';
+
+  const rows = filteredPLTrades().sort((a, b) => b.data.localeCompare(a.data));
+
+  const totale = sum(rows.map(r => r.pnl));
+  const positive = rows.filter(r => r.pnl >= 0);
+  const negative = rows.filter(r => r.pnl < 0);
+  const migliore = rows.length ? rows.reduce((a, b) => (b.pnl > a.pnl ? b : a)) : null;
+  const peggiore = rows.length ? rows.reduce((a, b) => (b.pnl < a.pnl ? b : a)) : null;
+
+  document.getElementById('pl-cards').innerHTML = `
+    <div class="card"><div class="label">P&amp;L periodo filtrato</div><div class="value ${totale >= 0 ? 'pos' : 'neg'}">${eur(totale)}</div><div class="sub">${rows.length} operazioni</div></div>
+    <div class="card"><div class="label">Operazioni in utile</div><div class="value pos">${positive.length}</div><div class="sub">${eur(sum(positive.map(r => r.pnl)))}</div></div>
+    <div class="card"><div class="label">Operazioni in perdita</div><div class="value neg">${negative.length}</div><div class="sub">${eur(sum(negative.map(r => r.pnl)))}</div></div>
+    <div class="card"><div class="label">Migliore / peggiore</div><div class="value" style="font-size:14px; line-height:1.5;">${migliore ? `${migliore.desc} <span class="pos">${eur(migliore.pnl)}</span>` : '&mdash;'}${peggiore ? `<br>${peggiore.desc} <span class="neg">${eur(peggiore.pnl)}</span>` : ''}</div></div>
+  `;
+
+  // Sintesi per anno: sempre su tutto l'archivio (non risente dei filtri data/anno)
+  const byYear = {};
+  DATA.profitLoss.trades.forEach(t => {
+    const y = t.data.slice(0, 4);
+    if (!byYear[y]) byYear[y] = [];
+    byYear[y].push(t);
+  });
+  const anni = Object.keys(byYear).sort().reverse();
+  document.getElementById('pl-years-table').querySelector('tbody').innerHTML = anni.map(y => {
+    const trades = byYear[y];
+    const tot = sum(trades.map(t => t.pnl));
+    const media = trades.length ? tot / trades.length : 0;
+    const pos = trades.filter(t => t.pnl >= 0).length;
+    return `<tr>
+      <td>${y}</td>
+      <td class="num">${trades.length}</td>
+      <td class="num ${tot >= 0 ? 'pos' : 'neg'}">${eur(tot)}</td>
+      <td class="num">${eur(media)}</td>
+      <td class="num">${pos}/${trades.length}</td>
+    </tr>`;
+  }).join("") || `<tr><td colspan="5" style="color:var(--ink-soft); padding:18px;">Nessun dato: importa un file per popolare la sezione.</td></tr>`;
+
+  // Sintesi per titolo, sul periodo filtrato
+  const byTitolo = {};
+  rows.forEach(t => {
+    const key = t.simbolo || t.desc;
+    if (!byTitolo[key]) byTitolo[key] = { desc: t.desc, simbolo: t.simbolo, n: 0, pnl: 0 };
+    byTitolo[key].n++;
+    byTitolo[key].pnl += t.pnl;
+  });
+  const titoliRows = Object.values(byTitolo).sort((a, b) => b.pnl - a.pnl);
+  document.getElementById('pl-titoli-table').querySelector('tbody').innerHTML = titoliRows.map(r => `
+    <tr>
+      <td>${r.desc}</td>
+      <td><span class="tag">${r.simbolo || ''}</span></td>
+      <td class="num">${r.n}</td>
+      <td class="num ${r.pnl >= 0 ? 'pos' : 'neg'}">${eur(r.pnl)}</td>
+    </tr>
+  `).join("") || `<tr><td colspan="4" style="color:var(--ink-soft); padding:18px;">Nessuna operazione nel periodo selezionato.</td></tr>`;
+
+  // Dettaglio operazioni, sul periodo filtrato
+  document.getElementById('pl-table').querySelector('tbody').innerHTML = rows.map(t => `
+    <tr>
+      <td>${fmtData(t.data)}</td>
+      <td>${t.desc}</td>
+      <td><span class="tag">${t.simbolo || ''}</span></td>
+      <td><span class="tag">${t.mercato || ''}</span></td>
+      <td class="num">${(t.qta || 0).toLocaleString('it-IT', { useGrouping: 'always' })}</td>
+      <td class="num">${t.pzoApertura != null ? t.pzoApertura.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 5 }) : ''}</td>
+      <td class="num">${t.pzoChiusura != null ? t.pzoChiusura.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 5 }) : ''}</td>
+      <td class="num ${t.pnl >= 0 ? 'pos' : 'neg'}">${eur(t.pnl)}</td>
+    </tr>
+  `).join("") || `<tr><td colspan="8" style="color:var(--ink-soft); padding:18px;">Nessuna operazione nel periodo selezionato.</td></tr>`;
+}
+
 /* ---------------- RENDER GLOBALE ---------------- */
 function renderAll() {
   renderHeader();
@@ -1323,10 +1519,11 @@ function renderAll() {
   renderAnalisi();
   renderPatrimonio();
   renderPortafoglio();
+  renderProfitLoss();
 }
 
 /* ---------------- TABS ---------------- */
-const TAB_ORDER = ['dashboard', 'pervoce', 'transazioni', 'budget', 'analisi', 'patrimonio', 'portafoglio', 'importa'];
+const TAB_ORDER = ['dashboard', 'pervoce', 'transazioni', 'budget', 'analisi', 'patrimonio', 'portafoglio', 'profitloss', 'importa'];
 document.getElementById('tabs').addEventListener('click', (e) => {
   if (e.target.tagName !== 'BUTTON') return;
   const tab = e.target.dataset.tab;
@@ -1484,6 +1681,7 @@ document.getElementById('btn-confirm-import').addEventListener('click', () => {
   populateVoceCats();
   populateBudgetAnno();
   populateAnalisiAnno();
+  populatePLFilters();
   renderAll();
   renderVoceAll();
   persist(`Importazione ${n} movimenti da file`);
@@ -1495,6 +1693,24 @@ document.getElementById('btn-import-ptf').addEventListener('click', () => docume
 document.getElementById('ptf-file-input').addEventListener('change', (e) => {
   if (e.target.files.length) handlePortafoglioFile(e.target.files[0]);
   e.target.value = '';
+});
+
+document.getElementById('btn-import-pl').addEventListener('click', () => document.getElementById('pl-file-input').click());
+document.getElementById('pl-file-input').addEventListener('change', (e) => {
+  if (e.target.files.length) handleProfitLossFile(e.target.files[0]);
+});
+document.getElementById('pl-filter-anno').addEventListener('change', () => {
+  document.getElementById('pl-filter-da').value = '';
+  document.getElementById('pl-filter-a').value = '';
+  renderProfitLoss();
+});
+document.getElementById('pl-filter-da').addEventListener('change', renderProfitLoss);
+document.getElementById('pl-filter-a').addEventListener('change', renderProfitLoss);
+document.getElementById('btn-pl-clear-filters').addEventListener('click', () => {
+  document.getElementById('pl-filter-anno').value = '';
+  document.getElementById('pl-filter-da').value = '';
+  document.getElementById('pl-filter-a').value = '';
+  renderProfitLoss();
 });
 
 /* ---------------- INIZIALIZZAZIONE ---------------- */
@@ -1521,6 +1737,7 @@ async function initApp() {
   populateVoceCats();
   populateBudgetAnno();
   populateAnalisiAnno();
+  populatePLFilters();
   renderVoceAll();
   renderAll();
 }
@@ -1554,6 +1771,7 @@ window.pullFromGitHub = async function () {
     populateVoceCats();
     populateBudgetAnno();
     populateAnalisiAnno();
+    populatePLFilters();
     renderVoceAll();
     renderAll();
   } else {
@@ -1622,6 +1840,7 @@ window.loadDataFile = function (file) {
     populateVoceCats();
     populateBudgetAnno();
     populateAnalisiAnno();
+    populatePLFilters();
     renderVoceAll();
     renderAll();
     const statusEl = document.getElementById('file-sync-status');

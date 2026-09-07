@@ -33,6 +33,7 @@
     <button data-tab="analisi">Analisi</button>
     <button data-tab="patrimonio">Patrimonio</button>
     <button data-tab="portafoglio">Portafoglio Titoli</button>
+    <button data-tab="profitloss">Profit &amp; Loss</button>
     <button data-tab="importa">Importa</button>
   </nav>
 
@@ -270,6 +271,59 @@
         <th class="num">P.zo carico</th><th class="num">Valore carico</th>
         <th class="num">P.zo mercato</th><th class="num">Valore mercato</th>
         <th class="num">Var%</th><th class="num">Var &euro;</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- ================= PROFIT & LOSS ================= -->
+  <section id="tab-profitloss" style="display:none;">
+    <div class="section-title">Profit &amp; Loss realizzati</div>
+    <div class="section-sub">Importa gli export "Dettaglio P&amp;L" di Fineco (foglio "Dettagli"): ogni chiusura di posizione viene aggiunta all'archivio, senza sovrascrivere quelle già caricate. Puoi ricaricare periodicamente lo stesso export: le operazioni già presenti vengono riconosciute e non duplicate.</div>
+
+    <div class="toolbar">
+      <input type="file" id="pl-file-input" accept=".xls,.xlsx" style="display:none;">
+      <button class="primary" id="btn-import-pl">Importa file P&amp;L</button>
+      <span class="section-sub" style="margin:0;" id="pl-updated"></span>
+    </div>
+    <div id="pl-import-status" class="import-status"></div>
+
+    <div class="toolbar" style="margin-top:26px;">
+      <select id="pl-filter-anno"></select>
+      <div class="date-range">
+        Dal <input type="date" id="pl-filter-da">
+        al <input type="date" id="pl-filter-a">
+      </div>
+      <button class="ghost" id="btn-pl-clear-filters">Azzera filtri</button>
+    </div>
+
+    <div class="grid" style="grid-template-columns:repeat(4,1fr);" id="pl-cards"></div>
+
+    <div class="section-title">Sintesi per anno</div>
+    <table class="ledger" id="pl-years-table">
+      <thead><tr>
+        <th>Anno</th>
+        <th class="num">N. operazioni</th>
+        <th class="num">P&amp;L</th>
+        <th class="num">P&amp;L medio</th>
+        <th class="num">Operazioni in utile</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="section-title">Sintesi per titolo <span class="tag" style="font-family:'Inter',sans-serif; font-weight:600;">periodo filtrato</span></div>
+    <table class="ledger" id="pl-titoli-table">
+      <thead><tr><th>Titolo</th><th>Simbolo</th><th class="num">N. operazioni</th><th class="num">P&amp;L</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="section-title">Operazioni chiuse <span class="tag" style="font-family:'Inter',sans-serif; font-weight:600;">periodo filtrato</span></div>
+    <table class="ledger" id="pl-table">
+      <thead><tr>
+        <th>Data</th><th>Titolo</th><th>Simbolo</th><th>Mercato</th>
+        <th class="num">Quantit&agrave;</th>
+        <th class="num">P.zo apertura</th><th class="num">P.zo chiusura</th>
+        <th class="num">P&amp;L</th>
       </tr></thead>
       <tbody></tbody>
     </table>
