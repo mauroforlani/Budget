@@ -49044,9 +49044,222 @@
         "pzoChiusura": 11.9534234,
         "valuta": "EUR",
         "pnl": 77.37
+      },
+      {
+        "data": "2024-10-14",
+        "desc": "PIRELLI & C.",
+        "simbolo": "PIRC",
+        "mercato": "Internalizzata Fineco",
+        "qta": 1000,
+        "pzoApertura": 5.1398959,
+        "pzoChiusura": 5.31388,
+        "valuta": "EUR",
+        "pnl": 173.98
+      },
+      {
+        "data": "2024-02-12",
+        "desc": "PIRELLI & C.",
+        "simbolo": "PIRC",
+        "mercato": "ITALIA",
+        "qta": 5,
+        "pzoApertura": 4.5225799,
+        "pzoChiusura": 5.354,
+        "valuta": "EUR",
+        "pnl": 4.16
+      },
+      {
+        "data": "2024-02-12",
+        "desc": "PIRELLI & C.",
+        "simbolo": "PIRC",
+        "mercato": "ITALIA",
+        "qta": 557,
+        "pzoApertura": 4.5225799,
+        "pzoChiusura": 5.3538025,
+        "valuta": "EUR",
+        "pnl": 462.99
+      },
+      {
+        "data": "2024-02-12",
+        "desc": "PIRELLI & C.",
+        "simbolo": "PIRC",
+        "mercato": "ITALIA",
+        "qta": 438,
+        "pzoApertura": 4.5225799,
+        "pzoChiusura": 5.3538173,
+        "valuta": "EUR",
+        "pnl": 364.08
+      },
+      {
+        "data": "2024-03-19",
+        "desc": "XTR HLTHC USD-1C-AC",
+        "simbolo": "XDWH",
+        "mercato": "ITALIA",
+        "qta": 1,
+        "pzoApertura": 46.48,
+        "pzoChiusura": 49.155,
+        "valuta": "EUR",
+        "pnl": 2.68
+      },
+      {
+        "data": "2024-03-19",
+        "desc": "XTR HLTHC USD-1C-AC",
+        "simbolo": "XDWH",
+        "mercato": "ITALIA",
+        "qta": 53,
+        "pzoApertura": 46.48,
+        "pzoChiusura": 49.155,
+        "valuta": "EUR",
+        "pnl": 141.78
+      },
+      {
+        "data": "2024-03-19",
+        "desc": "XTR HLTHC USD-1C-AC",
+        "simbolo": "XDWH",
+        "mercato": "ITALIA",
+        "qta": 46,
+        "pzoApertura": 46.48,
+        "pzoChiusura": 49.155,
+        "valuta": "EUR",
+        "pnl": 123.05
+      },
+      {
+        "data": "2024-03-27",
+        "desc": "ALPHABET-A",
+        "simbolo": "GOOGL",
+        "mercato": "Internalizzata Fineco",
+        "qta": 30,
+        "pzoApertura": 140.1317584,
+        "pzoChiusura": 149.2284416,
+        "valuta": "USD",
+        "pnl": 272.9
+      },
+      {
+        "data": "2024-04-09",
+        "desc": "PAYPAL HOLDINGS",
+        "simbolo": "PYPL",
+        "mercato": "Internalizzata Fineco",
+        "qta": 80,
+        "pzoApertura": 64.6118198,
+        "pzoChiusura": 66.7180817,
+        "valuta": "USD",
+        "pnl": 168.5
+      },
+      {
+        "data": "2024-11-27",
+        "desc": "AMAZON.COM",
+        "simbolo": "AMZN",
+        "mercato": "Internalizzata Fineco",
+        "qta": 40,
+        "pzoApertura": 178.628689,
+        "pzoChiusura": 206.0861717,
+        "valuta": "USD",
+        "pnl": 1098.3
+      },
+      {
+        "data": "2024-04-24",
+        "desc": "AMAZON.COM",
+        "simbolo": "AMZN",
+        "mercato": "NASDAQ",
+        "qta": 40,
+        "pzoApertura": 178.628689,
+        "pzoChiusura": 179.6763109,
+        "valuta": "USD",
+        "pnl": 41.9
+      },
+      {
+        "data": "2024-04-17",
+        "desc": "AMAZON.COM",
+        "simbolo": "AMZN",
+        "mercato": "Internalizzata Fineco",
+        "qta": 50,
+        "pzoApertura": 115.5595393,
+        "pzoChiusura": 181.031071,
+        "valuta": "USD",
+        "pnl": 3273.58
+      },
+      {
+        "data": "2024-04-11",
+        "desc": "INTESA SANPAOLO",
+        "simbolo": "ISP",
+        "mercato": "ITALIA",
+        "qta": 2000,
+        "pzoApertura": 2.549335,
+        "pzoChiusura": 3.30022,
+        "valuta": "EUR",
+        "pnl": 1501.77
+      },
+      {
+        "data": "2024-04-11",
+        "desc": "INTERPUMP GROUP",
+        "simbolo": "IP",
+        "mercato": "Internalizzata Fineco",
+        "qta": 147,
+        "pzoApertura": 42.701,
+        "pzoChiusura": 44.6533333,
+        "valuta": "EUR",
+        "pnl": 286.99
+      },
+      {
+        "data": "2024-04-11",
+        "desc": "INTERPUMP GROUP",
+        "simbolo": "IP",
+        "mercato": "Internalizzata Fineco",
+        "qta": 3,
+        "pzoApertura": 42.701,
+        "pzoChiusura": 43.7566666,
+        "valuta": "EUR",
+        "pnl": 3.17
+      },
+      {
+        "data": "2024-05-10",
+        "desc": "A2A",
+        "simbolo": "A2A",
+        "mercato": "Internalizzata Fineco",
+        "qta": 1600,
+        "pzoApertura": 1.8630267,
+        "pzoChiusura": 1.9353187,
+        "valuta": "EUR",
+        "pnl": 115.67
+      },
+      {
+        "data": "2024-05-08",
+        "desc": "ENEL",
+        "simbolo": "ENEL",
+        "mercato": "ITALIA",
+        "qta": 394,
+        "pzoApertura": 5.9494499,
+        "pzoChiusura": 6.3808426,
+        "valuta": "EUR",
+        "pnl": 169.97
+      },
+      {
+        "data": "2024-05-08",
+        "desc": "ENEL",
+        "simbolo": "ENEL",
+        "mercato": "ITALIA",
+        "qta": 606,
+        "pzoApertura": 5.9494499,
+        "pzoChiusura": 6.3818547,
+        "valuta": "EUR",
+        "pnl": 262.04
+      },
+      {
+        "data": "2024-10-16",
+        "desc": "HERA",
+        "simbolo": "HER",
+        "mercato": "ITALIA",
+        "qta": 1000,
+        "pzoApertura": 3.54673,
+        "pzoChiusura": 3.64306,
+        "valuta": "EUR",
+        "pnl": 96.33
       }
     ],
     "importedFiles": [
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-09-07"
+      },
       {
         "name": "profitloss-export.xls",
         "importedOn": "2026-09-07"
