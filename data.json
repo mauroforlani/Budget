@@ -48670,9 +48670,134 @@
         "pzoChiusura": 1.0089285,
         "valuta": "EUR",
         "pnl": -55.54
+      },
+      {
+        "data": "2021-09-29",
+        "desc": "A2A",
+        "simbolo": "A2A",
+        "mercato": "ITALIA",
+        "qta": 1700,
+        "pzoApertura": 1.7287764,
+        "pzoChiusura": 1.7856,
+        "valuta": "EUR",
+        "pnl": 96.6
+      },
+      {
+        "data": "2021-05-14",
+        "desc": "A2A",
+        "simbolo": "A2A",
+        "mercato": "ITALIA",
+        "qta": 2500,
+        "pzoApertura": 1.48782,
+        "pzoChiusura": 1.71274,
+        "valuta": "EUR",
+        "pnl": 562.3
+      },
+      {
+        "data": "2021-10-22",
+        "desc": "REPLY",
+        "simbolo": "REY",
+        "mercato": "ITALIA",
+        "qta": 18,
+        "pzoApertura": 138.2622222,
+        "pzoChiusura": 165.485,
+        "valuta": "EUR",
+        "pnl": 490.01
+      },
+      {
+        "data": "2021-06-11",
+        "desc": "REPLY",
+        "simbolo": "REY",
+        "mercato": "ITALIA",
+        "qta": 25,
+        "pzoApertura": 117.3223999,
+        "pzoChiusura": 137.8376,
+        "valuta": "EUR",
+        "pnl": 512.88
+      },
+      {
+        "data": "2021-05-14",
+        "desc": "REPLY",
+        "simbolo": "REY",
+        "mercato": "ITALIA",
+        "qta": 26,
+        "pzoApertura": 106.9026666,
+        "pzoChiusura": 115.4803846,
+        "valuta": "EUR",
+        "pnl": 223.02
+      },
+      {
+        "data": "2021-05-14",
+        "desc": "REPLY",
+        "simbolo": "REY",
+        "mercato": "ITALIA",
+        "qta": 19,
+        "pzoApertura": 106.9026666,
+        "pzoChiusura": 115.48,
+        "valuta": "EUR",
+        "pnl": 162.97
+      },
+      {
+        "data": "2021-09-29",
+        "desc": "ILLIMITY BANK",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 200,
+        "pzoApertura": 12.1770999,
+        "pzoChiusura": 13.4444,
+        "valuta": "EUR",
+        "pnl": 253.46
+      },
+      {
+        "data": "2021-06-07",
+        "desc": "ILLIMITY BANK",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 350,
+        "pzoApertura": 9.7034,
+        "pzoChiusura": 11.6977428,
+        "valuta": "EUR",
+        "pnl": 698.02
+      },
+      {
+        "data": "2021-09-29",
+        "desc": "STMICROELECTRONICS",
+        "simbolo": "STMMI",
+        "mercato": "Internalizzata Fineco",
+        "qta": 67,
+        "pzoApertura": 34.4252941,
+        "pzoChiusura": 38.0820895,
+        "valuta": "EUR",
+        "pnl": 245.01
+      },
+      {
+        "data": "2021-09-29",
+        "desc": "STMICROELECTRONICS",
+        "simbolo": "STMMI",
+        "mercato": "Internalizzata Fineco",
+        "qta": 18,
+        "pzoApertura": 34.4252941,
+        "pzoChiusura": 37.9711111,
+        "valuta": "EUR",
+        "pnl": 63.82
+      },
+      {
+        "data": "2021-09-29",
+        "desc": "FALCK RENEWABLES",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 600,
+        "pzoApertura": 6.1717,
+        "pzoChiusura": 6.7820833,
+        "valuta": "EUR",
+        "pnl": 366.23
       }
     ],
     "importedFiles": [
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-09-07"
+      },
       {
         "name": "profitloss-export.xls",
         "importedOn": "2026-09-07"
