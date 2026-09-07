@@ -48294,5 +48294,92 @@
   },
   "impostazioni": {
     "budgetTeoricoPct": 55
+  },
+  "profitLoss": {
+    "trades": [
+      {
+        "data": "2016-02-02",
+        "desc": "ATLANTIA",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 90,
+        "pzoApertura": 23.224,
+        "pzoChiusura": 24.5033333,
+        "valuta": "EUR",
+        "pnl": 115.14
+      },
+      {
+        "data": "2016-03-10",
+        "desc": "DEUBANK-17FB25 2,7",
+        "simbolo": "-",
+        "mercato": "ETLX",
+        "qta": 2000,
+        "pzoApertura": 84.1494135,
+        "pzoChiusura": 91.1819949,
+        "valuta": "EUR",
+        "pnl": 140.65
+      },
+      {
+        "data": "2016-04-13",
+        "desc": "BUZZI",
+        "simbolo": "BZU",
+        "mercato": "ITALIA",
+        "qta": 130,
+        "pzoApertura": 14.8581538,
+        "pzoChiusura": 15.779923,
+        "valuta": "EUR",
+        "pnl": 119.83
+      },
+      {
+        "data": "2016-05-31",
+        "desc": "A2A",
+        "simbolo": "A2A",
+        "mercato": "Internalizzata Fineco",
+        "qta": 1750,
+        "pzoApertura": 1.2343428,
+        "pzoChiusura": 1.2995257,
+        "valuta": "EUR",
+        "pnl": 114.07
+      },
+      {
+        "data": "2016-11-14",
+        "desc": "FIAT CHRYSLER AUTO",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 350,
+        "pzoApertura": 6.4322,
+        "pzoChiusura": 7.1763428,
+        "valuta": "EUR",
+        "pnl": 260.45
+      },
+      {
+        "data": "2016-12-12",
+        "desc": "AUTOGRILL",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 300,
+        "pzoApertura": 7.8749333,
+        "pzoChiusura": 8.1744333,
+        "valuta": "EUR",
+        "pnl": 89.85
+      },
+      {
+        "data": "2016-12-12",
+        "desc": "ENI",
+        "simbolo": "ENI",
+        "mercato": "ITALIA",
+        "qta": 200,
+        "pzoApertura": 13.93645,
+        "pzoChiusura": 14.67205,
+        "valuta": "EUR",
+        "pnl": 147.12
+      }
+    ],
+    "importedFiles": [
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-09-07"
+      }
+    ]
   }
 }
