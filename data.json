@@ -48791,9 +48791,101 @@
         "pzoChiusura": 6.7820833,
         "valuta": "EUR",
         "pnl": 366.23
+      },
+      {
+        "data": "2022-02-01",
+        "desc": "APPLE",
+        "simbolo": "AAPL",
+        "mercato": "NASDAQ",
+        "qta": 35,
+        "pzoApertura": 120.6299799,
+        "pzoChiusura": 173.8510285,
+        "valuta": "USD",
+        "pnl": 1862.74
+      },
+      {
+        "data": "2022-01-17",
+        "desc": "INTESA SANPAOLO",
+        "simbolo": "ISP",
+        "mercato": "ITALIA",
+        "qta": 1325,
+        "pzoApertura": 2.2946188,
+        "pzoChiusura": 2.5716018,
+        "valuta": "EUR",
+        "pnl": 367
+      },
+      {
+        "data": "2022-01-12",
+        "desc": "BREMBO",
+        "simbolo": "-",
+        "mercato": "Internalizzata Fineco",
+        "qta": 300,
+        "pzoApertura": 12.8443666,
+        "pzoChiusura": 13.2048666,
+        "valuta": "EUR",
+        "pnl": 108.15
+      },
+      {
+        "data": "2022-02-17",
+        "desc": "AMAZON.COM",
+        "simbolo": "AMZN",
+        "mercato": "NASDAQ",
+        "qta": 2,
+        "pzoApertura": 3071.7446495,
+        "pzoChiusura": 3162.1719849,
+        "valuta": "USD",
+        "pnl": 180.85
+      },
+      {
+        "data": "2022-05-25",
+        "desc": "SAIPEM FRAZ RAGGR",
+        "simbolo": "-",
+        "mercato": "Internalizzata Fineco",
+        "qta": 0.96,
+        "pzoApertura": 68.8985697,
+        "pzoChiusura": 5.21851,
+        "valuta": "EUR",
+        "pnl": -61.13
+      },
+      {
+        "data": "2022-06-15",
+        "desc": "SAIPEM RAGGR FRAZ",
+        "simbolo": "-",
+        "mercato": "Internalizzata Fineco",
+        "qta": 0.7,
+        "pzoApertura": 688.9857,
+        "pzoChiusura": 41.10158,
+        "valuta": "EUR",
+        "pnl": -453.52
+      },
+      {
+        "data": "2022-07-01",
+        "desc": "SAIPEM",
+        "simbolo": "SPM",
+        "mercato": "Internalizzata Fineco",
+        "qta": 5,
+        "pzoApertura": 36.3157,
+        "pzoChiusura": 2.137,
+        "valuta": "EUR",
+        "pnl": -170.89
+      },
+      {
+        "data": "2022-07-19",
+        "desc": "SAIPEM DIR  05LG22",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 5,
+        "pzoApertura": 652.66926,
+        "pzoChiusura": null,
+        "valuta": "EUR",
+        "pnl": -3263.35
       }
     ],
     "importedFiles": [
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-09-07"
+      },
       {
         "name": "profitloss-export.xls",
         "importedOn": "2026-09-07"
