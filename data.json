@@ -48659,9 +48659,24 @@
         "pzoChiusura": 89.9296222,
         "valuta": "EUR",
         "pnl": 152.38
+      },
+      {
+        "data": "2020-12-01",
+        "desc": "EUKEDOS",
+        "simbolo": "EUK",
+        "mercato": "ITALIA",
+        "qta": 140,
+        "pzoApertura": 1.40567,
+        "pzoChiusura": 1.0089285,
+        "valuta": "EUR",
+        "pnl": -55.54
       }
     ],
     "importedFiles": [
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-09-07"
+      },
       {
         "name": "profitloss-export.xls",
         "importedOn": "2026-09-07"
