@@ -48373,9 +48373,156 @@
         "pzoChiusura": 14.67205,
         "valuta": "EUR",
         "pnl": 147.12
+      },
+      {
+        "data": "2017-09-07",
+        "desc": "ATLANTIA",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 100,
+        "pzoApertura": 25.5384,
+        "pzoChiusura": 26.9886,
+        "valuta": "EUR",
+        "pnl": 145.02
+      },
+      {
+        "data": "2017-09-11",
+        "desc": "PRYSMIAN",
+        "simbolo": "PRY",
+        "mercato": "Internalizzata Fineco",
+        "qta": 100,
+        "pzoApertura": 25.9492,
+        "pzoChiusura": 27.3679,
+        "valuta": "EUR",
+        "pnl": 141.87
+      },
+      {
+        "data": "2017-09-19",
+        "desc": "BREMBO",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 58,
+        "pzoApertura": 13.32528,
+        "pzoChiusura": 13.9734482,
+        "valuta": "EUR",
+        "pnl": 37.59
+      },
+      {
+        "data": "2017-09-19",
+        "desc": "BREMBO",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 12,
+        "pzoApertura": 13.32528,
+        "pzoChiusura": 13.9733333,
+        "valuta": "EUR",
+        "pnl": 7.78
+      },
+      {
+        "data": "2017-09-19",
+        "desc": "BREMBO",
+        "simbolo": "-",
+        "mercato": "ITALIA",
+        "qta": 180,
+        "pzoApertura": 13.32528,
+        "pzoChiusura": 13.9733888,
+        "valuta": "EUR",
+        "pnl": 116.66
+      },
+      {
+        "data": "2017-12-12",
+        "desc": "TESLA",
+        "simbolo": "1TSLA",
+        "mercato": "AFTER HOURS",
+        "qta": 10,
+        "pzoApertura": 267.0065,
+        "pzoChiusura": 277.472,
+        "valuta": "EUR",
+        "pnl": 104.66
+      },
+      {
+        "data": "2017-11-23",
+        "desc": "TESLA",
+        "simbolo": "1TSLA",
+        "mercato": "AFTER HOURS",
+        "qta": 10,
+        "pzoApertura": 267.0065,
+        "pzoChiusura": 264.496,
+        "valuta": "EUR",
+        "pnl": -25.1
+      },
+      {
+        "data": "2017-11-29",
+        "desc": "A2A",
+        "simbolo": "A2A",
+        "mercato": "Internalizzata Fineco",
+        "qta": 1500,
+        "pzoApertura": 1.51788,
+        "pzoChiusura": 1.576,
+        "valuta": "EUR",
+        "pnl": 87.18
+      },
+      {
+        "data": "2017-12-12",
+        "desc": "ENI",
+        "simbolo": "ENI",
+        "mercato": "ITALIA",
+        "qta": 375,
+        "pzoApertura": 13.7661066,
+        "pzoChiusura": 14.2329066,
+        "valuta": "EUR",
+        "pnl": 175.05
+      },
+      {
+        "data": "2017-11-07",
+        "desc": "ENI",
+        "simbolo": "ENI",
+        "mercato": "ITALIA",
+        "qta": 500,
+        "pzoApertura": 14.21696,
+        "pzoChiusura": 14.66208,
+        "valuta": "EUR",
+        "pnl": 222.56
+      },
+      {
+        "data": "2017-11-10",
+        "desc": "ITALGAS",
+        "simbolo": "IG",
+        "mercato": "ITALIA",
+        "qta": 588,
+        "pzoApertura": 5.069616,
+        "pzoChiusura": 5.150187,
+        "valuta": "EUR",
+        "pnl": 47.38
+      },
+      {
+        "data": "2017-11-10",
+        "desc": "ITALGAS",
+        "simbolo": "IG",
+        "mercato": "ITALIA",
+        "qta": 412,
+        "pzoApertura": 5.069616,
+        "pzoChiusura": 5.1514077,
+        "valuta": "EUR",
+        "pnl": 33.7
+      },
+      {
+        "data": "2017-11-10",
+        "desc": "ITALGAS",
+        "simbolo": "IG",
+        "mercato": "ITALIA",
+        "qta": 250,
+        "pzoApertura": 5.069616,
+        "pzoChiusura": 5.1482,
+        "valuta": "EUR",
+        "pnl": 19.65
       }
     ],
     "importedFiles": [
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-09-07"
+      },
       {
         "name": "profitloss-export.xls",
         "importedOn": "2026-09-07"
