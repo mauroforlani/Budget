@@ -49253,9 +49253,90 @@
         "pzoChiusura": 3.64306,
         "valuta": "EUR",
         "pnl": 96.33
+      },
+      {
+        "data": "2025-03-03",
+        "desc": "BTP-1MZ25 5%",
+        "simbolo": "-",
+        "mercato": "MOT",
+        "qta": 10000,
+        "pzoApertura": 101.298784,
+        "pzoChiusura": 99.0140003,
+        "valuta": "EUR",
+        "pnl": -228.48
+      },
+      {
+        "data": "2025-05-05",
+        "desc": "GENERALI",
+        "simbolo": "G",
+        "mercato": "ITALIA",
+        "qta": 43,
+        "pzoApertura": 30.588,
+        "pzoChiusura": 32.7376744,
+        "valuta": "EUR",
+        "pnl": 92.44
+      },
+      {
+        "data": "2025-05-05",
+        "desc": "GENERALI",
+        "simbolo": "G",
+        "mercato": "ITALIA",
+        "qta": 207,
+        "pzoApertura": 30.588,
+        "pzoChiusura": 32.7376811,
+        "valuta": "EUR",
+        "pnl": 444.98
+      },
+      {
+        "data": "2025-07-18",
+        "desc": "STMICROELECTRONICS",
+        "simbolo": "STMMI",
+        "mercato": "ITALIA",
+        "qta": 150,
+        "pzoApertura": 25.2278666,
+        "pzoChiusura": 27.9618,
+        "valuta": "EUR",
+        "pnl": 410.09
+      },
+      {
+        "data": "2025-10-27",
+        "desc": "ENI",
+        "simbolo": "ENI",
+        "mercato": "ITALIA",
+        "qta": 247,
+        "pzoApertura": 15.2208571,
+        "pzoChiusura": 15.797919,
+        "valuta": "EUR",
+        "pnl": 142.53
+      },
+      {
+        "data": "2025-10-27",
+        "desc": "ENI",
+        "simbolo": "ENI",
+        "mercato": "ITALIA",
+        "qta": 103,
+        "pzoApertura": 15.2208571,
+        "pzoChiusura": 15.7979029,
+        "valuta": "EUR",
+        "pnl": 59.44
+      },
+      {
+        "data": "2025-10-21",
+        "desc": "ADVANCED MICRO D",
+        "simbolo": "AMD",
+        "mercato": "Internalizzata Fineco",
+        "qta": 30,
+        "pzoApertura": 178.6115583,
+        "pzoChiusura": 234.7282195,
+        "valuta": "USD",
+        "pnl": 1683.5
       }
     ],
     "importedFiles": [
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-09-07"
+      },
       {
         "name": "profitloss-export.xls",
         "importedOn": "2026-09-07"
