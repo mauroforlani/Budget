@@ -48626,9 +48626,46 @@
         "pzoChiusura": 4.8108375,
         "valuta": "EUR",
         "pnl": 97.56
+      },
+      {
+        "data": "2019-06-18",
+        "desc": "BTP-1MZ47 2,7%",
+        "simbolo": "JADWKW",
+        "mercato": "MOT",
+        "qta": 8000,
+        "pzoApertura": 92.886322,
+        "pzoChiusura": 93.8880148,
+        "valuta": "EUR",
+        "pnl": 80.14
+      },
+      {
+        "data": "2019-06-18",
+        "desc": "BTP-1MZ47 2,7%",
+        "simbolo": "JADWKW",
+        "mercato": "MOT",
+        "qta": 6000,
+        "pzoApertura": 92.886322,
+        "pzoChiusura": 93.7828482,
+        "valuta": "EUR",
+        "pnl": 53.79
+      },
+      {
+        "data": "2019-06-18",
+        "desc": "BTP-1MZ67 2,8%",
+        "simbolo": "521739",
+        "mercato": "MOT",
+        "qta": 14000,
+        "pzoApertura": 88.841192,
+        "pzoChiusura": 89.9296222,
+        "valuta": "EUR",
+        "pnl": 152.38
       }
     ],
     "importedFiles": [
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-09-07"
+      },
       {
         "name": "profitloss-export.xls",
         "importedOn": "2026-09-07"
