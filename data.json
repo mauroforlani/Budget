@@ -48879,9 +48879,178 @@
         "pzoChiusura": null,
         "valuta": "EUR",
         "pnl": -3263.35
+      },
+      {
+        "data": "2023-03-21",
+        "desc": "UNICREDIT",
+        "simbolo": "UCG",
+        "mercato": "Internalizzata Fineco",
+        "qta": 300,
+        "pzoApertura": 15.8600666,
+        "pzoChiusura": 17.2631333,
+        "valuta": "EUR",
+        "pnl": 420.92
+      },
+      {
+        "data": "2023-05-23",
+        "desc": "TESLA",
+        "simbolo": "TSLA",
+        "mercato": "Internalizzata Fineco",
+        "qta": 25,
+        "pzoApertura": 173.2280593,
+        "pzoChiusura": 190.1018426,
+        "valuta": "USD",
+        "pnl": 421.84
+      },
+      {
+        "data": "2023-05-17",
+        "desc": "ADOBE",
+        "simbolo": "ADBE",
+        "mercato": "NASDAQ",
+        "qta": 1,
+        "pzoApertura": 343.6316129,
+        "pzoChiusura": 358.23,
+        "valuta": "USD",
+        "pnl": 14.6
+      },
+      {
+        "data": "2023-05-17",
+        "desc": "ADOBE",
+        "simbolo": "ADBE",
+        "mercato": "NASDAQ",
+        "qta": 14,
+        "pzoApertura": 343.6316129,
+        "pzoChiusura": 358.2201,
+        "valuta": "USD",
+        "pnl": 204.24
+      },
+      {
+        "data": "2023-05-17",
+        "desc": "ADOBE",
+        "simbolo": "ADBE",
+        "mercato": "NASDAQ",
+        "qta": 15,
+        "pzoApertura": 343.6316129,
+        "pzoChiusura": 357.3565677,
+        "valuta": "USD",
+        "pnl": 205.87
+      },
+      {
+        "data": "2023-06-05",
+        "desc": "AMAZON.COM",
+        "simbolo": "AMZN",
+        "mercato": "Internalizzata Fineco",
+        "qta": 50,
+        "pzoApertura": 115.5595393,
+        "pzoChiusura": 125.4410881,
+        "valuta": "USD",
+        "pnl": 494.08
+      },
+      {
+        "data": "2023-05-16",
+        "desc": "AMAZON.COM",
+        "simbolo": "AMZN",
+        "mercato": "Internalizzata Fineco",
+        "qta": 70,
+        "pzoApertura": 99.2850547,
+        "pzoChiusura": 114.5350229,
+        "valuta": "USD",
+        "pnl": 1067.5
+      },
+      {
+        "data": "2023-05-26",
+        "desc": "ALPHABET-A",
+        "simbolo": "GOOGL",
+        "mercato": "Internalizzata Fineco",
+        "qta": 33,
+        "pzoApertura": 124.0925433,
+        "pzoChiusura": 124.7174256,
+        "valuta": "USD",
+        "pnl": 20.62
+      },
+      {
+        "data": "2023-05-23",
+        "desc": "C3.AI RG-A",
+        "simbolo": "AI",
+        "mercato": "NYSE",
+        "qta": 100,
+        "pzoApertura": 26.3095148,
+        "pzoChiusura": 27.5204606,
+        "valuta": "USD",
+        "pnl": 121.09
+      },
+      {
+        "data": "2023-07-31",
+        "desc": "NVIDIA",
+        "simbolo": "NVDA",
+        "mercato": "Internalizzata Fineco",
+        "qta": 8,
+        "pzoApertura": 419.5593042,
+        "pzoChiusura": 466.8909968,
+        "valuta": "USD",
+        "pnl": 378.65
+      },
+      {
+        "data": "2023-07-12",
+        "desc": "STMICROELECTRONICS",
+        "simbolo": "STMMI",
+        "mercato": "Internalizzata Fineco",
+        "qta": 85,
+        "pzoApertura": 43.9082941,
+        "pzoChiusura": 46.391647,
+        "valuta": "EUR",
+        "pnl": 211.08
+      },
+      {
+        "data": "2023-11-29",
+        "desc": "BTP-29NV23 0%",
+        "simbolo": "-",
+        "mercato": "MOT",
+        "qta": 10000,
+        "pzoApertura": 97.127,
+        "pzoChiusura": 100,
+        "valuta": "EUR",
+        "pnl": 287.3
+      },
+      {
+        "data": "2023-11-15",
+        "desc": "GENERALI",
+        "simbolo": "G",
+        "mercato": "Internalizzata Fineco",
+        "qta": 400,
+        "pzoApertura": 18.7655749,
+        "pzoChiusura": 19.632625,
+        "valuta": "EUR",
+        "pnl": 346.82
+      },
+      {
+        "data": "2023-11-13",
+        "desc": "FINECOBANK",
+        "simbolo": "FBK",
+        "mercato": "ITALIA",
+        "qta": 339,
+        "pzoApertura": 11.2563555,
+        "pzoChiusura": 11.9584955,
+        "valuta": "EUR",
+        "pnl": 238.03
+      },
+      {
+        "data": "2023-11-13",
+        "desc": "FINECOBANK",
+        "simbolo": "FBK",
+        "mercato": "ITALIA",
+        "qta": 111,
+        "pzoApertura": 11.2563555,
+        "pzoChiusura": 11.9534234,
+        "valuta": "EUR",
+        "pnl": 77.37
       }
     ],
     "importedFiles": [
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-09-07"
+      },
       {
         "name": "profitloss-export.xls",
         "importedOn": "2026-09-07"
