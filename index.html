@@ -201,6 +201,14 @@
       <label><input type="checkbox" id="analisi-flag-progetti" autocomplete="off"> Includi gestione progetti <span class="flag-hint">(Progetti/Spese Straordinarie)</span></label>
     </div>
 
+    <div class="section-title">Entrate vs Uscite per anno</div>
+    <div class="section-sub">Confronto diretto tra i totali annuali, prima di derivarne il tasso di risparmio.</div>
+    <div class="chart-panel">
+      <div class="legend"><span><i style="background:var(--accent);"></i>Entrate</span><span><i style="background:#D8B15A;"></i>Uscite</span></div>
+      <div id="analisi-flussi-chart"></div>
+      <div class="chart-note" id="analisi-flussi-note"></div>
+    </div>
+
     <div class="section-title">Tasso di risparmio</div>
     <div class="section-sub">Quota delle entrate annuali non spesa: (Entrate &minus; Uscite) / Entrate.</div>
     <div class="chart-panel">
@@ -215,14 +223,26 @@
       <div class="chart-note" id="analisi-trend-note"></div>
     </div>
 
-    <div class="section-title">Classifica categorie</div>
-    <div class="section-sub">Confronto con l'anno precedente: un valore verde nelle uscite indica una riduzione della spesa, nelle entrate un aumento.</div>
     <div class="toolbar">
       <select id="analisi-anno"></select>
     </div>
 
+    <div class="section-title">Andamento mensile &mdash; anno selezionato</div>
+    <div class="section-sub">Entrate e uscite mese per mese, per individuare la stagionalità entro l'anno.</div>
+    <div class="chart-panel">
+      <div class="legend"><span><i style="background:var(--accent);"></i>Entrate</span><span><i style="background:#D8B15A;"></i>Uscite</span></div>
+      <div id="analisi-mensile-chart"></div>
+      <div class="chart-note" id="analisi-mensile-note"></div>
+    </div>
+
+    <div class="section-title">Composizione per categoria</div>
+    <div class="section-sub">Le voci che pesano di più sul totale dell'anno selezionato.</div>
+
     <div class="voce-block">
       <div class="voce-block-title">Uscite per categoria</div>
+      <div class="chart-panel">
+        <div id="analisi-usc-hbar" class="hbars"></div>
+      </div>
       <table class="ledger" id="analisi-uscite-table">
         <thead><tr><th>Categoria</th><th class="num">Anno selezionato</th><th class="num">% sul totale</th><th class="num">Anno precedente</th><th class="num">Variazione</th></tr></thead>
         <tbody></tbody>
@@ -231,6 +251,9 @@
 
     <div class="voce-block">
       <div class="voce-block-title">Entrate per categoria</div>
+      <div class="chart-panel">
+        <div id="analisi-ent-hbar" class="hbars"></div>
+      </div>
       <table class="ledger" id="analisi-entrate-table">
         <thead><tr><th>Categoria</th><th class="num">Anno selezionato</th><th class="num">% sul totale</th><th class="num">Anno precedente</th><th class="num">Variazione</th></tr></thead>
         <tbody></tbody>

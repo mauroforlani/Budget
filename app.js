@@ -1063,6 +1063,99 @@ function getAnalisiFlags() {
   };
 }
 
+function renderAnalisiFlussi() {
+  const { escludiTitoli, escludiProgetti } = getAnalisiFlags();
+  const yearTotals = ANNI.map(y => ({
+    y,
+    e: annoAdjEntrate(y, escludiTitoli, escludiProgetti),
+    u: annoAdjUscite(y, escludiTitoli, escludiProgetti),
+    stimato: !ANNI_CON_CATEGORIE.has(y) && (escludiTitoli || escludiProgetti),
+  }));
+  const maxVal = Math.max(...yearTotals.map(d => Math.max(d.e, d.u)), 1);
+  const PXMAX = 190;
+  document.getElementById('analisi-flussi-chart').innerHTML = `<div class="colchart">` + yearTotals.map(d => {
+    const he = Math.max(2, d.e / maxVal * PXMAX);
+    const hu = Math.max(2, d.u / maxVal * PXMAX);
+    return `<div class="colgroup">
+      <div class="bars">
+        <div class="col e" style="height:${he}px;" title="Entrate ${d.y}: ${eur(d.e)}"><span class="tip">${eurCompact(d.e)}</span></div>
+        <div class="col u" style="height:${hu}px;" title="Uscite ${d.y}: ${eur(d.u)}"><span class="tip">${eurCompact(d.u)}</span></div>
+      </div>
+      <div class="yr">${d.y}${d.stimato ? '*' : ''}</div>
+    </div>`;
+  }).join("") + `</div>`;
+
+  const escl = [];
+  if (escludiTitoli) escl.push('Acquisto/Vendita Titoli');
+  if (escludiProgetti) escl.push('Progetti/Spese Straordinarie');
+  const esclTxt = escl.length ? ` Escluse dal calcolo: ${escl.join(' e ')}.` : '';
+  const primoAnnoCat = Math.min(...ANNI_CON_CATEGORIE);
+  let note = `Totali annuali di entrate e uscite, a confronto diretto.${esclTxt}`;
+  if (escludiTitoli || escludiProgetti) {
+    note += ` Il dettaglio per categoria è disponibile dal ${primoAnnoCat}: gli anni precedenti (contrassegnati con *) mostrano comunque il totale completo.`;
+  }
+  document.getElementById('analisi-flussi-note').innerHTML = note;
+}
+
+function renderAnalisiMensile() {
+  const { escludiTitoli, escludiProgetti } = getAnalisiFlags();
+  const anno = parseInt(document.getElementById('analisi-anno').value || ANNO_CORRENTE, 10);
+  const el = document.getElementById('analisi-mensile-chart');
+  const noteEl = document.getElementById('analisi-mensile-note');
+
+  const mesi = [];
+  for (let m = 0; m < 12; m++) {
+    if (anno === ANNO_CORRENTE && !DATA.meta.mesiTransazioniDettagliate.includes(MESI_IT[m])) continue;
+    mesi.push({
+      m,
+      e: annoAdjEntrateMese(anno, m, escludiTitoli, escludiProgetti),
+      u: annoAdjUsciteMese(anno, m, escludiTitoli, escludiProgetti),
+    });
+  }
+  if (!mesi.length) {
+    el.innerHTML = '';
+    noteEl.textContent = `Nessun dato mensile disponibile per il ${anno}.`;
+    return;
+  }
+  const maxVal = Math.max(...mesi.map(d => Math.max(d.e, d.u)), 1);
+  const PXMAX = 170;
+  el.innerHTML = `<div class="colchart">` + mesi.map(d => {
+    const he = Math.max(2, d.e / maxVal * PXMAX);
+    const hu = Math.max(2, d.u / maxVal * PXMAX);
+    return `<div class="colgroup">
+      <div class="bars">
+        <div class="col e" style="height:${he}px;" title="Entrate ${MESI_IT[d.m]} ${anno}: ${eur(d.e)}"><span class="tip">${eurCompact(d.e)}</span></div>
+        <div class="col u" style="height:${hu}px;" title="Uscite ${MESI_IT[d.m]} ${anno}: ${eur(d.u)}"><span class="tip">${eurCompact(d.u)}</span></div>
+      </div>
+      <div class="yr">${MESI_IT[d.m].slice(0, 3)}</div>
+    </div>`;
+  }).join("") + `</div>`;
+
+  const migliore = mesi.reduce((a, b) => (b.e - b.u > a.e - a.u ? b : a));
+  const peggiore = mesi.reduce((a, b) => (b.e - b.u < a.e - a.u ? b : a));
+  noteEl.innerHTML = `Mese con saldo migliore: ${MESI_IT[migliore.m]} (${eur(migliore.e - migliore.u)}). Mese con saldo peggiore: ${MESI_IT[peggiore.m]} (${eur(peggiore.e - peggiore.u)}).`;
+}
+
+function renderAnalisiHBar(tipo, anno, categorieEscluse) {
+  const dict = tipo === 'entrate' ? DATA.entrateCategorie : DATA.usciteCategorie;
+  const cats = Object.keys(dict).filter(c => c !== 'TOTALE' && !categorieEscluse.includes(c));
+  const righe = cats
+    .map(c => ({ cat: c, val: dict[c][anno] || 0 }))
+    .filter(r => r.val > 0)
+    .sort((a, b) => b.val - a.val);
+  const targetId = tipo === 'entrate' ? 'analisi-ent-hbar' : 'analisi-usc-hbar';
+  const maxVal = Math.max(...righe.map(r => r.val), 1);
+  const clsFill = tipo === 'entrate' ? 'ent' : 'usc';
+  document.getElementById(targetId).innerHTML = righe.map(r => {
+    const w = Math.max(2, r.val / maxVal * 100);
+    return `<div class="hbar-row">
+      <div class="hbar-label" title="${r.cat}">${r.cat}</div>
+      <div class="hbar-track"><div class="hbar-fill ${clsFill}" style="width:${w}%;"></div></div>
+      <div class="hbar-val">${eurCompact(r.val)}</div>
+    </div>`;
+  }).join("") || `<div style="color:var(--ink-soft); font-family:'Inter',sans-serif; font-size:12.5px; padding:6px 0;">Nessun dato per l'anno selezionato.</div>`;
+}
+
 function renderAnalisiRisparmio() {
   const { escludiTitoli, escludiProgetti } = getAnalisiFlags();
   const PXMAX = 150;
@@ -1186,12 +1279,20 @@ function renderAnalisiClassifica() {
   const annoPrec = anno - 1;
   renderClassificaTabella('uscite', anno, annoPrec, categorieEscluse);
   renderClassificaTabella('entrate', anno, annoPrec, categorieEscluse);
+  renderAnalisiHBar('uscite', anno, categorieEscluse);
+  renderAnalisiHBar('entrate', anno, categorieEscluse);
+}
+
+function renderAnalisiAnnoDipendenti() {
+  renderAnalisiMensile();
+  renderAnalisiClassifica();
 }
 
 function renderAnalisi() {
+  renderAnalisiFlussi();
   renderAnalisiRisparmio();
   renderAnalisiTrend();
-  renderAnalisiClassifica();
+  renderAnalisiAnnoDipendenti();
 }
 
 
@@ -1549,7 +1650,7 @@ document.getElementById('budget-teorico-pct').addEventListener('change', (e) => 
   renderBudget();
   persist('Aggiornamento % flusso teorico');
 });
-document.getElementById('analisi-anno').addEventListener('change', renderAnalisiClassifica);
+document.getElementById('analisi-anno').addEventListener('change', renderAnalisiAnnoDipendenti);
 document.getElementById('analisi-flag-titoli').addEventListener('change', renderAnalisi);
 document.getElementById('analisi-flag-progetti').addEventListener('change', renderAnalisi);
 

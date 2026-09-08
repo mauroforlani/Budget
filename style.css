@@ -508,3 +508,19 @@ table.ledger input.cell-edit[readonly]:hover{ border-color:transparent; }
 
 /* ---------- PATRIMONIO ROW ACTIONS ---------- */
 .patr-actions{ margin-top:14px; }
+
+/* ---------- HORIZONTAL BAR CHART (composizione per categoria) ---------- */
+.hbars{ display:flex; flex-direction:column; gap:11px; }
+.hbar-row{ display:grid; grid-template-columns: 168px 1fr 96px; align-items:center; gap:12px; }
+@media(max-width:760px){ .hbar-row{ grid-template-columns: 110px 1fr 78px; gap:8px; } }
+.hbar-label{
+  font-family:'Inter', sans-serif; font-size:12.5px; font-weight:600; color:var(--ink);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.hbar-track{ background: var(--surface-2); border-radius:6px; height:15px; overflow:hidden; }
+.hbar-fill{ height:100%; border-radius:6px; min-width:3px; transition: width .2s ease; }
+.hbar-fill.usc{ background: var(--accent); }
+.hbar-fill.ent{ background: var(--green); }
+.hbar-val{
+  font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--ink-soft); text-align:right; white-space:nowrap;
+}
