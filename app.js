@@ -771,6 +771,32 @@ function categoriaMeseValore(dict, cat, anno, mIdx) {
   return annualVal / 12;
 }
 
+/* Ultimo mese (indice 0-11) per cui l'anno corrente ha transazioni registrate.
+   Serve per capire quanto è "parziale" l'anno in corso e limitare i confronti
+   con l'anno precedente allo stesso periodo (YTD vs YTD), invece di confrontare
+   un anno incompleto con un anno intero. Ritorna 11 (Dicembre) se l'anno
+   corrente non ha ancora dettaglio mensile, così i confronti restano a 12 mesi. */
+function ultimoMeseConDatiAnnoCorrente() {
+  const mesi = (DATA.meta && DATA.meta.mesiTransazioniDettagliate) || [];
+  if (!mesi.length) return 11;
+  let idx = -1;
+  mesi.forEach(nome => {
+    const i = MESI_IT.indexOf(nome);
+    if (i > idx) idx = i;
+  });
+  return idx < 0 ? 11 : idx;
+}
+
+/* Somma il valore di una categoria per i primi `mesiCount` mesi (Gennaio in poi)
+   di un dato anno. Se l'anno non ha dettaglio mensile, categoriaMeseValore()
+   ripartisce già il totale annuo in dodicesimi, quindi il risultato equivale
+   a una stima proporzionale (annuo / 12 * mesiCount). */
+function sumCategoriaPeriodo(dict, cat, anno, mesiCount) {
+  let s = 0;
+  for (let m = 0; m < mesiCount; m++) s += categoriaMeseValore(dict, cat, anno, m);
+  return s;
+}
+
 function stipendioMese(anno, mIdx) {
   if (!haDettaglioCategorie(anno)) return 0;
   return categoriaMeseValore(DATA.entrateCategorie, 'Stipendio', anno, mIdx);
@@ -1246,10 +1272,21 @@ const CATEGORIE_PROGETTI = ['Progetti/Spese Straordinarie'];
 function renderClassificaTabella(tipo, anno, annoPrec, categorieEscluse) {
   const dict = tipo === 'entrate' ? DATA.entrateCategorie : DATA.usciteCategorie;
   const cats = Object.keys(dict).filter(c => c !== 'TOTALE' && !categorieEscluse.includes(c));
-  const totaleAnno = sum(cats.map(c => dict[c][anno] || 0));
+
+  // Se l'anno selezionato è l'anno corrente e non è ancora concluso, confronta
+  // anno e anno precedente sugli stessi mesi (YTD vs YTD) invece che sul totale
+  // annuo intero dell'anno precedente, altrimenti il confronto sarebbe fuorviante.
+  const ultimoMeseIdx = ultimoMeseConDatiAnnoCorrente();
+  const annoParziale = anno === ANNO_CORRENTE && ultimoMeseIdx < 11;
+  const mesiCount = annoParziale ? ultimoMeseIdx + 1 : 12;
+
+  const valAnno = c => annoParziale ? sumCategoriaPeriodo(dict, c, anno, mesiCount) : (dict[c][anno] || 0);
+  const valPrecFn = c => annoParziale ? sumCategoriaPeriodo(dict, c, annoPrec, mesiCount) : (dict[c][annoPrec] || 0);
+
+  const totaleAnno = sum(cats.map(valAnno));
 
   const righe = cats
-    .map(c => ({ cat: c, val: dict[c][anno] || 0, valPrec: dict[c][annoPrec] || 0 }))
+    .map(c => ({ cat: c, val: valAnno(c), valPrec: valPrecFn(c) }))
     .filter(r => r.val !== 0 || r.valPrec !== 0)
     .sort((a, b) => b.val - a.val);
 
@@ -1267,6 +1304,21 @@ function renderClassificaTabella(tipo, anno, annoPrec, categorieEscluse) {
       <td class="num ${favorevole ? 'pos' : 'neg'}">${deltaTxt}</td>
     </tr>`;
   }).join("") || `<tr><td colspan="5" style="color:var(--ink-soft); padding:18px;">Nessun dato per l'anno selezionato.</td></tr>`;
+
+  const thAnno = document.getElementById(`analisi-${tipo}-th-anno`);
+  const thPrec = document.getElementById(`analisi-${tipo}-th-prec`);
+  if (thAnno && thPrec) {
+    if (annoParziale) {
+      const periodoTxt = mesiCount === 1 ? MESI_IT[0] : `Gen\u2013${MESI_IT[ultimoMeseIdx].slice(0, 3)}`;
+      thAnno.textContent = `${anno} (${periodoTxt})`;
+      thPrec.textContent = `${annoPrec} (${periodoTxt})`;
+    } else {
+      thAnno.textContent = 'Anno selezionato';
+      thPrec.textContent = 'Anno precedente';
+    }
+  }
+
+  return { annoParziale, mesiCount, ultimoMeseIdx };
 }
 
 function renderAnalisiClassifica() {
@@ -1277,10 +1329,21 @@ function renderAnalisiClassifica() {
   ];
   const anno = parseInt(document.getElementById('analisi-anno').value || ANNO_CORRENTE, 10);
   const annoPrec = anno - 1;
-  renderClassificaTabella('uscite', anno, annoPrec, categorieEscluse);
-  renderClassificaTabella('entrate', anno, annoPrec, categorieEscluse);
+  const infoU = renderClassificaTabella('uscite', anno, annoPrec, categorieEscluse);
+  const infoE = renderClassificaTabella('entrate', anno, annoPrec, categorieEscluse);
   renderAnalisiHBar('uscite', anno, categorieEscluse);
   renderAnalisiHBar('entrate', anno, categorieEscluse);
+
+  const subEl = document.getElementById('analisi-composizione-sub');
+  if (subEl) {
+    const info = infoU.annoParziale ? infoU : infoE;
+    if (info.annoParziale) {
+      const periodoTxt = info.mesiCount === 1 ? MESI_IT[0] : `Gennaio\u2013${MESI_IT[info.ultimoMeseIdx]}`;
+      subEl.innerHTML = `Le voci che pesano di più sul totale del periodo. <b>${anno} è un anno parziale</b>: per un confronto corretto, sia ${anno} sia ${annoPrec} sono limitati allo stesso periodo (${periodoTxt}), invece di confrontare un anno incompleto con uno intero.`;
+    } else {
+      subEl.textContent = 'Le voci che pesano di più sul totale dell\u2019anno selezionato.';
+    }
+  }
 }
 
 function renderAnalisiAnnoDipendenti() {

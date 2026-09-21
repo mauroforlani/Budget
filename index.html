@@ -236,7 +236,7 @@
     </div>
 
     <div class="section-title">Composizione per categoria</div>
-    <div class="section-sub">Le voci che pesano di più sul totale dell'anno selezionato.</div>
+    <div class="section-sub" id="analisi-composizione-sub">Le voci che pesano di più sul totale dell'anno selezionato.</div>
 
     <div class="voce-block">
       <div class="voce-block-title">Uscite per categoria</div>
@@ -244,7 +244,7 @@
         <div id="analisi-usc-hbar" class="hbars"></div>
       </div>
       <table class="ledger" id="analisi-uscite-table">
-        <thead><tr><th>Categoria</th><th class="num">Anno selezionato</th><th class="num">% sul totale</th><th class="num">Anno precedente</th><th class="num">Variazione</th></tr></thead>
+        <thead><tr><th>Categoria</th><th class="num" id="analisi-uscite-th-anno">Anno selezionato</th><th class="num">% sul totale</th><th class="num" id="analisi-uscite-th-prec">Anno precedente</th><th class="num">Variazione</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -255,7 +255,7 @@
         <div id="analisi-ent-hbar" class="hbars"></div>
       </div>
       <table class="ledger" id="analisi-entrate-table">
-        <thead><tr><th>Categoria</th><th class="num">Anno selezionato</th><th class="num">% sul totale</th><th class="num">Anno precedente</th><th class="num">Variazione</th></tr></thead>
+        <thead><tr><th>Categoria</th><th class="num" id="analisi-entrate-th-anno">Anno selezionato</th><th class="num">% sul totale</th><th class="num" id="analisi-entrate-th-prec">Anno precedente</th><th class="num">Variazione</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
