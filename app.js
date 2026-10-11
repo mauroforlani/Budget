@@ -1709,6 +1709,12 @@ document.getElementById('tabs').addEventListener('click', (e) => {
   if (e.target.tagName !== 'BUTTON') return;
   const tab = e.target.dataset.tab;
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b === e.target));
+  // Su mobile la barra dei tab scorre in orizzontale: tieni visibile il tab scelto
+  // e riporta la pagina in cima, così il nuovo contenuto parte dall'inizio.
+  try {
+    e.target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    if (window.matchMedia('(max-width: 760px)').matches) window.scrollTo({ top: 0, behavior: 'auto' });
+  } catch (err) { /* browser molto vecchi: ignora */ }
   TAB_ORDER.forEach(t => {
     document.getElementById('tab-' + t).style.display = (t === tab) ? 'block' : 'none';
   });

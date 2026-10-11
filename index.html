@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0E6E5C">
 <title>Le Tue Finanze</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
@@ -64,10 +65,10 @@
     </div>
 
     <div class="section-title">Ultime registrazioni</div>
-    <table class="ledger" id="dash-recent">
+    <div class="table-scroll"><table class="ledger" id="dash-recent">
       <thead><tr><th>Data</th><th>Descrizione</th><th>Categoria</th><th class="num">Importo</th></tr></thead>
       <tbody></tbody>
-    </table>
+    </table></div>
   </section>
 
   <!-- ================= DETTAGLIO PER VOCE ================= -->
@@ -81,10 +82,10 @@
         <select id="voce-cat-entrate"></select>
       </div>
       <div class="voce-chart" id="voce-chart-entrate"></div>
-      <table class="ledger" id="voce-table-entrate">
+      <div class="table-scroll"><table class="ledger" id="voce-table-entrate">
         <thead><tr><th>Anno</th><th class="num">Totale</th><th class="num">Media/mese</th><th class="num">Variazione vs anno prec.</th></tr></thead>
         <tbody></tbody>
-      </table>
+      </table></div>
     </div>
 
     <div class="voce-block">
@@ -93,10 +94,10 @@
         <select id="voce-cat-uscite"></select>
       </div>
       <div class="voce-chart" id="voce-chart-uscite"></div>
-      <table class="ledger" id="voce-table-uscite">
+      <div class="table-scroll"><table class="ledger" id="voce-table-uscite">
         <thead><tr><th>Anno</th><th class="num">Totale</th><th class="num">Media/mese</th><th class="num">Variazione vs anno prec.</th></tr></thead>
         <tbody></tbody>
-      </table>
+      </table></div>
     </div>
   </section>
 
@@ -141,10 +142,10 @@
       <button class="ghost" id="btn-export-tx">Esporta selezionate (.xlsx)</button>
     </div>
 
-    <table class="ledger" id="tx-table">
+    <div class="table-scroll"><table class="ledger" id="tx-table">
       <thead><tr><th style="width:34px;"></th><th>Data</th><th>Descrizione</th><th>Categoria</th><th>Istituto</th><th class="num">Importo</th><th></th></tr></thead>
       <tbody></tbody>
-    </table>
+    </table></div>
   </section>
 
   <!-- ================= BUDGET ================= -->
@@ -162,7 +163,7 @@
     </div>
 
     <div class="section-title">Totali per anno</div>
-    <table class="ledger" id="budget-years-table">
+    <div class="table-scroll"><table class="ledger" id="budget-years-table">
       <thead><tr>
         <th>Anno</th>
         <th class="num">Entrate</th>
@@ -174,10 +175,10 @@
         <th class="num">% Risparmio effettivo</th>
       </tr></thead>
       <tbody></tbody>
-    </table>
+    </table></div>
 
     <div class="section-title" id="budget-title">Budget mensile</div>
-    <table class="ledger" id="budget-table">
+    <div class="table-scroll"><table class="ledger" id="budget-table">
       <thead><tr>
         <th>Mese</th>
         <th class="num">Entrate</th>
@@ -190,7 +191,7 @@
       </tr></thead>
       <tbody></tbody>
       <tfoot></tfoot>
-    </table>
+    </table></div>
     <div class="budget-note" id="budget-note"></div>
   </section>
 
@@ -243,10 +244,10 @@
       <div class="chart-panel">
         <div id="analisi-usc-hbar" class="hbars"></div>
       </div>
-      <table class="ledger" id="analisi-uscite-table">
+      <div class="table-scroll"><table class="ledger" id="analisi-uscite-table">
         <thead><tr><th>Categoria</th><th class="num" id="analisi-uscite-th-anno">Anno selezionato</th><th class="num">% sul totale</th><th class="num" id="analisi-uscite-th-prec">Anno precedente</th><th class="num">Variazione</th></tr></thead>
         <tbody></tbody>
-      </table>
+      </table></div>
     </div>
 
     <div class="voce-block">
@@ -254,10 +255,10 @@
       <div class="chart-panel">
         <div id="analisi-ent-hbar" class="hbars"></div>
       </div>
-      <table class="ledger" id="analisi-entrate-table">
+      <div class="table-scroll"><table class="ledger" id="analisi-entrate-table">
         <thead><tr><th>Categoria</th><th class="num" id="analisi-entrate-th-anno">Anno selezionato</th><th class="num">% sul totale</th><th class="num" id="analisi-entrate-th-prec">Anno precedente</th><th class="num">Variazione</th></tr></thead>
         <tbody></tbody>
-      </table>
+      </table></div>
     </div>
 
   </section>
@@ -266,11 +267,11 @@
   <section id="tab-patrimonio" style="display:none;">
     <div class="section-title">Patrimonio per istituto</div>
     <div class="section-sub">Fineco e Illimity sono istituti fissi (nome non modificabile): la liquidit&agrave; si aggiorna da sola in base alle transazioni a cui assegni un istituto, e per Fineco il Portafoglio Titoli riprende automaticamente il valore di mercato dal tab Portafoglio Titoli. Puoi comunque correggere manualmente qualsiasi importo, e aggiungere altri istituti liberi.</div>
-    <table class="ledger" id="patrimonio-table">
+    <div class="table-scroll"><table class="ledger" id="patrimonio-table">
       <thead><tr><th>Istituto</th><th class="num">Liquidit&agrave;</th><th class="num">Portafoglio Titoli</th><th class="num">Deposito</th><th class="num">Totale</th><th></th></tr></thead>
       <tbody></tbody>
       <tfoot></tfoot>
-    </table>
+    </table></div>
     <div class="patr-actions">
       <button class="ghost" id="btn-add-istituto">+ Aggiungi istituto</button>
     </div>
@@ -287,7 +288,7 @@
 
     <div class="grid" style="grid-template-columns:repeat(3,1fr);" id="ptf-cards"></div>
     <div class="section-title">Titoli in portafoglio</div>
-    <table class="ledger" id="ptf-table">
+    <div class="table-scroll"><table class="ledger" id="ptf-table">
       <thead><tr>
         <th>Titolo</th><th>ISIN</th><th>Mercato</th><th>Strumento</th>
         <th class="num">Quantit&agrave;</th>
@@ -296,7 +297,7 @@
         <th class="num">Var%</th><th class="num">Var &euro;</th>
       </tr></thead>
       <tbody></tbody>
-    </table>
+    </table></div>
   </section>
 
   <!-- ================= PROFIT & LOSS ================= -->
@@ -323,7 +324,7 @@
     <div class="grid" style="grid-template-columns:repeat(4,1fr);" id="pl-cards"></div>
 
     <div class="section-title">Sintesi per anno</div>
-    <table class="ledger" id="pl-years-table">
+    <div class="table-scroll"><table class="ledger" id="pl-years-table">
       <thead><tr>
         <th>Anno</th>
         <th class="num">N. operazioni</th>
@@ -332,16 +333,16 @@
         <th class="num">Operazioni in utile</th>
       </tr></thead>
       <tbody></tbody>
-    </table>
+    </table></div>
 
     <div class="section-title">Sintesi per titolo <span class="tag" style="font-family:'Inter',sans-serif; font-weight:600;">periodo filtrato</span></div>
-    <table class="ledger" id="pl-titoli-table">
+    <div class="table-scroll"><table class="ledger" id="pl-titoli-table">
       <thead><tr><th>Titolo</th><th>Simbolo</th><th class="num">N. operazioni</th><th class="num">P&amp;L</th></tr></thead>
       <tbody></tbody>
-    </table>
+    </table></div>
 
     <div class="section-title">Operazioni chiuse <span class="tag" style="font-family:'Inter',sans-serif; font-weight:600;">periodo filtrato</span></div>
-    <table class="ledger" id="pl-table">
+    <div class="table-scroll"><table class="ledger" id="pl-table">
       <thead><tr>
         <th>Data</th><th>Titolo</th><th>Simbolo</th><th>Mercato</th>
         <th class="num">Quantit&agrave;</th>
@@ -349,7 +350,7 @@
         <th class="num">P&amp;L</th>
       </tr></thead>
       <tbody></tbody>
-    </table>
+    </table></div>
   </section>
 
   <!-- ================= IMPORTA ================= -->
@@ -379,10 +380,10 @@
         <button class="primary" id="btn-confirm-import">Importa selezionati</button>
       </div>
       <div class="section-sub" style="margin-top:6px;">Se selezioni un istituto, la sua liquidit&agrave; nel tab Patrimonio verr&agrave; aggiornata della somma netta dei movimenti importati e confermati.</div>
-      <table class="ledger" id="import-table">
+      <div class="table-scroll"><table class="ledger" id="import-table">
         <thead><tr><th></th><th>Data</th><th>Descrizione</th><th class="num">Importo</th><th>Fonte</th><th>Istituto</th><th>Categoria proposta</th></tr></thead>
         <tbody></tbody>
-      </table>
+      </table></div>
     </div>
   </section>
 

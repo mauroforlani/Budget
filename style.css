@@ -109,6 +109,7 @@ h1{
   color: rgba(255,255,255,.92);
   display:flex; align-items:center; gap:6px;
   padding:7px 12px;
+  margin-top:10px;
   border:1px solid rgba(255,255,255,.35);
   border-radius:999px;
   background: rgba(255,255,255,.12);
@@ -415,7 +416,7 @@ table.ledger tbody tr:last-child td{ border-bottom:none; }
 
 /* ---------- CONTROLS ---------- */
 .toolbar{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom: 16px; }
-select, input[type=text], input[type=number], input[type=date]{
+select, input[type=text], input[type=number], input[type=date], input[type=password]{
   font-family:'Inter', sans-serif;
   font-size:12.5px;
   padding: 8px 12px;
@@ -641,3 +642,155 @@ table.ledger input.cell-edit[readonly]:hover{ border-color:transparent; }
 ::-webkit-scrollbar{ height:8px; width:8px; }
 ::-webkit-scrollbar-thumb{ background: #D6DAEA; border-radius:8px; }
 ::-webkit-scrollbar-thumb:hover{ background: #C0C6E0; }
+
+
+/* =====================================================================
+   TABELLE SCORREVOLI + MOBILE (ottimizzato per telefoni ~360-430px, es. Pixel)
+   ===================================================================== */
+
+/* Ogni tabella sta in un riquadro che scorre in orizzontale da solo, così su
+   schermi stretti non si allarga mai l'intera pagina. */
+.table-scroll{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:var(--r-md);
+  box-shadow:var(--shadow-sm);
+  margin-bottom:34px;
+}
+.table-scroll > table.ledger{
+  border:none; box-shadow:none; border-radius:0; margin:0; background:transparent;
+}
+
+/* barre dello sparkline leggibili sullo sfondo a gradiente */
+.sparkline .bar{ background: rgba(255,255,255,.92) !important; }
+.sparkline .bar[style*="--red"]{ background:#FFB8AD !important; }
+
+nav.tabs{ background: rgba(247,248,252,.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+@media (max-width: 760px){
+  /* scorrimento orizzontale con indicatori d'ombra sui bordi del riquadro */
+  .table-scroll{
+    margin-bottom:26px;
+    background:
+      linear-gradient(to right,#fff 30%,rgba(255,255,255,0)) left center,
+      linear-gradient(to left,#fff 30%,rgba(255,255,255,0)) right center,
+      radial-gradient(farthest-side at 0 50%,rgba(18,22,43,.20),rgba(18,22,43,0)) left center,
+      radial-gradient(farthest-side at 100% 50%,rgba(18,22,43,.20),rgba(18,22,43,0)) right center,
+      #fff;
+    background-repeat:no-repeat;
+    background-size:34px 100%,34px 100%,10px 100%,10px 100%,auto;
+    background-attachment:local,local,scroll,scroll,scroll;
+  }
+  .table-scroll > table.ledger{ min-width:560px; font-size:11.5px; }
+  #tx-table{ min-width:700px; }
+  #ptf-table, #pl-table{ min-width:760px; }
+  table.ledger th, table.ledger td{ padding:9px 9px; }
+  table.ledger th{ font-size:9.5px; }
+  .tag{ white-space:nowrap; }
+
+  /* prima colonna (mese, categoria, istituto, titolo...) fissa mentre scorri di lato */
+  .table-scroll > table.ledger:not(#tx-table):not(#import-table) th:first-child,
+  .table-scroll > table.ledger:not(#tx-table):not(#import-table) td:first-child{
+    position:sticky; left:0; z-index:2; max-width:132px;
+    box-shadow:1px 0 0 var(--border);
+  }
+  .table-scroll > table.ledger:not(#tx-table):not(#import-table) td:first-child{ background:#fff; }
+  .table-scroll > table.ledger:not(#tx-table):not(#import-table) th:first-child{ background:var(--surface); z-index:3; }
+  .table-scroll > table.ledger:not(#tx-table):not(#import-table) tbody tr:hover td:first-child{ background:var(--surface); }
+}
+
+@media (max-width: 640px){
+  .wrap{ padding:10px 12px 64px; }
+
+  /* header compatto */
+  header{ padding:18px 18px 16px; margin-bottom:12px; border-radius:18px; gap:12px; }
+  .eyebrow{ font-size:9.5px; letter-spacing:.12em; margin-bottom:5px; }
+  h1{ font-size:25px; }
+  .hdr-right{ width:100%; text-align:left; }
+  .hdr-right .lbl{ font-size:10px; }
+  .hdr-right .val{ font-size:26px; }
+  .sparkline{ justify-content:flex-start; height:26px; margin-top:6px; }
+  .gh-status{ width:100%; margin-top:10px; justify-content:flex-start; text-align:left; font-size:10px; padding:8px 12px; }
+
+  /* tab: una sola riga scorrevole, sempre in alto */
+  nav.tabs{
+    flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden;
+    gap:4px; padding:5px; top:6px; margin:0 0 16px;
+    scrollbar-width:none; scroll-snap-type:x proximity;
+  }
+  nav.tabs::-webkit-scrollbar{ display:none; }
+  nav.tabs button{ flex:0 0 auto; padding:10px 14px; font-size:13px; scroll-snap-align:center; }
+
+  /* schede riepilogo: sempre 2 colonne (vince anche sugli stili inline 3/4 colonne) */
+  .grid, .grid[style]{ grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:10px; margin-bottom:22px; }
+  .grid > .card:last-child:nth-child(odd){ grid-column:1 / -1; }
+  .card{ padding:13px 12px 13px 16px; border-radius:12px; }
+  .card:hover{ transform:none; }
+  .card .label{ font-size:9.5px; letter-spacing:.05em; margin-bottom:7px; }
+  .card .value{ font-size:19px; overflow-wrap:anywhere; }
+  .card .sub{ font-size:10px; margin-top:6px; }
+
+  .section-title{ font-size:17px; margin:4px 0 12px; }
+  .voce-block-title{ font-size:15.5px; }
+  .section-sub{ font-size:12px; }
+  .data-banner{ padding:11px 14px; font-size:12px; margin-bottom:18px; }
+
+  /* pannelli grafici */
+  .chart-panel, .voce-chart{ padding:16px 14px 12px; border-radius:16px; margin-bottom:22px; }
+  .chart-flags, .budget-flags{ gap:10px 16px; }
+  .chart-flags label, .budget-flags label{ font-size:12.5px; }
+  input[type=checkbox]{ width:19px !important; height:19px !important; flex:0 0 auto; }
+  .colchart{ gap:12px; }
+  .hbar-row{ grid-template-columns:92px 1fr 66px; gap:7px; }
+  .hbar-label{ font-size:11.5px; }
+  .hbar-val{ font-size:10.5px; }
+
+  /* controlli più comodi da toccare */
+  .toolbar{ gap:8px; }
+  .toolbar select, .toolbar input[type=text], .toolbar input[type=number], .toolbar input[type=date],
+  .voce-controls select{ flex:1 1 130px; min-width:0; }
+  select, input[type=text], input[type=number], input[type=date], input[type=password]{ min-height:42px; font-size:14px; }
+  button.primary, button.ghost{ min-height:42px; }
+  .form-panel{ padding:14px; }
+  .form-grid{ gap:10px; }
+  .form-grid input, .form-grid select{ width:100%; min-width:0; }
+
+  /* finestre modali (es. sincronizzazione GitHub): scorrono invece di uscire dallo schermo */
+  .modal-backdrop{ align-items:flex-start; overflow-y:auto; padding:10px; }
+  .modal{ margin:6px auto 24px; padding:20px 16px; border-radius:18px; }
+  .modal-actions{ flex-wrap:wrap; }
+  .modal-actions-sync{ margin-top:16px !important; }
+  #gh-token-preview{ margin-bottom:6px; }
+  .modal-actions button{ flex:1 1 120px; }
+  .modal input[type=text], .modal input[type=password]{ min-height:44px; font-size:15px; }
+
+  .import-drop{ padding:24px 14px; }
+  footer.note{ font-size:11.5px; }
+
+  /* Transazioni: su telefono ogni riga diventa una scheda compatta a due livelli
+     (descrizione + importo sopra; data, categoria, istituto, azioni sotto),
+     così l'importo è sempre visibile senza scorrere di lato. */
+  #tx-table{ min-width:0; width:100%; }
+  #tx-table thead{ display:none; }
+  #tx-table, #tx-table tbody{ display:block; }
+  #tx-table tbody tr{
+    display:grid;
+    grid-template-columns:30px auto auto minmax(0,1fr) auto;
+    column-gap:8px; row-gap:5px; align-items:center;
+    padding:11px 12px; border-bottom:1px solid var(--border);
+  }
+  #tx-table tbody tr:last-child{ border-bottom:none; }
+  #tx-table tbody td{ display:block; padding:0; border:none; min-width:0; }
+  #tx-table tbody td:nth-child(1){ grid-column:1; grid-row:1 / span 2; align-self:start; padding-top:2px; }
+  #tx-table tbody td:nth-child(3){ grid-column:2 / 5; grid-row:1; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; line-height:1.3; overflow-wrap:anywhere; }
+  #tx-table tbody td:nth-child(6){ grid-column:5; grid-row:1; font-size:13.5px; font-weight:700; text-align:right; }
+  #tx-table tbody td:nth-child(2){ grid-column:2; grid-row:2; font-size:10.5px; color:var(--ink-soft); white-space:nowrap; }
+  #tx-table tbody td:nth-child(4){ grid-column:3; grid-row:2; }
+  #tx-table tbody td:nth-child(5){ grid-column:4; grid-row:2; }
+  #tx-table tbody td:nth-child(7){ grid-column:5; grid-row:2; text-align:right; white-space:nowrap; }
+  #tx-table tbody td:nth-child(5) .tag, #tx-table tbody td:nth-child(4) .tag{ max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:10px; padding:2px 8px; }
+  #tx-table tbody td .rowbtn{ font-size:11px; padding:7px 3px; }
+  #tx-table tbody td[colspan]{ grid-column:1 / -1; grid-row:auto; font-family:'Inter',sans-serif; font-size:13px; font-weight:400; text-align:left; }
+}
