@@ -244,29 +244,43 @@ const GitHubSync = (() => {
   async function fetchSha(path, branch, token, owner, repo) {
     try {
       const res = await fetchWithRetry(apiUrl(path, branch), {
-        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json' }
+        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json' },
+        cache: 'no-store'
       });
       if (res.ok) { const j = await res.json(); return j.sha; }
     } catch (e) { /* ignore */ }
     return undefined;
   }
 
-  async function saveData(obj, message) {
+  let lastSaveConflict = false;
+
+  async function saveData(obj, message, opts) {
     const c = getConfig();
     if (!c || !c.token || !c.owner || !c.repo) {
       setStatus('err', 'GitHub non collegato — modifiche solo locali');
       return false;
     }
     // Serializza le chiamate per evitare conflitti di sha in scritture ravvicinate
-    saveQueue = saveQueue.then(() => doSave(c, obj, message));
+    saveQueue = saveQueue.then(() => doSave(c, obj, message, opts));
     return saveQueue;
   }
 
-  async function doSave(c, obj, message) {
+  async function doSave(c, obj, message, opts) {
     setStatus('busy', 'Salvataggio su GitHub…');
     const path = c.path || DEFAULT_PATH;
     try {
-      const sha = lastKnownSha || await fetchSha(path, c.branch, c.token, c.owner, c.repo);
+      // Controllo anti-sovrascrittura: se su GitHub il file è cambiato rispetto
+      // all'ultima versione che questa pagina ha letto/salvato (es. modifiche
+      // fatte da un altro dispositivo), NON lo sovrascriviamo alla cieca.
+      const remoteSha = await fetchSha(path, c.branch, c.token, c.owner, c.repo);
+      const force = !!(opts && opts.force);
+      if (!force && remoteSha && remoteSha !== lastKnownSha) {
+        lastSaveConflict = true;
+        setStatus('err', 'Su GitHub ci sono dati più recenti');
+        return false;
+      }
+      lastSaveConflict = false;
+      const sha = remoteSha || lastKnownSha;
       const body = {
         message: message || 'Aggiornamento dati finanze',
         content: b64EncodeUnicode(JSON.stringify(obj, null, 2)),
@@ -297,6 +311,13 @@ const GitHubSync = (() => {
       console.error(err);
       return false;
     }
+  }
+
+  // Sha attuale del file su GitHub (richiesta leggera, senza scaricare i dati)
+  async function fetchRemoteSha() {
+    const c = getConfig();
+    if (!c || !c.token || !c.owner || !c.repo) return null;
+    return (await fetchSha(c.path || DEFAULT_PATH, c.branch, c.token, c.owner, c.repo)) || null;
   }
 
   /* ---------------- UI: stato + modale di configurazione ---------------- */
@@ -352,7 +373,7 @@ const GitHubSync = (() => {
       backdrop.innerHTML = `
         <div class="modal">
           <h3>Sincronizzazione GitHub</h3>
-          <p class="hint">Due pulsanti, due direzioni: <b>"Carica su GitHub"</b> invia i dati di questa pagina al repository (li sovrascrive online). <b>"Scarica da GitHub"</b> fa l'esatto contrario: sostituisce i dati di questa pagina con quelli già salvati sul repository. Nessuna delle due cose avviene mai da sola: parte solo quando premi uno dei due pulsanti. Il token viene salvato solo in questo browser (localStorage), mai altrove — su ogni dispositivo dovrai inserirlo una volta.</p>
+          <p class="hint">Due pulsanti, due direzioni: <b>"Carica su GitHub"</b> invia i dati di questa pagina al repository (li sovrascrive online). <b>"Scarica da GitHub"</b> fa l'esatto contrario: sostituisce i dati di questa pagina con quelli già salvati sul repository. Quando il token è collegato, la pagina controlla da sola se su GitHub ci sono dati più recenti (all'apertura, quando torni sulla scheda e ogni minuto) e li scarica automaticamente, purché non ci siano tue modifiche non ancora salvate. Il token viene salvato solo in questo browser (localStorage), mai altrove — su ogni dispositivo dovrai inserirlo una volta.</p>
           <label>Proprietario / organizzazione (owner)</label>
           <input type="text" id="gh-owner" placeholder="es. mario-rossi" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
           <label>Nome repository</label>
@@ -534,5 +555,5 @@ const GitHubSync = (() => {
     }
   }
 
-  return { init, isConfigured, loadData, saveData, getConfig, setConfig, clearConfig, openModal: () => openModal(), getLastLoadDebug: () => lastLoadDebug };
+  return { init, isConfigured, loadData, saveData, getConfig, setConfig, clearConfig, openModal: () => openModal(), getLastLoadDebug: () => lastLoadDebug, fetchRemoteSha, getLastKnownSha: () => lastKnownSha, hadConflict: () => lastSaveConflict };
 })();

@@ -195,13 +195,30 @@ function persist(message) {
         lastSyncFailed = false;
       } else {
         lastSyncFailed = true;
-        if (!wasAlreadyFailing) {
+        if (GitHubSync.hadConflict && GitHubSync.hadConflict()) {
+          handleSyncConflict();
+        } else if (!wasAlreadyFailing) {
           alert('Il salvataggio automatico su GitHub non è riuscito. Le modifiche restano solo in questa pagina: NON chiudere o ricaricare la scheda finché il salvataggio non va a buon fine, oppure rischi di perderle. Controlla la connessione o le credenziali GitHub (icona in alto a destra).');
         }
         console.warn('Salvataggio su GitHub fallito: le modifiche restano solo locali finché non riprova con successo.');
       }
     });
   }, 600);
+}
+
+let conflictPromptOpen = false;
+async function handleSyncConflict() {
+  if (conflictPromptOpen) return;
+  conflictPromptOpen = true;
+  try {
+    const overwrite = confirm(
+      'Su GitHub ci sono dati più recenti di quelli di questa pagina (probabilmente salvati da un altro dispositivo), e qui ci sono modifiche non ancora salvate.\n\n' +
+      'OK = sovrascrivi GitHub con i dati di questa pagina.\n' +
+      'Annulla = scarica i dati da GitHub (le modifiche non salvate di questa pagina andranno perse).'
+    );
+    if (overwrite) await window.pushLocalToGitHub({ force: true });
+    else await window.pullFromGitHub();
+  } finally { conflictPromptOpen = false; }
 }
 
 /* ---------------- HEADER ---------------- */
@@ -1889,11 +1906,10 @@ async function initApp() {
   ['flag-titoli', 'flag-progetti', 'summary-flag-titoli', 'summary-flag-progetti', 'budget-flag-titoli', 'budget-flag-progetti', 'analisi-flag-titoli', 'analisi-flag-progetti']
     .forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
 
-  // NOTA: all'avvio la pagina NON scarica automaticamente i dati da GitHub.
-  // Il caricamento/scaricamento avviene solo quando premi esplicitamente
-  // uno dei due pulsanti "Carica su GitHub" / "Scarica da GitHub".
-  // Questo evita che un refresh accidentale della pagina sovrascriva dati
-  // appena inseriti prima che facciano in tempo a essere salvati online.
+  // All'avvio la pagina mostra subito i dati incorporati nel sito e, se GitHub è
+  // collegato, li aggiorna in background con quelli del repository (vedi
+  // autoPullIfNeeded). Un controllo anti-sovrascrittura in github-sync.js impedisce
+  // comunque di salvare dati vecchi sopra quelli più recenti presenti online.
 
   recomputeFlussi();
   syncPatrimonioAutomatico();
@@ -1904,13 +1920,20 @@ async function initApp() {
   populatePLFilters();
   renderVoceAll();
   renderAll();
+  autoPullIfNeeded(true);
 }
 
 /* Pulsante "⬆ Carica su GitHub": invia SUBITO (senza attese) i dati
    attualmente presenti in questa pagina, sovrascrivendo quelli online. */
-window.pushLocalToGitHub = async function () {
+window.pushLocalToGitHub = async function (opts) {
   if (persistTimer) { clearTimeout(persistTimer); persistTimer = null; }
-  const ok = await GitHubSync.saveData(buildExportData(), 'Caricamento manuale su GitHub');
+  const force = !!(opts && opts.force);
+  let ok = await GitHubSync.saveData(buildExportData(), 'Caricamento manuale su GitHub', { force });
+  if (!ok && !force && GitHubSync.hadConflict && GitHubSync.hadConflict()) {
+    const go = confirm('Su GitHub ci sono dati più recenti di quelli di questa pagina (probabilmente salvati da un altro dispositivo).\n\nSovrascriverli con i dati di questa pagina?\n\nPremi Annulla per non toccare nulla: poi puoi usare \"Scarica da GitHub\".');
+    if (!go) return;
+    ok = await GitHubSync.saveData(buildExportData(), 'Caricamento manuale su GitHub', { force: true });
+  }
   if (ok) {
     localDirty = false;
     lastSyncFailed = false;
@@ -1922,7 +1945,7 @@ window.pushLocalToGitHub = async function () {
 
 /* Pulsante "⬇ Scarica da GitHub": sostituisce i dati di questa pagina con
    quelli attualmente presenti sul repository. */
-window.pullFromGitHub = async function () {
+window.pullFromGitHub = async function (opts) {
   const remote = await GitHubSync.loadData();
   if (remote) {
     DATA = migrateCategoryNames(remote);
@@ -1938,7 +1961,7 @@ window.pullFromGitHub = async function () {
     populatePLFilters();
     renderVoceAll();
     renderAll();
-  } else {
+  } else if (!(opts && opts.silent)) {
     const dbg = (typeof GitHubSync.getLastLoadDebug === 'function') ? GitHubSync.getLastLoadDebug() : null;
     let detail = '';
     if (dbg) {
@@ -1996,7 +2019,6 @@ window.loadDataFile = function (file) {
     }
     DATA = migrateCategoryNames(parsed);
     transazioni = (DATA.transazioni || []).map(t => ({ ...t }));
-    localDirty = false;
     lastSyncFailed = false;
     recomputeFlussi();
     syncPatrimonioAutomatico();
@@ -2007,12 +2029,44 @@ window.loadDataFile = function (file) {
     populatePLFilters();
     renderVoceAll();
     renderAll();
+    // I dati da file non sono (ancora) su GitHub: li segno come non salvati, così
+    // l'aggiornamento automatico non li sostituisce, e li salvo se GitHub è collegato
+    // (il controllo anti-sovrascrittura chiede conferma se online c'è di più recente).
+    if (GitHubSync.isConfigured()) { persist('Caricamento dati da file'); } else { localDirty = false; }
     const statusEl = document.getElementById('file-sync-status');
     if (statusEl) statusEl.textContent = `✓ Dati caricati dal file "${file.name}" (${transazioni.length} transazioni).`;
   };
   reader.onerror = () => alert('Non sono riuscito a leggere il file scelto. Riprova.');
   reader.readAsText(file);
 };
+
+/* Aggiornamento automatico dai dati di GitHub: scarica solo se il file online è
+   cambiato rispetto all'ultima versione nota, e mai se ci sono modifiche locali
+   non salvate o se stai compilando un modulo. */
+let autoPullBusy = false;
+let lastAutoPullAt = 0;
+async function autoPullIfNeeded(force) {
+  if (autoPullBusy || localDirty || !GitHubSync.isConfigured()) return;
+  const now = Date.now();
+  if (!force) {
+    if (now - lastAutoPullAt < 20000) return;
+    const ae = document.activeElement;
+    if ((ae && /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName)) ||
+        document.querySelector('.form-panel.open') || document.querySelector('.modal-backdrop.open')) return;
+  }
+  autoPullBusy = true;
+  lastAutoPullAt = now;
+  try {
+    const remoteSha = await GitHubSync.fetchRemoteSha();
+    if (remoteSha && remoteSha !== GitHubSync.getLastKnownSha() && !localDirty) {
+      await window.pullFromGitHub({ silent: true });
+    }
+  } catch (e) { console.warn('Aggiornamento automatico da GitHub non riuscito', e); }
+  finally { autoPullBusy = false; }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') autoPullIfNeeded(false); });
+window.addEventListener('focus', () => autoPullIfNeeded(false));
+setInterval(() => { if (document.visibilityState === 'visible') autoPullIfNeeded(false); }, 60000);
 
 window.addEventListener('beforeunload', (e) => {
   if (localDirty) {
