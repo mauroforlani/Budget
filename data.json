@@ -353,8 +353,8 @@
         9213.22,
         10983.160000000007,
         23169.539999999986,
-        30543.24000000001,
-        14007.08,
+        30573.000000000007,
+        15402.139999999996,
         0,
         0,
         0
@@ -656,7 +656,7 @@
       "2023": 196395.59999999998,
       "2024": 70281.38999999998,
       "2025": 55272.01,
-      "2026": 134711.13999999998
+      "2026": 136135.95999999996
     },
     "Prelievi": {
       "2015": 4140,
@@ -684,7 +684,7 @@
       "2023": 1060.3200000000004,
       "2024": 1076.51,
       "2025": 1106.1200000000001,
-      "2026": 1386.27
+      "2026": 1522.0899999999997
     },
     "Serate": {
       "2015": 228.34999999999994,
@@ -726,7 +726,7 @@
       "2023": 2751.55,
       "2024": 1330.68,
       "2025": 1331.77,
-      "2026": 845.7299999999999
+      "2026": 846.2299999999999
     },
     "Pranzi/Cene": {
       "2015": 1220.6599999999999,
@@ -740,7 +740,7 @@
       "2023": 2705.990000000001,
       "2024": 4334.099999999998,
       "2025": 3624.4700000000007,
-      "2026": 2119.669999999999
+      "2026": 2507.59
     },
     "Casa": {
       "2015": 35746.21000000001,
@@ -768,7 +768,7 @@
       "2023": 6110.309999999996,
       "2024": 4060.2499999999977,
       "2025": 6151.4199999999955,
-      "2026": 2796.9199999999987
+      "2026": 3090.1899999999982
     },
     "Acquisto Titoli": {
       "2015": 8861.31,
@@ -796,7 +796,7 @@
       "2023": 771.4599999999999,
       "2024": 3217.6600000000003,
       "2025": 1732.3799999999997,
-      "2026": 969.29
+      "2026": 980.79
     },
     "Telefono": {
       "2015": 244.28,
@@ -824,7 +824,7 @@
       "2023": 11953.030000000002,
       "2024": 11220.089999999995,
       "2025": 8013.6399999999985,
-      "2026": 11229.899999999998
+      "2026": 11406.759999999997
     },
     "Macchina/Moto": {
       "2015": 1379.22,
@@ -866,7 +866,7 @@
       "2023": 4570.6900000000005,
       "2024": 5476.840000000001,
       "2025": 3655.87,
-      "2026": 3088.5099999999998
+      "2026": 3422.5099999999998
     },
     "Casa - Spesa": {
       "2015": 0,
@@ -880,7 +880,7 @@
       "2023": 637.2799999999999,
       "2024": 578.13,
       "2025": 267.33999999999986,
-      "2026": 680.38
+      "2026": 727.43
     },
     "Telepass": {
       "2015": 0,
@@ -894,7 +894,7 @@
       "2023": 1190.21,
       "2024": 1398.3600000000001,
       "2025": 1362.28,
-      "2026": 1830.2100000000005
+      "2026": 1868.1100000000006
     },
     "Casa - Internet": {
       "2015": 0,
@@ -48169,6 +48169,426 @@
       "desc": "Ritenuta Portaf.Remunerato",
       "importo": -0.13,
       "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-09-27",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -1,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-27",
+      "desc": "PINO FOCACCIA MILANO IT",
+      "importo": -8,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-26",
+      "desc": "NUEVO COLCERESA NORD COLCERESA IT",
+      "importo": -5.4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-26",
+      "desc": "FUNIVIA LAGAZUOI CORTINA D'AMP IT",
+      "importo": -56.06,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-09-26",
+      "desc": "RIFUGIO LAGAZUOI CORTINA D AMP IT",
+      "importo": -49,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-26",
+      "desc": "RIFUGIO NUVOLAU CORTINA D'AMP IT",
+      "importo": -9,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-09-25",
+      "desc": "SCHLERNHAUS VOELS AM SCHL IT",
+      "importo": -50.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-25",
+      "desc": "LTS SOC. COOP. HTTPS://MYSUE IT",
+      "importo": -30,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-09-24",
+      "desc": "AUTOGRILL 7163 BRENTINO BELL IT",
+      "importo": -3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-24",
+      "desc": "GRAPHIDEA MILANO IT",
+      "importo": -0.5,
+      "cat": "Altro"
+    },
+    {
+      "data": "2026-09-24",
+      "desc": "COMFORT HOTEL ERICA SALORNO IT",
+      "importo": -146,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-09-23",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-09-23",
+      "desc": "BKG*HOTEL AT BOOKING.C (888)850-3958 NL",
+      "importo": -170,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-09-23",
+      "desc": "PIZZERIA DI PORTA GARI MILANO IT",
+      "importo": -13.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-23",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -3.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-23",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-21",
+      "desc": "miscusi Milan IT",
+      "importo": -13.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-21",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-20",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-09-20",
+      "desc": "ATLANTIC PORTA NUOVA MILANO IT",
+      "importo": -11.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-20",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -1.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-19",
+      "desc": "SumUp *American bar Costigliole S IT",
+      "importo": -2.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-19",
+      "desc": "PV0486 CASTELLO DI A IT",
+      "importo": -19.72,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-09-19",
+      "desc": "47406 VILLARBOIT - AS VILLARBOIT IT",
+      "importo": -21.4,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-09-19",
+      "desc": "PACIOCH SRL OULX IT",
+      "importo": -7.3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-19",
+      "desc": "garage berge 481699 05CHATEAU VIL FR",
+      "importo": -17.01,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-09-18",
+      "desc": "TEMU.COM WWW.TEMU.COM IE",
+      "importo": -23.73,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-09-18",
+      "desc": "SPACCIO DOLCIARIO GAL. MANDELLO DEL IT",
+      "importo": -8.7,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-18",
+      "desc": "SUMUP *BOVAL-HUTE PONTRESINA CH",
+      "importo": -60.15,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-16",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-09-16",
+      "desc": "PIZZIUM SPA MILANO IT",
+      "importo": -24,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-15",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -1.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-15",
+      "desc": "INTERNET FOTOSERVICE OLDENBURG DE",
+      "importo": -171.45,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-09-14",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -8.23,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-09-13",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-09-13",
+      "desc": "ATLANTIC PORTA NUOVA MILANO IT",
+      "importo": -8.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-13",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -2.7,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-12",
+      "desc": "ESSO STORO - SELF AREA STORO IT",
+      "importo": -17.85,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-09-12",
+      "desc": "HOTEL FORTINI PINZOLO IT",
+      "importo": -9,
+      "cat": "Hotel"
+    },
+    {
+      "data": "2026-09-12",
+      "desc": "TELECABINA GROSTE 3 MADONNA DI CA IT",
+      "importo": -30,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-09-12",
+      "desc": "NUOVA SIDAP SRL 9625M COLOGNO MONZE IT",
+      "importo": -13.59,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-09-12",
+      "desc": "SALVETTI FORNERIA PAST MALONNO IT",
+      "importo": -1.3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-12",
+      "desc": "MARTINA 77 SRL VIGANO SAN MA IT",
+      "importo": -17.07,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-09-11",
+      "desc": "PEAK PASSION GMBH DUEBENDORF CH",
+      "importo": -10.8,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-09-11",
+      "desc": "PARKING AALTS DORF CEN FORMAZZA IT",
+      "importo": -5,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-09-11",
+      "desc": "RIFUGIO MARIA LUISA FORMAZZA IT",
+      "importo": -6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-10",
+      "desc": "SOCIETA' AUTOSTRADE VA CHATILLON IT",
+      "importo": -37.9,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-09-09",
+      "desc": "MINUTO DI BAULI MILANO IT",
+      "importo": -21.6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-09",
+      "desc": "SUGAR GIARDINI MILANO IT",
+      "importo": -5.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-08",
+      "desc": "Amazon.it*NF7MV6T74 www.amazon.it LU",
+      "importo": -32.99,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-09-07",
+      "desc": "VENCHI MI Gae Aulenti Milano IT",
+      "importo": -2.8,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-07",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -1.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-07",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-07",
+      "desc": "ENDU SRL WWW.ENDU.NET IT",
+      "importo": -65.1,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-09-06",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -8.67,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-05",
+      "desc": "SumUp *GREEN CARPET CA ERBUSCO IT",
+      "importo": -1.3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-05",
+      "desc": "ALBERGO DOSSO ALTO COLLIO IT",
+      "importo": -5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-05",
+      "desc": "SALVETTI S42 ESINE IT",
+      "importo": -1.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-05",
+      "desc": "Pag. del 06/09/26 ora 12:25 presso: DIST RIBUTORE BIENNO PIAZZALE DAMIANO MORAN DIN BIENNO 25040 ITA Carta N *****112 Num. Rif. Transazione 24912253 7741",
+      "importo": -16.56,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-09-04",
+      "desc": "CAFFE MORETTI CERESOLE REAL IT",
+      "importo": -11.3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-04",
+      "desc": "AUTOGRILL 0064 SETTIMO ROTTA IT",
+      "importo": -3.1,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-04",
+      "desc": "ITALICO TOURISM BERGAMO IT",
+      "importo": -75,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-09-03",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-09-02",
+      "desc": "PAGOPA GPAY NEXI MILANO IT",
+      "importo": -11.5,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-09-01",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-09-01",
+      "desc": "Vega - Galvani MILANO IT",
+      "importo": -12.62,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-08-31",
+      "desc": "PIZZERIA DI PORTA GARI MILANO IT",
+      "importo": -16.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-31",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-08-29",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-08-29",
+      "desc": "RIFUGIO SELLA COGNE IT",
+      "importo": -8,
+      "cat": "Pranzi/Cene"
     }
   ],
   "patrimonio": [
