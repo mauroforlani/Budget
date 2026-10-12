@@ -794,3 +794,53 @@ nav.tabs{ background: rgba(247,248,252,.92); backdrop-filter: blur(8px); -webkit
   #tx-table tbody td .rowbtn{ font-size:11px; padding:7px 3px; }
   #tx-table tbody td[colspan]{ grid-column:1 / -1; grid-row:auto; font-family:'Inter',sans-serif; font-size:13px; font-weight:400; text-align:left; }
 }
+
+
+/* =====================================================================
+   GRAFICI INTERATTIVI (charts.js)
+   ===================================================================== */
+.ck-ctrl{ display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin-bottom:12px; }
+.ck-chips, .ck-type{ display:inline-flex; gap:2px; padding:3px; background:var(--surface); border:1px solid var(--border); border-radius:999px; }
+.ck-chips button, .ck-type button{
+  font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:var(--ink-soft);
+  background:transparent; border:none; border-radius:999px; padding:6px 12px; cursor:pointer; min-height:30px;
+  transition: background .15s ease, color .15s ease;
+}
+.ck-chips button:hover, .ck-type button:hover{ color:var(--ink); background:#fff; }
+.ck-chips button.on, .ck-type button.on{ background:var(--grad-brand); color:#fff; box-shadow:0 3px 8px rgba(14,110,92,.28); }
+.ck-type{ margin-left:auto; }
+.ck-range{ display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); }
+.ck-range select{ padding:5px 8px; min-height:34px; font-size:12px; }
+
+.ck-box{ position:relative; width:100%; }
+.ck-hint{ font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink-soft); margin-top:8px; text-align:center; }
+.ck-empty{ font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink-soft); padding:18px 0; text-align:center; }
+.ck-sep{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); margin:20px 0 12px; padding-top:14px; border-top:1px dashed var(--border); }
+
+.ck-drill:empty{ display:none; }
+.ck-drill{
+  margin-top:16px; padding:16px; border-radius:var(--r-md);
+  background:linear-gradient(180deg,var(--surface),#fff); border:1px solid var(--border);
+  box-shadow:var(--shadow-sm); animation: ckIn .25s ease;
+}
+@keyframes ckIn{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+.ck-drill-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+.ck-drill-title{ font-family:'Source Serif 4',serif; font-size:16px; font-weight:600; color:var(--ink); }
+.ck-close{
+  font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600; color:var(--ink-soft);
+  background:#fff; border:1px solid var(--border); border-radius:999px; padding:6px 12px; cursor:pointer; min-height:32px;
+}
+.ck-close:hover{ color:var(--ink); border-color:var(--ink); }
+.ck-sub{ margin-top:12px; }
+.ck-sub-title{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-soft); margin-bottom:6px; }
+.ck-drill .chart-note{ margin-top:10px; padding-top:10px; }
+
+.hbar-click{ cursor:pointer; border-radius:8px; transition:background .12s ease; }
+.hbar-click:hover{ background:var(--surface); }
+
+@media (max-width:640px){
+  .ck-ctrl{ gap:8px 10px; }
+  .ck-type{ margin-left:0; }
+  .ck-chips button, .ck-type button{ padding:7px 11px; }
+  .ck-drill{ padding:12px 10px; }
+}

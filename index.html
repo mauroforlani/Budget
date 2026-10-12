@@ -52,10 +52,6 @@
     <div class="section-title">Entrate e uscite &mdash; tutti gli anni caricati</div>
     <div class="section-sub" id="chart-sub"></div>
     <div class="chart-panel">
-      <div class="legend">
-        <span><i style="background:var(--accent)"></i> Entrate</span>
-        <span><i style="background:#D8B15A"></i> Uscite</span>
-      </div>
       <div class="chart-flags">
         <label><input type="checkbox" id="flag-titoli" autocomplete="off"> Includi gestione titoli <span class="flag-hint">(Acquisto/Vendita Titoli)</span></label>
         <label><input type="checkbox" id="flag-progetti" autocomplete="off"> Includi gestione progetti <span class="flag-hint">(Progetti/Spese Straordinarie)</span></label>
@@ -205,7 +201,6 @@
     <div class="section-title">Entrate vs Uscite per anno</div>
     <div class="section-sub">Confronto diretto tra i totali annuali, prima di derivarne il tasso di risparmio.</div>
     <div class="chart-panel">
-      <div class="legend"><span><i style="background:var(--accent);"></i>Entrate</span><span><i style="background:#D8B15A;"></i>Uscite</span></div>
       <div id="analisi-flussi-chart"></div>
       <div class="chart-note" id="analisi-flussi-note"></div>
     </div>
@@ -217,8 +212,8 @@
       <div class="chart-note" id="analisi-risparmio-note"></div>
     </div>
 
-    <div class="section-title">Trend uscite &mdash; media mobile 12 mesi</div>
-    <div class="section-sub">Somma delle uscite degli ultimi 12 mesi, calcolata mese per mese: smussa la stagionalità e mostra la direzione di fondo della spesa.</div>
+    <div class="section-title">Trend &mdash; media mobile 12 mesi</div>
+    <div class="section-sub">Somma mobile degli ultimi 12 mesi, calcolata mese per mese: smussa la stagionalità e mostra la direzione di fondo di uscite ed entrate.</div>
     <div class="chart-panel">
       <div id="analisi-trend-chart"></div>
       <div class="chart-note" id="analisi-trend-note"></div>
@@ -231,7 +226,6 @@
     <div class="section-title">Andamento mensile &mdash; anno selezionato</div>
     <div class="section-sub">Entrate e uscite mese per mese, per individuare la stagionalità entro l'anno.</div>
     <div class="chart-panel">
-      <div class="legend"><span><i style="background:var(--accent);"></i>Entrate</span><span><i style="background:#D8B15A;"></i>Uscite</span></div>
       <div id="analisi-mensile-chart"></div>
       <div class="chart-note" id="analisi-mensile-note"></div>
     </div>
@@ -242,6 +236,8 @@
     <div class="voce-block">
       <div class="voce-block-title">Uscite per categoria</div>
       <div class="chart-panel">
+        <div id="analisi-usc-donut"></div>
+        <div class="ck-sep">Elenco completo &mdash; tocca una voce per il dettaglio</div>
         <div id="analisi-usc-hbar" class="hbars"></div>
       </div>
       <div class="table-scroll"><table class="ledger" id="analisi-uscite-table">
@@ -253,6 +249,8 @@
     <div class="voce-block">
       <div class="voce-block-title">Entrate per categoria</div>
       <div class="chart-panel">
+        <div id="analisi-ent-donut"></div>
+        <div class="ck-sep">Elenco completo &mdash; tocca una voce per il dettaglio</div>
         <div id="analisi-ent-hbar" class="hbars"></div>
       </div>
       <div class="table-scroll"><table class="ledger" id="analisi-entrate-table">
@@ -395,6 +393,8 @@
 
 <script src="data.js"></script>
 <script src="github-sync.js"></script>
+<script src="chart.umd.js"></script>
+<script src="charts.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -293,29 +293,130 @@ function annoAdjUscite(y, escludiTitoli, escludiProgetti) {
   return v;
 }
 
-function renderDashChart() {
-  const escludiTitoli = !document.getElementById('flag-titoli').checked;
-  const escludiProgetti = !document.getElementById('flag-progetti').checked;
+/* ---------------- GRAFICI INTERATTIVI (ChartKit, vedi charts.js) ---------------- */
+const CK = ChartKit.COL;
 
-  const yearTotals = ANNI.map(y => ({
+function ckExcl(escludiTitoli, escludiProgetti) {
+  return [...(escludiTitoli ? CATEGORIE_TITOLI : []), ...(escludiProgetti ? CATEGORIE_PROGETTI : [])];
+}
+// Mesi (indici 0-11) da mostrare per un anno: per l'anno in corso solo quelli con dati.
+function mesiDisponibili(anno) {
+  const out = [];
+  for (let m = 0; m < 12; m++) {
+    if (anno === ANNO_CORRENTE && !DATA.meta.mesiTransazioniDettagliate.includes(MESI_IT[m])) continue;
+    out.push(m);
+  }
+  return out;
+}
+const meseCorto = m => MESI_IT[m].slice(0, 3);
+
+// Dettaglio di un anno: entrate, uscite e saldo mese per mese
+function monthlyFlowPanel(anno, escludiTitoli, escludiProgetti) {
+  const mesi = mesiDisponibili(anno);
+  const e = mesi.map(m => annoAdjEntrateMese(anno, m, escludiTitoli, escludiProgetti));
+  const u = mesi.map(m => annoAdjUsciteMese(anno, m, escludiTitoli, escludiProgetti));
+  return {
+    title: `${anno} \u2014 mese per mese`,
+    charts: [{
+      kind: 'bars', height: 240, labels: mesi.map(meseCorto),
+      series: [
+        { label: 'Entrate', color: CK.ent, data: e },
+        { label: 'Uscite', color: CK.usc, data: u },
+        { label: 'Saldo', color: CK.blue, kind: 'line', data: e.map((v, i) => v - u[i]) }
+      ]
+    }],
+    note: anno === ANNO_CORRENTE ? `${anno} \u00e8 un anno parziale: sono mostrati solo i mesi con dati.` : ''
+  };
+}
+
+// Dettaglio di un anno: saldo (entrate \u2212 uscite) mese per mese
+function monthlySavingsPanel(anno, escludiTitoli, escludiProgetti) {
+  const mesi = mesiDisponibili(anno);
+  const saldo = mesi.map(m => annoAdjEntrateMese(anno, m, escludiTitoli, escludiProgetti) - annoAdjUsciteMese(anno, m, escludiTitoli, escludiProgetti));
+  return {
+    title: `${anno} \u2014 saldo mensile`,
+    charts: [{
+      kind: 'bars', height: 220, labels: mesi.map(meseCorto),
+      series: [{ label: 'Saldo (entrate \u2212 uscite)', color: CK.green, colors: saldo.map(v => (v >= 0 ? CK.green : CK.red)), data: saldo }]
+    }],
+    note: 'Verde = mese in avanzo, rosso = mese in cui le uscite hanno superato le entrate.'
+  };
+}
+
+// Dettaglio di un mese: ciambelle delle categorie di uscita ed entrata
+function monthCategoryPanel(anno, m, categorieEscluse) {
+  const title = `${MESI_IT[m]} ${anno} \u2014 categorie`;
+  if (!haDettaglioMensile(anno)) return { title, charts: [], note: 'Dettaglio per categoria non disponibile per questo mese.' };
+  const items = lato => {
+    const obj = (DATA._monthlyCat[anno][lato] || [])[m] || {};
+    return Object.keys(obj).filter(c => c !== 'TOTALE' && !categorieEscluse.includes(c) && obj[c] > 0).map(c => ({ label: c, value: obj[c] }));
+  };
+  const u = items('uscite'), e = items('entrate');
+  const charts = [];
+  if (u.length) charts.push({ kind: 'donut', title: 'Uscite del mese', items: u, centerLabel: 'Uscite', height: 300 });
+  if (e.length) charts.push({ kind: 'donut', title: 'Entrate del mese', items: e, centerLabel: 'Entrate', height: 300 });
+  return { title, charts, note: charts.length ? '' : 'Nessun movimento categorizzato in questo mese.' };
+}
+
+// Dettaglio di una categoria: andamento negli anni + mese per mese nell'anno scelto
+function categoryPanel(tipo, cat, anno) {
+  const dict = tipo === 'entrate' ? DATA.entrateCategorie : DATA.usciteCategorie;
+  const cd = dict[cat] || {};
+  const anni = Object.keys(cd).map(Number).sort((a, b) => a - b);
+  const col = tipo === 'entrate' ? CK.ent : CK.usc;
+  const mesi = mesiDisponibili(anno);
+  const stima = !haDettaglioMensile(anno);
+  return {
+    title: cat,
+    charts: [
+      { kind: 'bars', title: 'Andamento annuale', height: 200, labels: anni.map(String),
+        series: [{ label: cat, color: col, colors: anni.map(y => (y === anno ? CK.blue : col)), data: anni.map(y => cd[y] || 0) }] },
+      { kind: 'bars', title: `${anno} mese per mese${stima ? ' (stima)' : ''}`, height: 200, labels: mesi.map(meseCorto),
+        series: [{ label: cat, color: col, data: mesi.map(m => categoriaMeseValore(dict, cat, anno, m)) }] }
+    ],
+    note: `Barra blu = anno selezionato (${anno}).`
+  };
+}
+
+// Dettaglio di una categoria nei mesi di un anno (grafico "Dettaglio per voce")
+function catMonthlyPanel(tipo, cat, anno) {
+  const dict = tipo === 'entrate' ? DATA.entrateCategorie : DATA.usciteCategorie;
+  const col = tipo === 'entrate' ? CK.ent : CK.usc;
+  const mesi = mesiDisponibili(anno);
+  const stima = !haDettaglioMensile(anno);
+  return {
+    title: `${cat} \u2014 ${anno}`,
+    charts: [{ kind: 'bars', height: 220, labels: mesi.map(meseCorto),
+      series: [{ label: cat, color: col, data: mesi.map(m => categoriaMeseValore(dict, cat, anno, m)) }] }],
+    note: stima ? 'Dettaglio mensile non disponibile per questo anno: il totale annuo \u00e8 ripartito in 12 parti uguali (stima).' : ''
+  };
+}
+
+// Entrate/uscite per anno (usato da Sommario e Analisi)
+function flussiAnnualiChart(hostId, escludiTitoli, escludiProgetti) {
+  const yt = ANNI.map(y => ({
     y,
     e: annoAdjEntrate(y, escludiTitoli, escludiProgetti),
     u: annoAdjUscite(y, escludiTitoli, escludiProgetti),
     stimato: !ANNI_CON_CATEGORIE.has(y) && (escludiTitoli || escludiProgetti)
   }));
-  const maxVal = Math.max(...yearTotals.map(d => Math.max(d.e, d.u)), 1);
-  const PXMAX = 190;
-  document.getElementById('dash-chart').innerHTML = `<div class="colchart">` + yearTotals.map(d => {
-    const he = Math.max(2, d.e / maxVal * PXMAX);
-    const hu = Math.max(2, d.u / maxVal * PXMAX);
-    return `<div class="colgroup">
-      <div class="bars">
-        <div class="col e" style="height:${he}px;" title="Entrate ${d.y}: ${eur(d.e)}"><span class="tip">${eurCompact(d.e)}</span></div>
-        <div class="col u" style="height:${hu}px;" title="Uscite ${d.y}: ${eur(d.u)}"><span class="tip">${eurCompact(d.u)}</span></div>
-      </div>
-      <div class="yr">${d.y}${d.stimato ? '*' : ''}</div>
-    </div>`;
-  }).join("") + `</div>`;
+  ChartKit.yearly(hostId, {
+    keys: yt.map(d => d.y),
+    labels: yt.map(d => d.y + (d.stimato ? '*' : '')),
+    series: [
+      { label: 'Entrate', color: CK.ent, data: yt.map(d => d.e) },
+      { label: 'Uscite', color: CK.usc, data: yt.map(d => d.u) },
+      { label: 'Saldo', color: CK.blue, kind: 'line', hidden: true, data: yt.map(d => d.e - d.u) }
+    ],
+    hint: 'Tocca un anno per vedere i mesi \u00b7 tocca la legenda per mostrare/nascondere le serie',
+    onPick: y => monthlyFlowPanel(y, escludiTitoli, escludiProgetti)
+  });
+}
+
+function renderDashChart() {
+  const escludiTitoli = !document.getElementById('flag-titoli').checked;
+  const escludiProgetti = !document.getElementById('flag-progetti').checked;
+  flussiAnnualiChart('dash-chart', escludiTitoli, escludiProgetti);
 
   const noteBits = [];
   if (escludiTitoli) noteBits.push('gestione titoli esclusa (Acquisto/Vendita Titoli)');
@@ -593,20 +694,14 @@ function renderVoceBlock(tipo) {
   const catDict = dict[cat] || {};
   const anniCat = Object.keys(catDict).map(Number).sort((a, b) => a - b);
   const vals = anniCat.map(y => catDict[y]);
-  const maxVal = Math.max(...vals.map(Math.abs), 1);
-
-  const PXMAX_V = 190;
-  document.getElementById('voce-chart-' + suffix).innerHTML = `<div class="colchart">` + anniCat.map((y, i) => {
-    const v = vals[i];
-    const h = Math.max(2, Math.abs(v) / maxVal * PXMAX_V);
-    const negClass = v < 0 ? ' neg-cat' : '';
-    return `<div class="colgroup">
-      <div class="bars">
-        <div class="col single${negClass}" style="height:${h}px;" title="${y}: ${eur(v)}"><span class="tip">${eurCompact(v)}</span></div>
-      </div>
-      <div class="yr">${y}${y === ANNO_CORRENTE ? '*' : ''}</div>
-    </div>`;
-  }).join("") + `</div>`;
+  const colMain = tipo === 'entrate' ? CK.ent : CK.usc;
+  ChartKit.yearly('voce-chart-' + suffix, {
+    keys: anniCat,
+    labels: anniCat.map(y => y + (y === ANNO_CORRENTE ? '*' : '')),
+    series: [{ label: cat || 'Totale', color: colMain, colors: vals.map(v => (v < 0 ? CK.red : colMain)), data: vals }],
+    hint: 'Tocca un anno per vedere i mesi',
+    onPick: y => catMonthlyPanel(tipo, cat, y)
+  });
 
   document.getElementById('voce-table-' + suffix).querySelector('tbody').innerHTML = anniCat.map((y, i) => {
     const v = vals[i];
@@ -1108,25 +1203,7 @@ function getAnalisiFlags() {
 
 function renderAnalisiFlussi() {
   const { escludiTitoli, escludiProgetti } = getAnalisiFlags();
-  const yearTotals = ANNI.map(y => ({
-    y,
-    e: annoAdjEntrate(y, escludiTitoli, escludiProgetti),
-    u: annoAdjUscite(y, escludiTitoli, escludiProgetti),
-    stimato: !ANNI_CON_CATEGORIE.has(y) && (escludiTitoli || escludiProgetti),
-  }));
-  const maxVal = Math.max(...yearTotals.map(d => Math.max(d.e, d.u)), 1);
-  const PXMAX = 190;
-  document.getElementById('analisi-flussi-chart').innerHTML = `<div class="colchart">` + yearTotals.map(d => {
-    const he = Math.max(2, d.e / maxVal * PXMAX);
-    const hu = Math.max(2, d.u / maxVal * PXMAX);
-    return `<div class="colgroup">
-      <div class="bars">
-        <div class="col e" style="height:${he}px;" title="Entrate ${d.y}: ${eur(d.e)}"><span class="tip">${eurCompact(d.e)}</span></div>
-        <div class="col u" style="height:${hu}px;" title="Uscite ${d.y}: ${eur(d.u)}"><span class="tip">${eurCompact(d.u)}</span></div>
-      </div>
-      <div class="yr">${d.y}${d.stimato ? '*' : ''}</div>
-    </div>`;
-  }).join("") + `</div>`;
+  flussiAnnualiChart('analisi-flussi-chart', escludiTitoli, escludiProgetti);
 
   const escl = [];
   if (escludiTitoli) escl.push('Acquisto/Vendita Titoli');
@@ -1143,36 +1220,31 @@ function renderAnalisiFlussi() {
 function renderAnalisiMensile() {
   const { escludiTitoli, escludiProgetti } = getAnalisiFlags();
   const anno = parseInt(document.getElementById('analisi-anno').value || ANNO_CORRENTE, 10);
-  const el = document.getElementById('analisi-mensile-chart');
   const noteEl = document.getElementById('analisi-mensile-note');
 
-  const mesi = [];
-  for (let m = 0; m < 12; m++) {
-    if (anno === ANNO_CORRENTE && !DATA.meta.mesiTransazioniDettagliate.includes(MESI_IT[m])) continue;
-    mesi.push({
-      m,
-      e: annoAdjEntrateMese(anno, m, escludiTitoli, escludiProgetti),
-      u: annoAdjUsciteMese(anno, m, escludiTitoli, escludiProgetti),
-    });
-  }
+  const mesi = mesiDisponibili(anno).map(m => ({
+    m,
+    e: annoAdjEntrateMese(anno, m, escludiTitoli, escludiProgetti),
+    u: annoAdjUsciteMese(anno, m, escludiTitoli, escludiProgetti),
+  }));
   if (!mesi.length) {
-    el.innerHTML = '';
+    ChartKit.clear('analisi-mensile-chart');
     noteEl.textContent = `Nessun dato mensile disponibile per il ${anno}.`;
     return;
   }
-  const maxVal = Math.max(...mesi.map(d => Math.max(d.e, d.u)), 1);
-  const PXMAX = 170;
-  el.innerHTML = `<div class="colchart">` + mesi.map(d => {
-    const he = Math.max(2, d.e / maxVal * PXMAX);
-    const hu = Math.max(2, d.u / maxVal * PXMAX);
-    return `<div class="colgroup">
-      <div class="bars">
-        <div class="col e" style="height:${he}px;" title="Entrate ${MESI_IT[d.m]} ${anno}: ${eur(d.e)}"><span class="tip">${eurCompact(d.e)}</span></div>
-        <div class="col u" style="height:${hu}px;" title="Uscite ${MESI_IT[d.m]} ${anno}: ${eur(d.u)}"><span class="tip">${eurCompact(d.u)}</span></div>
-      </div>
-      <div class="yr">${MESI_IT[d.m].slice(0, 3)}</div>
-    </div>`;
-  }).join("") + `</div>`;
+  const excl = ckExcl(escludiTitoli, escludiProgetti);
+  ChartKit.yearly('analisi-mensile-chart', {
+    keys: mesi.map(d => d.m),
+    labels: mesi.map(d => meseCorto(d.m)),
+    series: [
+      { label: 'Entrate', color: CK.ent, data: mesi.map(d => d.e) },
+      { label: 'Uscite', color: CK.usc, data: mesi.map(d => d.u) },
+      { label: 'Saldo', color: CK.blue, kind: 'line', hidden: true, data: mesi.map(d => d.e - d.u) }
+    ],
+    controls: { range: false, type: true },
+    hint: 'Tocca un mese per vedere le categorie',
+    onPick: m => monthCategoryPanel(anno, m, excl)
+  });
 
   const migliore = mesi.reduce((a, b) => (b.e - b.u > a.e - a.u ? b : a));
   const peggiore = mesi.reduce((a, b) => (b.e - b.u < a.e - a.u ? b : a));
@@ -1187,39 +1259,53 @@ function renderAnalisiHBar(tipo, anno, categorieEscluse) {
     .filter(r => r.val > 0)
     .sort((a, b) => b.val - a.val);
   const targetId = tipo === 'entrate' ? 'analisi-ent-hbar' : 'analisi-usc-hbar';
+  const donutId = tipo === 'entrate' ? 'analisi-ent-donut' : 'analisi-usc-donut';
+
+  ChartKit.donut(donutId, {
+    items: righe.map(r => ({ label: r.cat, value: r.val })),
+    centerLabel: tipo === 'entrate' ? 'Entrate' : 'Uscite',
+    onPick: cat => categoryPanel(tipo, cat, anno)
+  });
+
   const maxVal = Math.max(...righe.map(r => r.val), 1);
   const clsFill = tipo === 'entrate' ? 'ent' : 'usc';
-  document.getElementById(targetId).innerHTML = righe.map(r => {
+  const el = document.getElementById(targetId);
+  el.innerHTML = righe.map(r => {
     const w = Math.max(2, r.val / maxVal * 100);
-    return `<div class="hbar-row">
-      <div class="hbar-label" title="${r.cat}">${r.cat}</div>
+    const attr = r.cat.replace(/"/g, '&quot;');
+    return `<div class="hbar-row hbar-click" data-cat="${attr}">
+      <div class="hbar-label" title="${attr}">${r.cat}</div>
       <div class="hbar-track"><div class="hbar-fill ${clsFill}" style="width:${w}%;"></div></div>
       <div class="hbar-val">${eurCompact(r.val)}</div>
     </div>`;
   }).join("") || `<div style="color:var(--ink-soft); font-family:'Inter',sans-serif; font-size:12.5px; padding:6px 0;">Nessun dato per l'anno selezionato.</div>`;
+  el.onclick = ev => {
+    const row = ev.target.closest('.hbar-row[data-cat]');
+    if (row) ChartKit.openDrill(donutId, row.dataset.cat);
+  };
 }
 
 function renderAnalisiRisparmio() {
   const { escludiTitoli, escludiProgetti } = getAnalisiFlags();
-  const PXMAX = 150;
   const punti = ANNI.map(y => {
     const ent = annoAdjEntrate(y, escludiTitoli, escludiProgetti);
     const usc = annoAdjUscite(y, escludiTitoli, escludiProgetti);
     const risparmio = ent > 0 ? (ent - usc) / ent : 0;
     return { y, risparmio, parziale: y === ANNO_CORRENTE };
   });
-  const maxAbs = Math.max(...punti.map(p => Math.abs(p.risparmio)), 0.05);
-  document.getElementById('analisi-risparmio-chart').innerHTML = `<div class="colchart">` + punti.map(p => {
-    const h = Math.max(2, Math.abs(p.risparmio) / maxAbs * PXMAX);
-    const cls = p.risparmio >= 0 ? 'pos-metric' : 'neg-metric';
-    const pctTxt = (p.risparmio * 100).toFixed(0) + '%';
-    return `<div class="colgroup">
-      <div class="bars">
-        <div class="col single ${cls}" style="height:${h}px;" title="${p.y}: tasso di risparmio ${(p.risparmio * 100).toFixed(1)}%"><span class="tip">${pctTxt}</span></div>
-      </div>
-      <div class="yr">${p.y}${p.parziale ? '*' : ''}</div>
-    </div>`;
-  }).join("") + `</div>`;
+  ChartKit.yearly('analisi-risparmio-chart', {
+    keys: punti.map(p => p.y),
+    labels: punti.map(p => p.y + (p.parziale ? '*' : '')),
+    series: [{
+      label: 'Tasso di risparmio', color: CK.ent,
+      colors: punti.map(p => (p.risparmio >= 0 ? CK.green : CK.red)),
+      data: punti.map(p => p.risparmio * 100)
+    }],
+    fmt: v => v.toFixed(1) + '%',
+    tickFmt: v => v + '%',
+    hint: 'Tocca un anno per vedere il saldo mese per mese',
+    onPick: y => monthlySavingsPanel(y, escludiTitoli, escludiProgetti)
+  });
   const escl = [];
   if (escludiTitoli) escl.push('Acquisto/Vendita Titoli');
   if (escludiProgetti) escl.push('Progetti/Spese Straordinarie');
@@ -1248,32 +1334,39 @@ function renderAnalisiTrend() {
   const rolling = [];
   for (let i = 11; i < serie.length; i++) {
     const finestra = serie.slice(i - 11, i + 1);
-    rolling.push({ y: serie[i].y, m: serie[i].m, rollingUscite: sum(finestra.map(w => w.uscite)) });
+    rolling.push({
+      y: serie[i].y, m: serie[i].m,
+      rollingUscite: sum(finestra.map(w => w.uscite)),
+      rollingEntrate: sum(finestra.map(w => w.entrate))
+    });
   }
 
-  const el = document.getElementById('analisi-trend-chart');
   const noteEl = document.getElementById('analisi-trend-note');
   if (!rolling.length) {
-    el.innerHTML = '';
+    ChartKit.clear('analisi-trend-chart');
     noteEl.textContent = 'Servono almeno 12 mesi di dati consecutivi per calcolare la media mobile su 12 mesi.';
     return;
   }
-  const maxVal = Math.max(...rolling.map(r => r.rollingUscite), 1);
-  el.innerHTML = `<div class="trend-chart">` + rolling.map(r => {
-    const h = Math.max(2, r.rollingUscite / maxVal * 130);
-    const isGen = r.m === 0;
-    return `<div class="trend-bar-wrap">
-      <div class="trend-bar" style="height:${h}px;" title="${MESI_IT[r.m]} ${r.y}: ${eur(r.rollingUscite)} (uscite ultimi 12 mesi)"></div>
-      ${isGen ? `<div class="trend-tick">${r.y}</div>` : ''}
-    </div>`;
-  }).join("") + `</div>`;
+  const excl = ckExcl(escludiTitoli, escludiProgetti);
+  ChartKit.yearly('analisi-trend-chart', {
+    keys: rolling.map((r, i) => i),
+    itemYears: rolling.map(r => r.y),
+    labels: rolling.map(r => `${meseCorto(r.m)} ${String(r.y).slice(2)}`),
+    series: [
+      { label: 'Uscite ultimi 12 mesi', color: CK.uscDark, kind: 'line', fill: true, data: rolling.map(r => r.rollingUscite) },
+      { label: 'Entrate ultimi 12 mesi', color: CK.ent, kind: 'line', data: rolling.map(r => r.rollingEntrate) }
+    ],
+    defaultType: 'line', controls: { range: true, type: false }, maxTicks: 8,
+    hint: 'Tocca un punto per vedere le categorie di quel mese',
+    onPick: i => { const r = rolling[i]; return r ? monthCategoryPanel(r.y, r.m, excl) : null; }
+  });
 
   const last = rolling[rolling.length - 1];
   const escl = [];
   if (escludiTitoli) escl.push('Acquisto Titoli');
   if (escludiProgetti) escl.push('Progetti/Spese Straordinarie');
   const esclTxt = escl.length ? ` Escluse dal calcolo: ${escl.join(' e ')}.` : '';
-  noteEl.innerHTML = `Ultimo punto disponibile (${MESI_IT[last.m]} ${last.y}): uscite degli ultimi 12 mesi pari a ${eur(last.rollingUscite)}. Ogni barra è la somma mobile dei 12 mesi che la precedono (incluso il mese stesso).${esclTxt}`;
+  noteEl.innerHTML = `Ultimo punto disponibile (${MESI_IT[last.m]} ${last.y}): uscite degli ultimi 12 mesi pari a ${eur(last.rollingUscite)}, entrate pari a ${eur(last.rollingEntrate)}. Ogni punto è la somma mobile dei 12 mesi che lo precedono (incluso il mese stesso).${esclTxt}`;
 }
 
 function populateAnalisiAnno() {
