@@ -50464,6 +50464,39 @@
         "pzoChiusura": 234.7282195,
         "valuta": "USD",
         "pnl": 1683.5
+      },
+      {
+        "data": "2026-10-15",
+        "desc": "A2A",
+        "simbolo": "A2A",
+        "mercato": "ITALIA",
+        "qta": 1239,
+        "pzoApertura": 2.2833314,
+        "pzoChiusura": 2.3924479,
+        "valuta": "EUR",
+        "pnl": 135.2
+      },
+      {
+        "data": "2026-10-15",
+        "desc": "A2A",
+        "simbolo": "A2A",
+        "mercato": "ITALIA",
+        "qta": 2261,
+        "pzoApertura": 2.2833314,
+        "pzoChiusura": 2.3924444,
+        "valuta": "EUR",
+        "pnl": 246.7
+      },
+      {
+        "data": "2026-10-29",
+        "desc": "AVIO",
+        "simbolo": "AVIO",
+        "mercato": "ITALIA",
+        "qta": 200,
+        "pzoApertura": 30.0971,
+        "pzoChiusura": 33.22675,
+        "valuta": "EUR",
+        "pnl": 625.93
       }
     ],
     "importedFiles": [
@@ -50506,6 +50539,10 @@
       {
         "name": "profitloss-export.xls",
         "importedOn": "2026-09-07"
+      },
+      {
+        "name": "profitloss-export.xls",
+        "importedOn": "2026-11-08"
       }
     ]
   }
