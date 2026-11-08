@@ -340,8 +340,8 @@
         12355.880000000001,
         12999,
         21411.539999999997,
-        4058.48,
-        0,
+        4725.61,
+        24560.729999999996,
         0,
         0
       ],
@@ -354,8 +354,8 @@
         10983.160000000007,
         23169.539999999986,
         30601.800000000007,
-        15458.049999999996,
-        0,
+        48631.04000000001,
+        36713.799999999996,
         0,
         0
       ]
@@ -374,7 +374,7 @@
       "2023": 100111.22,
       "2024": 106390.86,
       "2025": 92990.76,
-      "2026": 121296.85999999999
+      "2026": 146524.71999999997
     },
     "Versamenti": {
       "2015": 3131.71,
@@ -402,7 +402,7 @@
       "2023": 32356.04,
       "2024": 41990.63,
       "2025": 27895.63,
-      "2026": 60066.490000000005
+      "2026": 68440.05
     },
     "Stipendio": {
       "2015": 30379.479999999996,
@@ -416,7 +416,7 @@
       "2023": 56795.5,
       "2024": 53593.06,
       "2025": 57269,
-      "2026": 46500
+      "2026": 57687.17
     },
     "Rimborsi Lavorativi": {
       "2015": 13034.32,
@@ -444,7 +444,7 @@
       "2023": 1540.8500000000001,
       "2024": 2952.67,
       "2025": 3858.8100000000004,
-      "2026": 3162.87
+      "2026": 3830
     },
     "Altro": {
       "2015": 30.490000000000002,
@@ -584,7 +584,7 @@
       "2023": 200,
       "2024": 0,
       "2025": 0,
-      "2026": 0
+      "2026": 5000
     },
     "Pranzi/Cene": {
       "2015": 0,
@@ -656,7 +656,7 @@
       "2023": 196395.59999999998,
       "2024": 70281.38999999998,
       "2025": 55272.01,
-      "2026": 136220.66999999998
+      "2026": 206107.45999999996
     },
     "Prelievi": {
       "2015": 4140,
@@ -670,7 +670,7 @@
       "2023": 1420,
       "2024": 3570.04,
       "2025": 2970,
-      "2026": 2403.07
+      "2026": 2723.07
     },
     "Rifornimento": {
       "2015": 2486.58,
@@ -740,7 +740,7 @@
       "2023": 2705.990000000001,
       "2024": 4334.099999999998,
       "2025": 3624.4700000000007,
-      "2026": 2536.3900000000003
+      "2026": 2547.3900000000003
     },
     "Casa": {
       "2015": 35746.21000000001,
@@ -768,7 +768,7 @@
       "2023": 6110.309999999996,
       "2024": 4060.2499999999977,
       "2025": 6151.4199999999955,
-      "2026": 3090.1899999999982
+      "2026": 3102.179999999998
     },
     "Acquisto Titoli": {
       "2015": 8861.31,
@@ -782,7 +782,7 @@
       "2023": 102707.03999999998,
       "2024": 30134.329999999998,
       "2025": 22055.56,
-      "2026": 104601.89
+      "2026": 137497.01
     },
     "Imposte/Tasse": {
       "2015": 361.0999999999998,
@@ -796,7 +796,7 @@
       "2023": 771.4599999999999,
       "2024": 3217.6600000000003,
       "2025": 1732.3799999999997,
-      "2026": 980.79
+      "2026": 1172.9599999999996
     },
     "Telefono": {
       "2015": 244.28,
@@ -824,7 +824,7 @@
       "2023": 11953.030000000002,
       "2024": 11220.089999999995,
       "2025": 8013.6399999999985,
-      "2026": 11406.759999999997
+      "2026": 11420.939999999997
     },
     "Macchina/Moto": {
       "2015": 1379.22,
@@ -838,7 +838,7 @@
       "2023": 1441.7,
       "2024": 806.36,
       "2025": 1271.26,
-      "2026": 1141.85
+      "2026": 1896.84
     },
     "Enjoy": {
       "2015": 0,
@@ -894,7 +894,7 @@
       "2023": 1190.21,
       "2024": 1398.3600000000001,
       "2025": 1362.28,
-      "2026": 1868.1100000000006
+      "2026": 2151.4500000000007
     },
     "Casa - Internet": {
       "2015": 0,
@@ -922,7 +922,7 @@
       "2023": 1342.48,
       "2024": 1216.54,
       "2025": 1325,
-      "2026": 630.19
+      "2026": 734.19
     },
     "Casa - Altro": {
       "2015": 0,
@@ -950,7 +950,7 @@
       "2023": 56151.829999999994,
       "2024": 149.99,
       "2025": 0,
-      "2026": 0
+      "2026": 35300
     },
     "Taxi": {
       "2015": 0,
@@ -48613,6 +48613,192 @@
       "desc": "RISTORANTE PURABRACELISSONE",
       "importo": -10.3,
       "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-29",
+      "desc": "SEPA Direct Debit",
+      "importo": -5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-29",
+      "desc": "Stipendio",
+      "importo": 5257.28,
+      "cat": "Stipendio"
+    },
+    {
+      "data": "2026-10-26",
+      "desc": "SEPA Direct Debit",
+      "importo": -5,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-10-26",
+      "desc": "SEPA Direct Debit",
+      "importo": -104,
+      "cat": "Casa - A2A"
+    },
+    {
+      "data": "2026-10-26",
+      "desc": "SEPA Direct Debit",
+      "importo": -754.99,
+      "cat": "Macchina/Moto"
+    },
+    {
+      "data": "2026-10-26",
+      "desc": "Stipendio",
+      "importo": 5929.89,
+      "cat": "Stipendio"
+    },
+    {
+      "data": "2026-10-25",
+      "desc": "Bonifico Istantaneo",
+      "importo": -6,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-25",
+      "desc": "Prelievo Bancomat",
+      "importo": -160,
+      "cat": "Prelievi"
+    },
+    {
+      "data": "2026-10-18",
+      "desc": "Compravendita Titoli",
+      "importo": 5409.32,
+      "cat": "Vendita Titoli"
+    },
+    {
+      "data": "2026-10-18",
+      "desc": "Compravendita Titoli",
+      "importo": 2964.24,
+      "cat": "Vendita Titoli"
+    },
+    {
+      "data": "2026-10-14",
+      "desc": "Bonifico Istantaneo",
+      "importo": -35300,
+      "cat": "Progetti/Spese Straordinarie"
+    },
+    {
+      "data": "2026-10-12",
+      "desc": "SEPA Direct Debit",
+      "importo": -4.6,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-10-11",
+      "desc": "SEPA Direct Debit",
+      "importo": -11.99,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-10-07",
+      "desc": "SEPA Direct Debit",
+      "importo": -283.34,
+      "cat": "Telepass"
+    },
+    {
+      "data": "2026-10-06",
+      "desc": "Imposta bollo dossier titoli",
+      "importo": -74.3,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-10-05",
+      "desc": "SEPA Direct Debit",
+      "importo": -4.58,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-10-01",
+      "desc": "Bonifico SEPA Italia",
+      "importo": 5000,
+      "cat": "Progetti/Spese Straordinarie"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Compravendita Titoli",
+      "importo": -9323.49,
+      "cat": "Acquisto Titoli"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Compravendita Titoli",
+      "importo": -9177.76,
+      "cat": "Acquisto Titoli"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Compravendita Titoli",
+      "importo": -14393.87,
+      "cat": "Acquisto Titoli"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Stacco Cedole Italia",
+      "importo": 225,
+      "cat": "Interessi/Cedole"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Ritenuta su Cedole",
+      "importo": -28.12,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Stacco Cedole Italia",
+      "importo": 207.5,
+      "cat": "Interessi/Cedole"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Ritenuta su Cedole",
+      "importo": -25.94,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Stacco Cedole Italia",
+      "importo": 232.5,
+      "cat": "Interessi/Cedole"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Ritenuta su Cedole",
+      "importo": -29.06,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Prelievo Bancomat",
+      "importo": -160,
+      "cat": "Prelievi"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Tobin Tax Italia Azioni",
+      "importo": -25.58,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Interessi Portaf.Remunerato",
+      "importo": 2.13,
+      "cat": "Interessi/Cedole"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Imposta bollo conto corrente",
+      "importo": -8.62,
+      "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "Ritenuta Portaf.Remunerato",
+      "importo": -0.55,
+      "cat": "Imposte/Tasse"
     }
   ],
   "patrimonio": [
@@ -48889,10 +49075,10 @@
       "Giugno",
       "Luglio",
       "Agosto",
-      "Settembre"
+      "Settembre",
+      "Ottobre"
     ],
     "mesiSenzaDati2026": [
-      "Ottobre",
       "Novembre",
       "Dicembre"
     ],
