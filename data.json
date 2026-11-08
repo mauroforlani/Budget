@@ -50497,6 +50497,215 @@
         "pzoChiusura": 33.22675,
         "valuta": "EUR",
         "pnl": 625.93
+      },
+      {
+        "data": "2026-03-05",
+        "desc": "LOTTOMATICA GR",
+        "simbolo": "LTMC",
+        "mercato": "ITALIA",
+        "qta": 200,
+        "pzoApertura": 22.60285,
+        "pzoChiusura": 24.8527,
+        "valuta": "EUR",
+        "pnl": 449.97
+      },
+      {
+        "data": "2026-03-17",
+        "desc": "AMPLIFON",
+        "simbolo": "AMP",
+        "mercato": "Internalizzata Fineco",
+        "qta": 300,
+        "pzoApertura": 29.0083333,
+        "pzoChiusura": 8.0207333,
+        "valuta": "EUR",
+        "pnl": -6296.28
+      },
+      {
+        "data": "2026-07-30",
+        "desc": "REPLY",
+        "simbolo": "REY",
+        "mercato": "ITALIA",
+        "qta": 21,
+        "pzoApertura": 108.105,
+        "pzoChiusura": 113.1842857,
+        "valuta": "EUR",
+        "pnl": 106.66
+      },
+      {
+        "data": "2026-07-30",
+        "desc": "REPLY",
+        "simbolo": "REY",
+        "mercato": "ITALIA",
+        "qta": 25,
+        "pzoApertura": 108.105,
+        "pzoChiusura": 113.1848,
+        "valuta": "EUR",
+        "pnl": 127
+      },
+      {
+        "data": "2026-07-30",
+        "desc": "REPLY",
+        "simbolo": "REY",
+        "mercato": "ITALIA",
+        "qta": 24,
+        "pzoApertura": 108.105,
+        "pzoChiusura": 113.2841666,
+        "valuta": "EUR",
+        "pnl": 124.3
+      },
+      {
+        "data": "2026-03-10",
+        "desc": "REPLY",
+        "simbolo": "REY",
+        "mercato": "ITALIA",
+        "qta": 15,
+        "pzoApertura": 183.1473333,
+        "pzoChiusura": 96.4033333,
+        "valuta": "EUR",
+        "pnl": -1301.16
+      },
+      {
+        "data": "2026-04-09",
+        "desc": "AMAZON.COM",
+        "simbolo": "AMZN",
+        "mercato": "Internalizzata Fineco",
+        "qta": 30,
+        "pzoApertura": 214.331493,
+        "pzoChiusura": 227.948434,
+        "valuta": "USD",
+        "pnl": 408.51
+      },
+      {
+        "data": "2026-04-09",
+        "desc": "FINECOBANK",
+        "simbolo": "FBK",
+        "mercato": "ITALIA",
+        "qta": 28,
+        "pzoApertura": 19.5520666,
+        "pzoChiusura": 20.6607142,
+        "valuta": "EUR",
+        "pnl": 31.04
+      },
+      {
+        "data": "2026-04-09",
+        "desc": "FINECOBANK",
+        "simbolo": "FBK",
+        "mercato": "ITALIA",
+        "qta": 272,
+        "pzoApertura": 19.5520666,
+        "pzoChiusura": 20.6606617,
+        "valuta": "EUR",
+        "pnl": 301.54
+      },
+      {
+        "data": "2026-04-02",
+        "desc": "STELLANTIS",
+        "simbolo": "STLAM",
+        "mercato": "ITALIA",
+        "qta": 600,
+        "pzoApertura": 6.2969333,
+        "pzoChiusura": 6.4776666,
+        "valuta": "EUR",
+        "pnl": 108.44
+      },
+      {
+        "data": "2026-04-07",
+        "desc": "ADVANCED MICRO D",
+        "simbolo": "AMD",
+        "mercato": "Internalizzata Fineco",
+        "qta": 30,
+        "pzoApertura": 203.851493,
+        "pzoChiusura": 220.5281966,
+        "valuta": "USD",
+        "pnl": 500.3
+      },
+      {
+        "data": "2026-08-07",
+        "desc": "AVIO",
+        "simbolo": "AVIO",
+        "mercato": "ITALIA",
+        "qta": 129,
+        "pzoApertura": 28.74452,
+        "pzoChiusura": 32.0988372,
+        "valuta": "EUR",
+        "pnl": 432.71
+      },
+      {
+        "data": "2026-08-07",
+        "desc": "AVIO",
+        "simbolo": "AVIO",
+        "mercato": "ITALIA",
+        "qta": 121,
+        "pzoApertura": 28.74452,
+        "pzoChiusura": 32.0989256,
+        "valuta": "EUR",
+        "pnl": 405.88
+      },
+      {
+        "data": "2026-05-25",
+        "desc": "AVIO",
+        "simbolo": "AVIO",
+        "mercato": "Internalizzata Fineco",
+        "qta": 90,
+        "pzoApertura": 34.03456,
+        "pzoChiusura": 36.8598888,
+        "valuta": "EUR",
+        "pnl": 254.28
+      },
+      {
+        "data": "2026-05-25",
+        "desc": "AVIO",
+        "simbolo": "AVIO",
+        "mercato": "Internalizzata Fineco",
+        "qta": 160,
+        "pzoApertura": 34.03456,
+        "pzoChiusura": 36.8698125,
+        "valuta": "EUR",
+        "pnl": 453.64
+      },
+      {
+        "data": "2026-05-21",
+        "desc": "BTP-21MG26 ITALIA",
+        "simbolo": "-",
+        "mercato": "MOT",
+        "qta": 8000,
+        "pzoApertura": 100.5642529,
+        "pzoChiusura": 100,
+        "valuta": "EUR",
+        "pnl": -45.14
+      },
+      {
+        "data": "2026-11-04",
+        "desc": "FERRARI",
+        "simbolo": "RACE",
+        "mercato": "Internalizzata Fineco",
+        "qta": 25,
+        "pzoApertura": 354.6728,
+        "pzoChiusura": 378.5296,
+        "valuta": "EUR",
+        "pnl": 596.42
+      },
+      {
+        "data": "2026-06-15",
+        "desc": "FERRARI",
+        "simbolo": "RACE",
+        "mercato": "ITALIA",
+        "qta": 8,
+        "pzoApertura": 287.996,
+        "pzoChiusura": 319.6925,
+        "valuta": "EUR",
+        "pnl": 253.57
+      },
+      {
+        "data": "2026-06-15",
+        "desc": "FERRARI",
+        "simbolo": "RACE",
+        "mercato": "ITALIA",
+        "qta": 17,
+        "pzoApertura": 287.996,
+        "pzoChiusura": 319.6911764,
+        "valuta": "EUR",
+        "pnl": 538.82
       }
     ],
     "importedFiles": [
@@ -50542,6 +50751,10 @@
       },
       {
         "name": "profitloss-export.xls",
+        "importedOn": "2026-11-08"
+      },
+      {
+        "name": "profitloss-export (1).xls",
         "importedOn": "2026-11-08"
       }
     ]
