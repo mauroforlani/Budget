@@ -354,8 +354,8 @@
         10983.160000000007,
         23169.539999999986,
         30601.800000000007,
-        48631.04000000001,
-        36713.799999999996,
+        48724.70000000001,
+        37533.16000000003,
         0,
         0
       ]
@@ -656,7 +656,7 @@
       "2023": 196395.59999999998,
       "2024": 70281.38999999998,
       "2025": 55272.01,
-      "2026": 206107.45999999996
+      "2026": 207020.48000000004
     },
     "Prelievi": {
       "2015": 4140,
@@ -684,7 +684,7 @@
       "2023": 1060.3200000000004,
       "2024": 1076.51,
       "2025": 1106.1200000000001,
-      "2026": 1522.0899999999997
+      "2026": 1788.9299999999996
     },
     "Serate": {
       "2015": 228.34999999999994,
@@ -740,7 +740,7 @@
       "2023": 2705.990000000001,
       "2024": 4334.099999999998,
       "2025": 3624.4700000000007,
-      "2026": 2547.3900000000003
+      "2026": 2862.7900000000013
     },
     "Casa": {
       "2015": 35746.21000000001,
@@ -768,7 +768,7 @@
       "2023": 6110.309999999996,
       "2024": 4060.2499999999977,
       "2025": 6151.4199999999955,
-      "2026": 3102.179999999998
+      "2026": 3342.179999999997
     },
     "Acquisto Titoli": {
       "2015": 8861.31,
@@ -810,7 +810,7 @@
       "2023": 220,
       "2024": 310,
       "2025": 100,
-      "2026": 40
+      "2026": 90
     },
     "Viaggi": {
       "2015": 1985.220000000001,
@@ -824,7 +824,7 @@
       "2023": 11953.030000000002,
       "2024": 11220.089999999995,
       "2025": 8013.6399999999985,
-      "2026": 11420.939999999997
+      "2026": 11437.339999999998
     },
     "Macchina/Moto": {
       "2015": 1379.22,
@@ -880,7 +880,7 @@
       "2023": 637.2799999999999,
       "2024": 578.13,
       "2025": 267.33999999999986,
-      "2026": 727.43
+      "2026": 751.8099999999998
     },
     "Telepass": {
       "2015": 0,
@@ -48799,6 +48799,378 @@
       "desc": "Ritenuta Portaf.Remunerato",
       "importo": -0.55,
       "cat": "Imposte/Tasse"
+    },
+    {
+      "data": "2026-10-27",
+      "desc": "WWW.AMAZON.* B26WQ0UU4 LUXEMBOURG LU",
+      "importo": -4.99,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-10-27",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-10-27",
+      "desc": "RISTORANTE PURABRACE LISSONE IT",
+      "importo": -35,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-27",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -2,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-26",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-23",
+      "desc": "LA CASERMETTA DI CHANT BACENO IT",
+      "importo": -7.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-23",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-10-23",
+      "desc": "PARCHEGGIO ALPE DEVERO BACENO IT",
+      "importo": -12,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-10-22",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-10-22",
+      "desc": "CLESS TICKET ATM MILAN MILANO IT",
+      "importo": -2.2,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-10-20",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -2.8,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-19",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -4.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-18",
+      "desc": "WWW.AMAZON.* B042U04J4 LUXEMBOURG LU",
+      "importo": -19.99,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-10-18",
+      "desc": "PIZZIUM SPA MILANO IT",
+      "importo": -21,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-18",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-18",
+      "desc": "GRUPPO NEGOZI SRL MILANO IT",
+      "importo": -6.4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-17",
+      "desc": "SP QUAD LOCK EUROPE VEGHEL NL",
+      "importo": -69.97,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-10-17",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-10-16",
+      "desc": "Vega - Galvani MILANO IT",
+      "importo": -60.19,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-10-15",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -1,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-14",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-10-13",
+      "desc": "VENCHI MI Gae Aulenti Milano IT",
+      "importo": -2.8,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-13",
+      "desc": "PIZZIUM SPA MILANO IT",
+      "importo": -24,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-13",
+      "desc": "GRUPPO NEGOZI SRL MILANO IT",
+      "importo": -9.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-12",
+      "desc": "VENCHI MI Gae Aulenti Milano IT",
+      "importo": -2.8,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-12",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -1.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-12",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-11",
+      "desc": "WWW.PIZZERIAPORTAGARIB MILANO IT",
+      "importo": -13.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-10",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -5.05,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-10-10",
+      "desc": "CODEGA LAURA PREMANA IT",
+      "importo": -3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-10",
+      "desc": "TAMOIL 4006 BALLABIO IT",
+      "importo": -74.28,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-10-08",
+      "desc": "PELLEGRINI-CM1776 MILANO IT",
+      "importo": -1,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-07",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-10-07",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -3.94,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-10-06",
+      "desc": "BLACK SUBMARINER LADUN MILANO IT",
+      "importo": -15.3,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-06",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-05",
+      "desc": "AMZN Digital 353-12477631 LU",
+      "importo": -118.43,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-10-05",
+      "desc": "Vega - Galvani MILANO IT",
+      "importo": -65.99,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-10-05",
+      "desc": "PIZZERIA DI PORTA GARI MILANO IT",
+      "importo": -11,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-05",
+      "desc": "LUIGI ZAINI S.P.A. MILANO IT",
+      "importo": -4.2,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-04",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-10-03",
+      "desc": "AUTOGRILL 0038 CAPONAGO IT",
+      "importo": -2.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-03",
+      "desc": "SALVETTI FORNERIA PAST MALONNO IT",
+      "importo": -4.2,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-03",
+      "desc": "SALVETTI FORNERIA PAST MALONNO IT",
+      "importo": -1.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-03",
+      "desc": "COMM.PAGANONI SPA LOVERO IT",
+      "importo": -14.47,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-10-03",
+      "desc": "HCH SRL FORCOLA IT",
+      "importo": -1.5,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-03",
+      "desc": "RIFUGIO MORTIROLO MAZZO DI VALT IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-03",
+      "desc": "STAZIONE DI SERVIZIO E CAPONAGO IT",
+      "importo": -16.8,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-10-02",
+      "desc": "AMZN Mktp IT*NK2FG7PM4 AMZN.COM/BILL LU",
+      "importo": -26.62,
+      "cat": "Hobby"
+    },
+    {
+      "data": "2026-10-02",
+      "desc": "LO STAPPO - CAFFE' IL VALEGGIO SUL IT",
+      "importo": -16,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-02",
+      "desc": "STAZIONE DI SERVIZIO E CAPONAGO IT",
+      "importo": -16.56,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-10-02",
+      "desc": "ENI 11727 MONTICHIARI IT",
+      "importo": -18.55,
+      "cat": "Rifornimento"
+    },
+    {
+      "data": "2026-10-02",
+      "desc": "M P DI MANCINI SNC SIRMIONE IT",
+      "importo": -9.9,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-10-01",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-10-01",
+      "desc": "ILIAD ITALIA Roma IT",
+      "importo": -50,
+      "cat": "Telefono"
+    },
+    {
+      "data": "2026-10-01",
+      "desc": "ESSELUNGA PORTA NUOVA MILANO IT",
+      "importo": -4.05,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "EATALY SPA MILANO MILANO IT",
+      "importo": -72.8,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-30",
+      "desc": "COFFEE CAPP BY N AND I POGNANO IT",
+      "importo": -4,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-29",
+      "desc": "CLESS TICKET ATM MILAN MILANO IT",
+      "importo": -2.2,
+      "cat": "Viaggi"
+    },
+    {
+      "data": "2026-09-28",
+      "desc": "ALDI S.R.L. MILANO IT",
+      "importo": -1.26,
+      "cat": "Casa - Spesa"
+    },
+    {
+      "data": "2026-09-28",
+      "desc": "VENCHI MI Gae Aulenti Milano IT",
+      "importo": -2.8,
+      "cat": "Pranzi/Cene"
+    },
+    {
+      "data": "2026-09-28",
+      "desc": "SPONTINI GAE AULENTI MILANO IT",
+      "importo": -10.6,
+      "cat": "Pranzi/Cene"
     }
   ],
   "patrimonio": [
